@@ -25,6 +25,8 @@ public class GraphingCalculator extends Application {
     //create the scenes for the calculator
     public static Scene graphScene = new Scene(graphGroup, 1000, 700, Color.WHITE);
 
+    ///hello
+
     @Override
     public void start(Stage stage) throws IOException {
         //set the stage to the main stage
