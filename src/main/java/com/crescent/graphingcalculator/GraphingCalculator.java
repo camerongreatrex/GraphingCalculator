@@ -1,19 +1,17 @@
 package com.crescent.graphingcalculator;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
+import javafx.application.Platform;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class GraphingCalculator extends Application {
     // stage renamed to window
     public static Stage window;
     // pane renamed to mainPane
@@ -22,6 +20,10 @@ public class HelloApplication extends Application {
     public static Scene menuScene = new Scene(mainPane, 1000, 700);
     //create buttons for the calculator
     public static Button startCalcButton = new Button("▷"), closeCalcButton = new Button("X");
+    //create the groups for the calculator
+    public static Group graphGroup = new Group();
+    //create the scenes for the calculator
+    public static Scene graphScene = new Scene(graphGroup, 1000, 700, Color.WHITE);
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -49,7 +51,14 @@ public class HelloApplication extends Application {
         closeCalcButton.setStyle(
                 "-fx-font-size: 50px;-fx-background-color: Black;-fx-text-fill: white; -fx-background-radius: 15px;");
         startCalcButton.setOnAction(startButtonEvent -> {
+            window.setScene(graphScene);
+        });
 
+        window.setOnCloseRequest(closeEvent -> {
+            Platform.exit();
+        });
+        closeCalcButton.setOnAction(closeButtonEvent -> {
+            window.close();
         });
     }
 

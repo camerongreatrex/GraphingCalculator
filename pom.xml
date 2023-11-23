@@ -129,7 +129,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.crescent.graphingcalculator/com.crescent.graphingcalculator.HelloApplication
+                                com.crescent.graphingcalculator/com.crescent.graphingcalculator.GraphingCalculator
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
