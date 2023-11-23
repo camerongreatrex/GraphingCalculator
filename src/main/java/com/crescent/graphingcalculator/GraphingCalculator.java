@@ -80,7 +80,7 @@ public class GraphingCalculator extends Application {
             window.close();
         });
     }
-
+    //set up number buttons
     public void setButton(Button button, int width, int height, double x, double y) {
         graphGroup.getChildren().add(button);
         button.setPrefSize(width, height);
