@@ -29,7 +29,7 @@ public class GraphingCalculator extends Application {
     public static Group graphGroup = new Group();
     //create the scenes for the calculator
     public static Scene graphScene = new Scene(graphGroup, 1000, 700, Color.WHITE);
-
+    private double lastMouseX, lastMouseY;
     @Override
     public void start(Stage stage) throws IOException {
         //set the stage to the main stage
@@ -60,8 +60,7 @@ public class GraphingCalculator extends Application {
             //create number axes
             final NumberAxis xAxis = new NumberAxis(-500, 500, 100);
             final NumberAxis yAxis = new NumberAxis(-500, 500, 100);
-
-            // Create scatter chart
+            //create scatter chart
             final ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
             scatterChart.setPrefSize(650, 650);
             scatterChart.setLayoutX(350);
@@ -75,7 +74,7 @@ public class GraphingCalculator extends Application {
             scatterChart.setLegendVisible(false);
 
 
-            // Define series for quadrants
+            //define series for quadrants
             XYChart.Series<Number, Number> quadrant1 = new XYChart.Series<>();
             XYChart.Series<Number, Number> quadrant2 = new XYChart.Series<>();
             XYChart.Series<Number, Number> quadrant3 = new XYChart.Series<>();
@@ -85,6 +84,9 @@ public class GraphingCalculator extends Application {
 
             //add the chart to the graph group
             graphGroup.getChildren().add(scatterChart);
+            //enable zooming for the scatter chart
+            enableChartZooming(scatterChart, xAxis, yAxis);
+            enableChartPanning(scatterChart);
         });
 
         window.setOnCloseRequest(closeEvent -> {
@@ -92,6 +94,70 @@ public class GraphingCalculator extends Application {
         });
         closeCalcButton.setOnAction(closeButtonEvent -> {
             window.close();
+        });
+    }
+
+    //method to enable zooming for the scatter chart
+    private void enableChartZooming(ScatterChart<Number, Number> chart, NumberAxis xAxis, NumberAxis yAxis) {
+        chart.setOnScroll((ScrollEvent event) -> {
+            double zoomFactor = 1.1;
+            double deltaY = event.getDeltaY();
+
+            if (deltaY < 0) {
+                zoomFactor = 1.0 / zoomFactor; // Zoom out
+            }
+
+            double mouseX = event.getX();
+            double mouseY = event.getY();
+
+            double xAxisWidth = xAxis.getUpperBound() - xAxis.getLowerBound();
+            double yAxisHeight = yAxis.getUpperBound() - yAxis.getLowerBound();
+
+            double xOffset = (mouseX - xAxis.getLayoutX()) / xAxis.getWidth() * xAxisWidth;
+            double yOffset = (mouseY - yAxis.getLayoutY()) / yAxis.getHeight() * yAxisHeight;
+
+            double newLowerX = xAxis.getLowerBound() + xOffset - (xOffset / zoomFactor);
+            double newUpperX = newLowerX + xAxisWidth / zoomFactor;
+
+            double newLowerY = yAxis.getLowerBound() + yOffset - (yOffset / zoomFactor);
+            double newUpperY = newLowerY + yAxisHeight / zoomFactor;
+
+            //adjust the axis bounds to multiples of 10
+            double xMin = roundToNearest(newLowerX, 10);
+            double xMax = roundToNearest(newUpperX, 10);
+            double yMin = roundToNearest(newLowerY, 10);
+            double yMax = roundToNearest(newUpperY, 10);
+
+            xAxis.setLowerBound(xMin);
+            xAxis.setUpperBound(xMax);
+            yAxis.setLowerBound(yMin);
+            yAxis.setUpperBound(yMax);
+        });
+    }
+    private double roundToNearest(double value, double nearest) {
+        return Math.round(value / nearest) * nearest;
+    }
+
+    private void enableChartPanning(ScatterChart<Number, Number> chart) {
+        chart.setOnMousePressed(event -> {
+            lastMouseX = event.getX();
+            lastMouseY = event.getY();
+        });
+
+        chart.setOnMouseDragged(event -> {
+            double deltaX = event.getX() - lastMouseX;
+            double deltaY = event.getY() - lastMouseY;
+
+            NumberAxis xAxis = (NumberAxis) chart.getXAxis();
+            NumberAxis yAxis = (NumberAxis) chart.getYAxis();
+
+            xAxis.setLowerBound(xAxis.getLowerBound() - deltaX);
+            xAxis.setUpperBound(xAxis.getUpperBound() - deltaX);
+            yAxis.setLowerBound(yAxis.getLowerBound() - deltaY);
+            yAxis.setUpperBound(yAxis.getUpperBound() - deltaY);
+
+            lastMouseX = event.getX();
+            lastMouseY = event.getY();
         });
     }
 
