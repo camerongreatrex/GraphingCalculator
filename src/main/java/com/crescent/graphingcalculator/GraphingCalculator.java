@@ -58,15 +58,15 @@ public class GraphingCalculator extends Application {
         
         //set properties for numerical buttons
         setButton(one, 50, 50, 60, 210);
-        setButton(two, 50, 50, 110, 210);
-        setButton(three, 50, 50, 160, 210);
-        setButton(four, 50, 50, 60, 260);
-        setButton(five, 50, 50, 110, 260);
-        setButton(six, 50, 50, 160, 260);
-        setButton(seven, 50, 50, 60, 310);
-        setButton(eight, 50, 50, 110, 310);
-        setButton(nine, 50, 50, 160, 310);
-        setButton(zero, 50, 50, 110, 360);
+        setButton(two, 50, 50, one.getLayoutX() + 50, one.getLayoutY());
+        setButton(three, 50, 50, one.getLayoutX() + 100, one.getLayoutY());
+        setButton(four, 50, 50, one.getLayoutX(), one.getLayoutY() + 50);
+        setButton(five, 50, 50, two.getLayoutX(), two.getLayoutY() + 50);
+        setButton(six, 50, 50, three.getLayoutX(), three.getLayoutY() + 50);
+        setButton(seven, 50, 50, one.getLayoutX(), one.getLayoutY() + 100);
+        setButton(eight, 50, 50, two.getLayoutX(), two.getLayoutY() + 100);
+        setButton(nine, 50, 50, three.getLayoutX(), three.getLayoutY() + 100);
+        setButton(zero, 50, 50, two.getLayoutX(), two.getLayoutY() + 150);
 
         
         startCalcButton.setOnAction(startButtonEvent -> {
@@ -81,9 +81,9 @@ public class GraphingCalculator extends Application {
         });
     }
 
-    public void setButton(Button button, int i, int j, int x, int y) {
+    public void setButton(Button button, int width, int height, double x, double y) {
         graphGroup.getChildren().add(button);
-        button.setPrefSize(i, j);
+        button.setPrefSize(width, height);
         button.setLayoutX(x);
         button.setLayoutY(y);
     }
