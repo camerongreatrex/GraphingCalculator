@@ -4,7 +4,12 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -25,8 +30,6 @@ public class GraphingCalculator extends Application {
     //create the scenes for the calculator
     public static Scene graphScene = new Scene(graphGroup, 1000, 700, Color.WHITE);
 
-    ///hello
-
     @Override
     public void start(Stage stage) throws IOException {
         //set the stage to the main stage
@@ -37,7 +40,7 @@ public class GraphingCalculator extends Application {
         window.setTitle("Graphing Calculator");
         window.setScene(menuScene);
         //set properties for the calculator start button
-        startCalcButton.setLayoutX(350);
+        startCalcButton.setLayoutX(400);
         startCalcButton.setLayoutY(250);
         mainPane.getChildren().add(startCalcButton);
         startCalcButton.setMinWidth(200);
@@ -45,7 +48,7 @@ public class GraphingCalculator extends Application {
         startCalcButton.setStyle(
                 "-fx-font-size: 50px;-fx-background-color: Black;-fx-text-fill: white; -fx-background-radius: 15px;");
         //set properties for the calculator close button
-        closeCalcButton.setLayoutX(350);
+        closeCalcButton.setLayoutX(400);
         closeCalcButton.setLayoutY(375);
         mainPane.getChildren().add(closeCalcButton);
         closeCalcButton.setMinWidth(200);
@@ -54,6 +57,34 @@ public class GraphingCalculator extends Application {
                 "-fx-font-size: 50px;-fx-background-color: Black;-fx-text-fill: white; -fx-background-radius: 15px;");
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
+            //create number axes
+            final NumberAxis xAxis = new NumberAxis(-500, 500, 100);
+            final NumberAxis yAxis = new NumberAxis(-500, 500, 100);
+
+            // Create scatter chart
+            final ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
+            scatterChart.setPrefSize(650, 650);
+            scatterChart.setLayoutX(350);
+            scatterChart.setLayoutY(0);
+            xAxis.setTickLabelGap(10);
+            yAxis.setTickLabelGap(10);
+            xAxis.setTickLabelRotation(90);
+            yAxis.setTickLabelRotation(0);
+            xAxis.setTickMarkVisible(false);
+            yAxis.setTickMarkVisible(false);
+            scatterChart.setLegendVisible(false);
+
+
+            // Define series for quadrants
+            XYChart.Series<Number, Number> quadrant1 = new XYChart.Series<>();
+            XYChart.Series<Number, Number> quadrant2 = new XYChart.Series<>();
+            XYChart.Series<Number, Number> quadrant3 = new XYChart.Series<>();
+            XYChart.Series<Number, Number> quadrant4 = new XYChart.Series<>();
+            //quadrant1.getData().add(new XYChart.Data<>(50, 50));
+            scatterChart.getData().addAll(quadrant1, quadrant2, quadrant3, quadrant4);
+
+            //add the chart to the graph group
+            graphGroup.getChildren().add(scatterChart);
         });
 
         window.setOnCloseRequest(closeEvent -> {
