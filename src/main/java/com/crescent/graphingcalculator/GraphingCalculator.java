@@ -36,7 +36,7 @@ public class GraphingCalculator extends Application {
     six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0");
     //create basic math buttons
     public static Button plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
-    multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("()"),
+    multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
     closeBracket = new Button(")");
 
     private double lastMouseX, lastMouseY;
