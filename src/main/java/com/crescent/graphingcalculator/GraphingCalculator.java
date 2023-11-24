@@ -29,6 +29,12 @@ public class GraphingCalculator extends Application {
     public static Group graphGroup = new Group();
     //create the scenes for the calculator
     public static Scene graphScene = new Scene(graphGroup, 1000, 700, Color.WHITE);
+    //create the groups for the buttons screen
+    public static Group buttonsGroup = new Group();
+    //create buttons for numbers 0-9
+    public static Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"),
+    six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0");
+
     private double lastMouseX, lastMouseY;
     @Override
     public void start(Stage stage) throws IOException {
@@ -55,6 +61,20 @@ public class GraphingCalculator extends Application {
         closeCalcButton.setMinHeight(100);
         closeCalcButton.setStyle(
                 "-fx-font-size: 50px;-fx-background-color: Black;-fx-text-fill: white; -fx-background-radius: 15px;");
+        
+        //set properties for numerical buttons
+        setButton(one, 50, 50, 100, 350);
+        setButton(two, 50, 50, one.getLayoutX() + 50, one.getLayoutY());
+        setButton(three, 50, 50, one.getLayoutX() + 100, one.getLayoutY());
+        setButton(four, 50, 50, one.getLayoutX(), one.getLayoutY() + 50);
+        setButton(five, 50, 50, two.getLayoutX(), two.getLayoutY() + 50);
+        setButton(six, 50, 50, three.getLayoutX(), three.getLayoutY() + 50);
+        setButton(seven, 50, 50, one.getLayoutX(), one.getLayoutY() + 100);
+        setButton(eight, 50, 50, two.getLayoutX(), two.getLayoutY() + 100);
+        setButton(nine, 50, 50, three.getLayoutX(), three.getLayoutY() + 100);
+        setButton(zero, 50, 50, two.getLayoutX(), two.getLayoutY() + 150);
+
+        
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
             //create number axes
@@ -95,6 +115,14 @@ public class GraphingCalculator extends Application {
         closeCalcButton.setOnAction(closeButtonEvent -> {
             window.close();
         });
+    }
+
+    //method for setting up number buttons
+    public void setButton(Button button, int width, int height, double x, double y) {
+        graphGroup.getChildren().add(button);
+        button.setPrefSize(width, height);
+        button.setLayoutX(x);
+        button.setLayoutY(y);
     }
 
     //method to enable zooming for the scatter chart
