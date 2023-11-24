@@ -36,7 +36,7 @@ public class GraphingCalculator extends Application {
     six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0");
     //create basic math buttons
     public static Button plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
-    multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("()"),
+    multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
     closeBracket = new Button(")");
 
     private double lastMouseX, lastMouseY;
@@ -77,6 +77,16 @@ public class GraphingCalculator extends Application {
         setButton(eight, 50, 50, two.getLayoutX(), two.getLayoutY() + 100);
         setButton(nine, 50, 50, three.getLayoutX(), three.getLayoutY() + 100);
         setButton(zero, 50, 50, two.getLayoutX(), two.getLayoutY() + 150);
+
+        //set properties for basic math buttons
+        setButton(plus, 50, 50, one.getLayoutX() - 50, one.getLayoutY());
+        setButton(minus, 50, 50, four.getLayoutX() - 50, four.getLayoutY());
+        setButton(exponent, 50, 50, seven.getLayoutX() - 50, seven.getLayoutY());
+        setButton(multiply, 50, 50, three.getLayoutX() + 50, three.getLayoutY());
+        setButton(divide, 50, 50, six.getLayoutX() + 50, six.getLayoutY());
+        setButton(modulus, 50, 50, nine.getLayoutX() + 50, nine.getLayoutY());
+        setButton(openBracket, 50, 50, two.getLayoutX(), two.getLayoutY() - 50);
+        setButton(closeBracket, 50, 50, three.getLayoutX(), three.getLayoutY() - 50);
 
         
         startCalcButton.setOnAction(startButtonEvent -> {
