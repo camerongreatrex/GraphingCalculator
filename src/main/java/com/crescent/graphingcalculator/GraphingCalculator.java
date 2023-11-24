@@ -63,7 +63,7 @@ public class GraphingCalculator extends Application {
                 "-fx-font-size: 50px;-fx-background-color: Black;-fx-text-fill: white; -fx-background-radius: 15px;");
         
         //set properties for numerical buttons
-        setButton(one, 50, 50, 80, 300);
+        setButton(one, 50, 50, 100, 350);
         setButton(two, 50, 50, one.getLayoutX() + 50, one.getLayoutY());
         setButton(three, 50, 50, one.getLayoutX() + 100, one.getLayoutY());
         setButton(four, 50, 50, one.getLayoutX(), one.getLayoutY() + 50);
