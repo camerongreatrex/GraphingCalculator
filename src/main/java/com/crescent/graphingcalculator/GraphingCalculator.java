@@ -12,6 +12,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -37,10 +39,14 @@ public class GraphingCalculator extends Application {
     decimalPoint = new Button("."), negative = new Button("(-)");
     //create basic math buttons
     public static Button plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
-    multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
-    closeBracket = new Button(")"), enter = new Button("=");
+    multiply = new Button("X"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
+    closeBracket = new Button(")"), enter = new Button("ENTER");
     //create trig buttons
     public static Button sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN");
+    //create other calculator buttons
+    public static Button clear = new Button("CLEAR");
+    //create text box/screen
+    public static Text textbox = new Text("HI");
 
     private double lastMouseX, lastMouseY;
     @Override
@@ -93,12 +99,24 @@ public class GraphingCalculator extends Application {
         setButton(openBracket, 45, 30, seven.getLayoutX(), seven.getLayoutY() - 50);
         setButton(closeBracket, 45, 30, eight.getLayoutX(), eight.getLayoutY() - 50);
         setButton(enter, 45, 30, negative.getLayoutX() + 50, negative.getLayoutY());
+        enter.setStyle("-fx-font: 9 arial;");
 
         //set properties for trig buttons
         setButton(sin, 45, 30, openBracket.getLayoutX(), openBracket.getLayoutY() - 50);
         setButton(cos, 45, 30, closeBracket.getLayoutX(), closeBracket.getLayoutY() - 50);
         setButton(tan, 45, 30, modulus.getLayoutX(), modulus.getLayoutY() - 50);
         
+        //set properties for other calculator buttons
+        setButton(clear, 45, 30, exponent.getLayoutX(), exponent.getLayoutY() - 50);
+        clear.setStyle("-fx-font: 9 arial;");
+
+        //set screen of calculator
+        textbox.setFill(Color.BLACK);
+        textbox.setFont(Font.font ("Verdana", 20));
+        textbox.setLayoutX(one.getLayoutX());
+        textbox.setLayoutY(100);
+        // textbox.setText("");
+
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
             //create number axes
