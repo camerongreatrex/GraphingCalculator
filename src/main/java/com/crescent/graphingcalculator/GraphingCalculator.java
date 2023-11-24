@@ -34,11 +34,13 @@ public class GraphingCalculator extends Application {
     //create buttons for numbers 0-9 and decimal point
     public static Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"),
     six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
-    decimalPoint = new Button(".");
+    decimalPoint = new Button("."), negative = new Button("(-)");
     //create basic math buttons
     public static Button plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
     multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
-    closeBracket = new Button(")");
+    closeBracket = new Button(")"), enter = new Button("=");
+    //create trig buttons
+    public static Button sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN");
 
     private double lastMouseX, lastMouseY;
     @Override
@@ -67,29 +69,35 @@ public class GraphingCalculator extends Application {
         closeCalcButton.setStyle(
                 "-fx-font-size: 50px;-fx-background-color: Black;-fx-text-fill: white; -fx-background-radius: 15px;");
         
-        //set properties for numerical buttons and decimal point
-        setButton(one, 50, 50, 100, 350);
-        setButton(two, 50, 50, one.getLayoutX() + 50, one.getLayoutY());
-        setButton(three, 50, 50, one.getLayoutX() + 100, one.getLayoutY());
-        setButton(four, 50, 50, one.getLayoutX(), one.getLayoutY() + 50);
-        setButton(five, 50, 50, two.getLayoutX(), two.getLayoutY() + 50);
-        setButton(six, 50, 50, three.getLayoutX(), three.getLayoutY() + 50);
-        setButton(seven, 50, 50, one.getLayoutX(), one.getLayoutY() + 100);
-        setButton(eight, 50, 50, two.getLayoutX(), two.getLayoutY() + 100);
-        setButton(nine, 50, 50, three.getLayoutX(), three.getLayoutY() + 100);
-        setButton(zero, 50, 50, two.getLayoutX(), two.getLayoutY() + 150);
-        setButton(decimalPoint, 50, 50, zero.getLayoutX() + 50, zero.getLayoutY());
+        //set properties for numerical buttons, decimal point and negative sign
+        setButton(one, 45, 30, 90, 500);
+        setButton(two, 45, 30, one.getLayoutX() + 50, one.getLayoutY());
+        setButton(three, 45, 30, one.getLayoutX() + 100, one.getLayoutY());
+        setButton(four, 45, 30, one.getLayoutX(), one.getLayoutY() - 50);
+        setButton(five, 45, 30, two.getLayoutX(), two.getLayoutY() - 50);
+        setButton(six, 45, 30, three.getLayoutX(), three.getLayoutY() - 50);
+        setButton(seven, 45, 30, one.getLayoutX(), four.getLayoutY() - 50);
+        setButton(eight, 45, 30, two.getLayoutX(), five.getLayoutY() - 50);
+        setButton(nine, 45, 30, three.getLayoutX(), six.getLayoutY() - 50);
+        setButton(zero, 45, 30, one.getLayoutX(), one.getLayoutY() + 50);
+        setButton(decimalPoint, 45, 30, two.getLayoutX(), zero.getLayoutY());
+        setButton(negative, 45, 30, three.getLayoutX(), zero.getLayoutY());
 
         //set properties for basic math buttons
-        setButton(plus, 50, 50, one.getLayoutX() - 50, one.getLayoutY());
-        setButton(minus, 50, 50, four.getLayoutX() - 50, four.getLayoutY());
-        setButton(exponent, 50, 50, seven.getLayoutX() - 50, seven.getLayoutY());
-        setButton(multiply, 50, 50, three.getLayoutX() + 50, three.getLayoutY());
-        setButton(divide, 50, 50, six.getLayoutX() + 50, six.getLayoutY());
-        setButton(modulus, 50, 50, nine.getLayoutX() + 50, nine.getLayoutY());
-        setButton(openBracket, 50, 50, two.getLayoutX(), two.getLayoutY() - 50);
-        setButton(closeBracket, 50, 50, three.getLayoutX(), three.getLayoutY() - 50);
+        setButton(plus, 45, 30, three.getLayoutX() + 50, three.getLayoutY());
+        setButton(minus, 45, 30, plus.getLayoutX(), plus.getLayoutY() - 50);
+        setButton(multiply, 45, 30, plus.getLayoutX(), minus.getLayoutY() - 50);
+        setButton(divide, 45, 30, multiply.getLayoutX(), multiply.getLayoutY() - 50);
+        setButton(exponent, 45, 30, divide.getLayoutX(), divide.getLayoutY() - 50);
+        setButton(modulus, 45, 30, nine.getLayoutX(), nine.getLayoutY() - 50);
+        setButton(openBracket, 45, 30, seven.getLayoutX(), seven.getLayoutY() - 50);
+        setButton(closeBracket, 45, 30, eight.getLayoutX(), eight.getLayoutY() - 50);
+        setButton(enter, 45, 30, negative.getLayoutX() + 50, negative.getLayoutY());
 
+        //set properties for trig buttons
+        setButton(sin, 45, 30, openBracket.getLayoutX(), openBracket.getLayoutY() - 50);
+        setButton(cos, 45, 30, closeBracket.getLayoutX(), closeBracket.getLayoutY() - 50);
+        setButton(tan, 45, 30, modulus.getLayoutX(), modulus.getLayoutY() - 50);
         
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
