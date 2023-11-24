@@ -31,9 +31,10 @@ public class GraphingCalculator extends Application {
     public static Scene graphScene = new Scene(graphGroup, 1000, 700, Color.WHITE);
     //create the groups for the buttons screen
     public static Group buttonsGroup = new Group();
-    //create buttons for numbers 0-9
+    //create buttons for numbers 0-9 and decimal point
     public static Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"),
-    six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0");
+    six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
+    decimalPoint = new Button(".");
     //create basic math buttons
     public static Button plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
     multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
@@ -66,7 +67,7 @@ public class GraphingCalculator extends Application {
         closeCalcButton.setStyle(
                 "-fx-font-size: 50px;-fx-background-color: Black;-fx-text-fill: white; -fx-background-radius: 15px;");
         
-        //set properties for numerical buttons
+        //set properties for numerical buttons and decimal point
         setButton(one, 50, 50, 100, 350);
         setButton(two, 50, 50, one.getLayoutX() + 50, one.getLayoutY());
         setButton(three, 50, 50, one.getLayoutX() + 100, one.getLayoutY());
@@ -77,6 +78,7 @@ public class GraphingCalculator extends Application {
         setButton(eight, 50, 50, two.getLayoutX(), two.getLayoutY() + 100);
         setButton(nine, 50, 50, three.getLayoutX(), three.getLayoutY() + 100);
         setButton(zero, 50, 50, two.getLayoutX(), two.getLayoutY() + 150);
+        setButton(decimalPoint, 50, 50, zero.getLayoutX() + 50, zero.getLayoutY());
 
         //set properties for basic math buttons
         setButton(plus, 50, 50, one.getLayoutX() - 50, one.getLayoutY());
