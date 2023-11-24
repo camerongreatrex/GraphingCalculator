@@ -39,7 +39,7 @@ public class GraphingCalculator extends Application {
     decimalPoint = new Button("."), negative = new Button("(-)");
     //create basic math buttons
     public static Button plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
-    multiply = new Button("X"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
+    multiply = new Button("X"), divide = new Button("÷"), modulus = new Button("%"), openBracket = new Button("("),
     closeBracket = new Button(")"), enter = new Button("ENTER");
     //create trig buttons
     public static Button sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN");
@@ -116,6 +116,11 @@ public class GraphingCalculator extends Application {
         textbox.setLayoutX(one.getLayoutX());
         textbox.setLayoutY(100);
         // textbox.setText("");
+
+        //set function of buttons
+        one.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 1);
+        });
 
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
