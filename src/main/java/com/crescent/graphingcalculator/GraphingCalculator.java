@@ -46,7 +46,7 @@ public class GraphingCalculator extends Application {
     //create other calculator buttons
     public static Button clear = new Button("CLEAR");
     //create text box/screen
-    public static Text textbox = new Text("HI");
+    public static Text textbox = new Text();
 
     private double lastMouseX, lastMouseY;
     @Override
@@ -111,15 +111,43 @@ public class GraphingCalculator extends Application {
         clear.setStyle("-fx-font: 9 arial;");
 
         //set screen of calculator
-        textbox.setFill(Color.BLACK);
+        // textbox.setText("ASDFGHJKL");
+        graphGroup.getChildren().add(textbox);
         textbox.setFont(Font.font ("Verdana", 20));
-        textbox.setLayoutX(one.getLayoutX());
+        textbox.setFill(Color.BLACK);
+        textbox.setLayoutX(100);
         textbox.setLayoutY(100);
-        // textbox.setText("");
 
         //set function of buttons
         one.setOnAction(startButtonEvent -> {
             textbox.setText(textbox.getText() + 1);
+        });
+        two.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 2);
+        });
+        three.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 3);
+        });
+        four.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 4);
+        });
+        five.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 5);
+        });
+        six.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 6);
+        });
+        seven.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 7);
+        });
+        eight.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 8);
+        });
+        nine.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 9);
+        });
+        zero.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 0);
         });
 
         startCalcButton.setOnAction(startButtonEvent -> {
