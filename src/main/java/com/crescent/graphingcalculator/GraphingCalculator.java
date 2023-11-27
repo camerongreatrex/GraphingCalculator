@@ -119,6 +119,7 @@ public class GraphingCalculator extends Application {
         textbox.setLayoutY(100);
 
         //set function of buttons
+    {
         one.setOnAction(startButtonEvent -> {
             textbox.setText(textbox.getText() + 1);
         });
@@ -149,6 +150,11 @@ public class GraphingCalculator extends Application {
         zero.setOnAction(startButtonEvent -> {
             textbox.setText(textbox.getText() + 0);
         });
+    }
+        clear.setOnAction(startButtonEvent -> {
+            textbox.setText("");
+        });
+    
 
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
