@@ -116,56 +116,68 @@ public class GraphingCalculator extends Application {
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
         textbox.setMaxWidth(210);
-        textbox.setLayoutX(25);
-        textbox.setLayoutY(25);
-        //set function of buttons
-        {
-            one.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 1);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            two.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 2);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            three.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 3);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            four.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 4);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            five.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 5);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            six.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 6);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            seven.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 7);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            eight.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 8);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            nine.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 9);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            zero.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 0);
-                textbox.positionCaret(textbox.getText().length());
-            });
-        }
-        clear.setOnMousePressed(startButtonEvent -> {
-            textbox.setText("");
-            textbox.positionCaret(0);
-        });
+        textbox.setLayoutX(80);
+        textbox.setLayoutY(100);
 
+        //set function of buttons
+    {
+        one.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 1);
+        });
+        two.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 2);
+        });
+        three.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 3);
+        });
+        four.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 4);
+        });
+        five.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 5);
+        });
+        six.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 6);
+        });
+        seven.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 7);
+        });
+        eight.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 8);
+        });
+        nine.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 9);
+        });
+        zero.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 0);
+        });
+    }
+    {
+        plus.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "+");
+        });
+        minus.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "-");
+        });
+        multiply.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "x");
+        });
+        divide.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "÷");
+        });
+        modulus.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "%");
+        });
+        openBracket.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "(");
+        });
+        closeBracket.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + ")");
+        });
+        clear.setOnAction(startButtonEvent -> {
+            textbox.setText("");
+        });
+    }
 
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
