@@ -189,6 +189,11 @@ public class GraphingCalculator extends Application {
         });
         closeBracket.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + ")");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        sin.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "SIN(");
+            textbox.positionCaret(textbox.getText().length());
         });
         clear.setOnMousePressed(startButtonEvent -> {
             textbox.setText("");
