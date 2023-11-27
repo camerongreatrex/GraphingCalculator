@@ -151,6 +151,18 @@ public class GraphingCalculator extends Application {
             textbox.setText(textbox.getText() + 0);
         });
     }
+        plus.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "+");
+        });
+        minus.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "-");
+        });
+        multiply.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "x");
+        });
+        divide.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "÷");
+        });
         clear.setOnAction(startButtonEvent -> {
             textbox.setText("");
         });
