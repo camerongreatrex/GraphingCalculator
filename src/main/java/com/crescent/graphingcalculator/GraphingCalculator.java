@@ -111,7 +111,6 @@ public class GraphingCalculator extends Application {
         clear.setStyle("-fx-font: 9 arial;");
 
         //set screen of calculator
-        // textbox.setText("ASDFGHJKL");
         graphGroup.getChildren().add(textbox);
         textbox.setEditable(false);
         textbox.setFocusTraversable(false);
@@ -166,10 +165,19 @@ public class GraphingCalculator extends Application {
         divide.setOnAction(startButtonEvent -> {
             textbox.setText(textbox.getText() + "÷");
         });
+        modulus.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "%");
+        });
+        openBracket.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "(");
+        });
+        closeBracket.setOnAction(startButtonEvent -> {
+            textbox.setText(textbox.getText() + ")");
+        });
         clear.setOnAction(startButtonEvent -> {
             textbox.setText("");
         });
-    
+    }
 
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
