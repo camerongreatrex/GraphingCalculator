@@ -151,6 +151,7 @@ public class GraphingCalculator extends Application {
             textbox.setText(textbox.getText() + 0);
         });
     }
+    {
         plus.setOnAction(startButtonEvent -> {
             textbox.setText(textbox.getText() + "+");
         });
@@ -166,7 +167,7 @@ public class GraphingCalculator extends Application {
         clear.setOnAction(startButtonEvent -> {
             textbox.setText("");
         });
-    
+    }
 
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
