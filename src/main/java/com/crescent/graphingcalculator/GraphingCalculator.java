@@ -8,12 +8,11 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -35,20 +34,21 @@ public class GraphingCalculator extends Application {
     public static Group buttonsGroup = new Group();
     //create buttons for numbers 0-9 and decimal point
     public static Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"),
-    six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
-    decimalPoint = new Button("."), negative = new Button("(-)");
+            six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
+            decimalPoint = new Button("."), negative = new Button("(-)");
     //create basic math buttons
     public static Button plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
-    multiply = new Button("X"), divide = new Button("÷"), modulus = new Button("%"), openBracket = new Button("("),
-    closeBracket = new Button(")"), enter = new Button("ENTER");
+            multiply = new Button("X"), divide = new Button("÷"), modulus = new Button("%"), openBracket = new Button("("),
+            closeBracket = new Button(")"), enter = new Button("ENTER");
     //create trig buttons
     public static Button sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN");
     //create other calculator buttons
     public static Button clear = new Button("CLEAR");
     //create text box/screen
-    public static Text textbox = new Text();
+    TextField textbox = new TextField();
 
     private double lastMouseX, lastMouseY;
+
     @Override
     public void start(Stage stage) throws IOException {
         //set the stage to the main stage
@@ -74,7 +74,7 @@ public class GraphingCalculator extends Application {
         closeCalcButton.setMinHeight(100);
         closeCalcButton.setStyle(
                 "-fx-font-size: 50px;-fx-background-color: Black;-fx-text-fill: white; -fx-background-radius: 15px;");
-        
+
         //set properties for numerical buttons, decimal point and negative sign
         setButton(one, 45, 30, 90, 500);
         setButton(two, 45, 30, one.getLayoutX() + 50, one.getLayoutY());
@@ -105,7 +105,7 @@ public class GraphingCalculator extends Application {
         setButton(sin, 45, 30, openBracket.getLayoutX(), openBracket.getLayoutY() - 50);
         setButton(cos, 45, 30, closeBracket.getLayoutX(), closeBracket.getLayoutY() - 50);
         setButton(tan, 45, 30, modulus.getLayoutX(), modulus.getLayoutY() - 50);
-        
+
         //set properties for other calculator buttons
         setButton(clear, 45, 30, exponent.getLayoutX(), exponent.getLayoutY() - 50);
         clear.setStyle("-fx-font: 9 arial;");
@@ -113,48 +113,50 @@ public class GraphingCalculator extends Application {
         //set screen of calculator
         // textbox.setText("ASDFGHJKL");
         graphGroup.getChildren().add(textbox);
-        textbox.setFont(Font.font ("Verdana", 20));
-        textbox.setFill(Color.BLACK);
-        textbox.setLayoutX(100);
+        textbox.setEditable(false);
+        textbox.setFocusTraversable(false);
+        textbox.setFont(Font.font("Verdana", 20));
+        textbox.setMaxWidth(210);
+        textbox.setLayoutX(80);
         textbox.setLayoutY(100);
 
         //set function of buttons
-    {
-        one.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 1);
-        });
-        two.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 2);
-        });
-        three.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 3);
-        });
-        four.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 4);
-        });
-        five.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 5);
-        });
-        six.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 6);
-        });
-        seven.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 7);
-        });
-        eight.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 8);
-        });
-        nine.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 9);
-        });
-        zero.setOnAction(startButtonEvent -> {
-            textbox.setText(textbox.getText() + 0);
-        });
-    }
+        {
+            one.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 1);
+            });
+            two.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 2);
+            });
+            three.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 3);
+            });
+            four.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 4);
+            });
+            five.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 5);
+            });
+            six.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 6);
+            });
+            seven.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 7);
+            });
+            eight.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 8);
+            });
+            nine.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 9);
+            });
+            zero.setOnAction(startButtonEvent -> {
+                textbox.setText(textbox.getText() + 0);
+            });
+        }
         clear.setOnAction(startButtonEvent -> {
             textbox.setText("");
         });
-    
+
 
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
@@ -243,6 +245,7 @@ public class GraphingCalculator extends Application {
             yAxis.setUpperBound(yMax);
         });
     }
+
     private double roundToNearest(double value, double nearest) {
         return Math.round(value / nearest) * nearest;
     }
