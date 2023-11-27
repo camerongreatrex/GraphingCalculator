@@ -195,6 +195,14 @@ public class GraphingCalculator extends Application {
             textbox.setText(textbox.getText() + "SIN(");
             textbox.positionCaret(textbox.getText().length());
         });
+        cos.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "COS(");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        tan.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "TAN(");
+            textbox.positionCaret(textbox.getText().length());
+        });
         clear.setOnMousePressed(startButtonEvent -> {
             textbox.setText("");
         });
