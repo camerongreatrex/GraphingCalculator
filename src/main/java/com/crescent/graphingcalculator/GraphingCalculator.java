@@ -121,60 +121,76 @@ public class GraphingCalculator extends Application {
 
         //set function of buttons
     {
-        one.setOnAction(startButtonEvent -> {
+        one.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 1);
+            textbox.positionCaret(textbox.getText().length());
         });
-        two.setOnAction(startButtonEvent -> {
+        two.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 2);
+            textbox.positionCaret(textbox.getText().length());
         });
-        three.setOnAction(startButtonEvent -> {
+        three.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 3);
+            textbox.positionCaret(textbox.getText().length());
         });
-        four.setOnAction(startButtonEvent -> {
+        four.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 4);
+            textbox.positionCaret(textbox.getText().length());
         });
-        five.setOnAction(startButtonEvent -> {
+        five.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 5);
+            textbox.positionCaret(textbox.getText().length());
         });
-        six.setOnAction(startButtonEvent -> {
+        six.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 6);
+            textbox.positionCaret(textbox.getText().length());
         });
-        seven.setOnAction(startButtonEvent -> {
+        seven.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 7);
+            textbox.positionCaret(textbox.getText().length());
         });
-        eight.setOnAction(startButtonEvent -> {
+        eight.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 8);
+            textbox.positionCaret(textbox.getText().length());
         });
-        nine.setOnAction(startButtonEvent -> {
+        nine.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 9);
+            textbox.positionCaret(textbox.getText().length());
         });
-        zero.setOnAction(startButtonEvent -> {
+        zero.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 0);
+            textbox.positionCaret(textbox.getText().length());
         });
     }
     {
-        plus.setOnAction(startButtonEvent -> {
+        plus.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + "+");
+            textbox.positionCaret(textbox.getText().length());
         });
-        minus.setOnAction(startButtonEvent -> {
+        minus.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + "-");
+            textbox.positionCaret(textbox.getText().length());
         });
-        multiply.setOnAction(startButtonEvent -> {
+        multiply.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + "x");
+            textbox.positionCaret(textbox.getText().length());
         });
-        divide.setOnAction(startButtonEvent -> {
+        divide.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + "÷");
+            textbox.positionCaret(textbox.getText().length());
         });
-        modulus.setOnAction(startButtonEvent -> {
+        modulus.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + "%");
+            textbox.positionCaret(textbox.getText().length());
         });
-        openBracket.setOnAction(startButtonEvent -> {
+        openBracket.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + "(");
+            textbox.positionCaret(textbox.getText().length());
         });
-        closeBracket.setOnAction(startButtonEvent -> {
+        closeBracket.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + ")");
         });
-        clear.setOnAction(startButtonEvent -> {
+        clear.setOnMousePressed(startButtonEvent -> {
             textbox.setText("");
         });
     }
