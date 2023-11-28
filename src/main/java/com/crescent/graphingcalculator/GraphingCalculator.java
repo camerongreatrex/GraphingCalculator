@@ -39,15 +39,21 @@ public class GraphingCalculator extends Application {
     //create basic math buttons
     public static Button plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
             multiply = new Button("X"), divide = new Button("÷"), modulus = new Button("%"), openBracket = new Button("("),
-            closeBracket = new Button(")"), enter = new Button("ENTER");
+            closeBracket = new Button(")");
     //create trig buttons
     public static Button sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN");
     //create other calculator buttons
-    public static Button clear = new Button("CLEAR");
+    public static Button clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPH");
+
     //create text box/screen
     TextField textbox = new TextField();
+    TextField graph1 = new TextField();
 
     private double lastMouseX, lastMouseY;
+
+    public static boolean graph1check = true;
+
+    public static int chooseText = 0;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -98,8 +104,6 @@ public class GraphingCalculator extends Application {
         setButton(modulus, 45, 30, nine.getLayoutX(), nine.getLayoutY() - 50);
         setButton(openBracket, 45, 30, seven.getLayoutX(), seven.getLayoutY() - 50);
         setButton(closeBracket, 45, 30, eight.getLayoutX(), eight.getLayoutY() - 50);
-        setButton(enter, 45, 30, negative.getLayoutX() + 50, negative.getLayoutY());
-        enter.setStyle("-fx-font: 9 arial;");
 
         //set properties for trig buttons
         setButton(sin, 45, 30, openBracket.getLayoutX(), openBracket.getLayoutY() - 50);
@@ -109,6 +113,10 @@ public class GraphingCalculator extends Application {
         //set properties for other calculator buttons
         setButton(clear, 45, 30, exponent.getLayoutX(), exponent.getLayoutY() - 50);
         clear.setStyle("-fx-font: 9 arial;");
+        setButton(enter, 45, 30, negative.getLayoutX() + 50, negative.getLayoutY());
+        enter.setStyle("-fx-font: 9 arial;");
+        setButton(graph, 45, 30, sin.getLayoutX(), sin.getLayoutY() - 50);
+        graph.setStyle("-fx-font: 9 arial;");
 
         //set screen of calculator
         graphGroup.getChildren().add(textbox);
@@ -119,11 +127,25 @@ public class GraphingCalculator extends Application {
         textbox.setLayoutX(80);
         textbox.setLayoutY(100);
 
+        graphGroup.getChildren().add(graph1);
+        graph1.setVisible(false);
+        graph1.setEditable(true);
+        graph1.setFocusTraversable(false);
+        graph1.setFont(Font.font("Verdana", 20));
+        graph1.setMaxWidth(210);
+        graph1.setLayoutX(80);
+        graph1.setLayoutY(100);
+
         //set function of buttons
     {
         one.setOnMousePressed(startButtonEvent -> {
+            if (chooseText == 0) {
             textbox.setText(textbox.getText() + 1);
             textbox.positionCaret(textbox.getText().length());
+            } else if(chooseText == 1) {
+                graph1.setText(graph1.getText() + 1);
+                graph1.positionCaret(graph1.getText().length());
+            }
         });
         two.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 2);
@@ -207,7 +229,21 @@ public class GraphingCalculator extends Application {
             textbox.setText("");
         });
     }
-
+    {
+        
+        graph.setOnAction(startButtonEvent -> {
+            if (graph1check) {
+                graph1.setVisible(true);
+                textbox.setVisible(false);
+                chooseText = 1;
+            } else {
+                graph1.setVisible(false);
+                textbox.setVisible(true);
+                chooseText = 0;
+            }
+            graph1check = !graph1check;
+        });
+    }  
         startCalcButton.setOnAction(startButtonEvent -> {
             window.setScene(graphScene);
             //create number axes
