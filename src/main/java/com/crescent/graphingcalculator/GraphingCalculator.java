@@ -54,8 +54,6 @@ public class GraphingCalculator extends Application {
     //control variable for graphing(y=) textboxs
     public static boolean graphchecks = false;
 
-    public static int chooseText = 0;
-
     @Override
     public void start(Stage stage) throws IOException {
         //set the stage to the main stage
@@ -119,7 +117,8 @@ public class GraphingCalculator extends Application {
         setButton(graph, 45, 30, sin.getLayoutX(), sin.getLayoutY() - 50);
         graph.setStyle("-fx-font: 9 arial;");
 
-        //set screen of calculator
+        //set textboxes of calculator
+        //main textbox
         graphGroup.getChildren().add(textbox);
         textbox.setEditable(false);
         textbox.setFocusTraversable(false);
@@ -128,6 +127,7 @@ public class GraphingCalculator extends Application {
         textbox.setLayoutX(80);
         textbox.setLayoutY(100);
 
+        //graphing textbox 1
         graphGroup.getChildren().add(graph1);
         graph1.setVisible(false);
         graph1.setEditable(true);
@@ -137,6 +137,7 @@ public class GraphingCalculator extends Application {
         graph1.setLayoutX(80);
         graph1.setLayoutY(90);
 
+        //graphing textbox 2
         graphGroup.getChildren().add(graph2);
         graph2.setVisible(false);
         graph2.setEditable(true);
@@ -148,11 +149,12 @@ public class GraphingCalculator extends Application {
 
         //set function of buttons
     {
+        //make all buttons work for different textboxes
         one.setOnMousePressed(startButtonEvent -> {
-            if (chooseText == 0) {
+            if (!graphchecks) {
             textbox.setText(textbox.getText() + 1);
             textbox.positionCaret(textbox.getText().length());
-            } else if(chooseText == 1) {
+            } else if(graphchecks) {
                 graph1.setText(graph1.getText() + 1);
                 graph1.positionCaret(graph1.getText().length());
             }
@@ -266,12 +268,10 @@ public class GraphingCalculator extends Application {
                 graph1.setVisible(false);
                 graph2.setVisible(false);
                 textbox.setVisible(true);
-                chooseText = 1;
             } else {
                 graph1.setVisible(true);
                 graph2.setVisible(true);
                 textbox.setVisible(false);
-                chooseText = 0;
             }
             graphchecks = !graphchecks;
         });
@@ -317,6 +317,10 @@ public class GraphingCalculator extends Application {
             window.close();
         });
     }
+
+    // void checkTextbox() {
+    //     if (graphchecks)
+    // }
 
     //method for setting up number buttons
     public void setButton(Button button, int width, int height, double x, double y) {
