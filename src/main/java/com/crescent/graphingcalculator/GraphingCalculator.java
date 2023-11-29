@@ -43,15 +43,16 @@ public class GraphingCalculator extends Application {
     //create trig buttons
     public static Button sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN");
     //create other calculator buttons
-    public static Button clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPH");
+    public static Button clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("Y=");
 
     //create text box/screen
     TextField textbox = new TextField();
-    TextField graph1 = new TextField();
+    TextField graph1 = new TextField(), graph2 = new TextField();
 
     private double lastMouseX, lastMouseY;
 
-    public static boolean graph1check = true;
+    //control variable for graphing(y=) textboxs
+    public static boolean graphchecks = false;
 
     public static int chooseText = 0;
 
@@ -134,7 +135,16 @@ public class GraphingCalculator extends Application {
         graph1.setFont(Font.font("Verdana", 20));
         graph1.setMaxWidth(210);
         graph1.setLayoutX(80);
-        graph1.setLayoutY(100);
+        graph1.setLayoutY(90);
+
+        graphGroup.getChildren().add(graph2);
+        graph2.setVisible(false);
+        graph2.setEditable(true);
+        graph2.setFocusTraversable(false);
+        graph2.setFont(Font.font("Verdana", 20));
+        graph2.setMaxWidth(210);
+        graph2.setLayoutX(80);
+        graph2.setLayoutY(130);
 
         //set function of buttons
     {
@@ -252,16 +262,18 @@ public class GraphingCalculator extends Application {
     {
         
         graph.setOnAction(startButtonEvent -> {
-            if (graph1check) {
-                graph1.setVisible(true);
-                textbox.setVisible(false);
+            if (graphchecks) {
+                graph1.setVisible(false);
+                graph2.setVisible(false);
+                textbox.setVisible(true);
                 chooseText = 1;
             } else {
-                graph1.setVisible(false);
-                textbox.setVisible(true);
+                graph1.setVisible(true);
+                graph2.setVisible(true);
+                textbox.setVisible(false);
                 chooseText = 0;
             }
-            graph1check = !graph1check;
+            graphchecks = !graphchecks;
         });
     }  
         startCalcButton.setOnAction(startButtonEvent -> {
