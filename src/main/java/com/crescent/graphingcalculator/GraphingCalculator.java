@@ -225,6 +225,26 @@ public class GraphingCalculator extends Application {
             textbox.setText(textbox.getText() + "TAN(");
             textbox.positionCaret(textbox.getText().length());
         });
+        exponent.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "^");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        decimalPoint.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + ".");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        negative.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "(-)");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        enter.setOnMousePressed(startButtonEvent -> {
+
+
+
+            //WIP WIP WIP WIP
+
+
+        });
         clear.setOnMousePressed(startButtonEvent -> {
             textbox.setText("");
         });
