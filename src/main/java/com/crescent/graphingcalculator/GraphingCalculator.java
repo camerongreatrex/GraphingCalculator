@@ -43,6 +43,7 @@ public class GraphingCalculator extends Application {
         chart.setLayoutY(150);
         chart.setPrefSize(650, 650);
         chart.setLegendVisible(false);
+        chart.setAnimated(false);
 
         // Text fields for user input
         field1 = new TextField();
@@ -187,9 +188,12 @@ public class GraphingCalculator extends Application {
             double b = Double.parseDouble(field2.getText());
             double c = Double.parseDouble(field3.getText());
 
+            // Calculate the x-coordinate of the vertex
+            double vertexX = -b / (2 * a);
+
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-            for (double x = -10; x <= 10; x += 0.1) {
+            for (double x = vertexX - 10; x <= vertexX + 10; x += 1) {
                 double y = a * x * x + b * x + c;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
