@@ -30,20 +30,20 @@ public class GraphingCalculator extends Application {
     // pane renamed to mainPane
     public static Pane calcPane = new Pane();
     //create the main menu scene
-    public static Scene menuScene = new Scene(calcPane, 1000, 800);
+    public static Scene menuScene = new Scene(calcPane, 1000, 750);
     //create buttons for the calculator
     public static Button startCalcButton = new Button("▷"), closeCalcButton = new Button("X");
     //create the groups for the calculator
     public static Group graphGroup = new Group();
     //create the scenes for the calculator
-    public static Scene calcScene = new Scene(graphGroup, 1000, 800, Color.WHITE);
+    public static Scene calcScene = new Scene(graphGroup, 1000, 750, Color.WHITE);
     //create the groups for the buttons screen
     public static Group buttonsGroup = new Group();
     
     
     //create scene for the graph
     public static Pane graphPane = new Pane();
-    public static Scene graphScene = new Scene(graphPane,1000, 800, Color.WHITE);
+    public static Scene graphScene = new Scene(graphPane,1000, 750, Color.WHITE);
     // Text fields, labels, chart, radio buttons, and the main pane for UI elements
     private TextField field1, field2, field3, field4;
     private Label formulaDisplay;
