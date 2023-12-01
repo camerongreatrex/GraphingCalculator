@@ -18,7 +18,7 @@ public class GraphingCalculator extends Application {
     private Label formulaDisplay;
     private Pane mainPane;
     private LineChart<Number, Number> chart;
-    private RadioButton linearRadioButton, parabolaRadioButton, squarerootRadioButton, cubicRadioButton;
+    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, squarerootRadioButton, cubicRadioButton;
 
     public static void main(String[] args) {
         launch(args);
@@ -76,6 +76,10 @@ public class GraphingCalculator extends Application {
         linearRadioButton.setLayoutX(400);
         linearRadioButton.setLayoutY(20);
 
+        absoluteRadioButton = new RadioButton("Absolute Function");
+        absoluteRadioButton.setLayoutX(550);
+        absoluteRadioButton.setLayoutY(60);
+
         parabolaRadioButton = new RadioButton("Parabola");
         parabolaRadioButton.setLayoutX(400);
         parabolaRadioButton.setLayoutY(60);
@@ -90,23 +94,24 @@ public class GraphingCalculator extends Application {
 
         ToggleGroup functionToggleGroup = new ToggleGroup();
         linearRadioButton.setToggleGroup(functionToggleGroup);
+        absoluteRadioButton.setToggleGroup(functionToggleGroup);
         parabolaRadioButton.setToggleGroup(functionToggleGroup);
         squarerootRadioButton.setToggleGroup(functionToggleGroup);
         cubicRadioButton.setToggleGroup(functionToggleGroup);
 
         // Buttons for plotting and resetting the graph
         Button plotGraphButton = new Button("Plot Graph");
-        plotGraphButton.setLayoutX(650);
-        plotGraphButton.setLayoutY(20);
+        plotGraphButton.setLayoutX(700);
+        plotGraphButton.setLayoutY(180);
         plotGraphButton.setOnAction(e -> plotGraph());
 
         Button resetButton = new Button("Reset Graph");
-        resetButton.setLayoutX(650);
-        resetButton.setLayoutY(60);
+        resetButton.setLayoutX(700);
+        resetButton.setLayoutY(220);
         resetButton.setOnAction(e -> resetGraph());
 
         // Adding all elements to the main pane
-        mainPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton,
+        mainPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton,
                 parabolaRadioButton, squarerootRadioButton, cubicRadioButton, formulaDisplay, plotGraphButton, resetButton);
 
         // Creating the scene and setting it on the stage
@@ -122,6 +127,11 @@ public class GraphingCalculator extends Application {
         linearRadioButton.setOnAction(e -> {
             formulaDisplay.setText("FORMULA: y = mx + b");
             organizeFields("Enter slope (m)", "Enter y-intercept (b)", null, null);
+            resetGraph();
+        });
+        absoluteRadioButton.setOnAction(e -> {
+            formulaDisplay.setText("FORMULA: y = |a * x|");
+            organizeFields("Enter coefficient (a)", null, null, null);
             resetGraph();
         });
         parabolaRadioButton.setOnAction(e -> {
@@ -151,6 +161,13 @@ public class GraphingCalculator extends Application {
         field2.setPromptText(prompt2);
         field3.setPromptText(prompt3);
         field4.setPromptText(prompt4);
+        if (prompt2 != null) {
+            field2.setVisible(true);
+            field2.setPromptText(prompt2);
+        } else {
+            field2.setVisible(false);
+            field2.clear();
+        }
         if (prompt3 != null) {
             field3.setVisible(true);
             field3.setPromptText(prompt3);
@@ -171,6 +188,8 @@ public class GraphingCalculator extends Application {
     private void plotGraph() {
         if (linearRadioButton.isSelected()) {
             plotLine();
+        } else if (absoluteRadioButton.isSelected()) {
+            plotAbsoluteFunction();
         } else if (parabolaRadioButton.isSelected()) {
             plotParabola();
         } else if (squarerootRadioButton.isSelected()) {
@@ -197,6 +216,33 @@ public class GraphingCalculator extends Application {
             chart.getData().add(series);
         } catch (NumberFormatException ex) {
             Label errorLabel = new Label("Please enter valid numbers.");
+            errorLabel.setLayoutX(20);
+            errorLabel.setLayoutY(135);
+            mainPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
+            mainPane.getChildren().add(errorLabel);
+            // Hide the error label after 3 seconds
+            PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+            visiblePause.setOnFinished(event -> mainPane.getChildren().remove(errorLabel));
+            visiblePause.play();
+        }
+    }
+
+    // Method to plot an absolute function
+    private void plotAbsoluteFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = -10; x <= 10; x += 0.5) {
+                double y = Math.abs(a * x);
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            Label errorLabel = new Label("Please enter a valid number for coefficient (a).");
             errorLabel.setLayoutX(20);
             errorLabel.setLayoutY(135);
             mainPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
@@ -309,6 +355,8 @@ public class GraphingCalculator extends Application {
 
         if (linearRadioButton.isSelected()) {
             organizeFields("Enter slope (m)", "Enter y-intercept (b)", null, null);
+        } else if (absoluteRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", null, null, null);
         } else if (parabolaRadioButton.isSelected()) {
             organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (c)", null);
         } else if (squarerootRadioButton.isSelected()) {
