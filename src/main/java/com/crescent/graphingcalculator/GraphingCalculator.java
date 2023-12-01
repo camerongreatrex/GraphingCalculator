@@ -2,9 +2,12 @@ package com.crescent.graphingcalculator;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,6 +16,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -25,20 +30,20 @@ public class GraphingCalculator extends Application {
     // pane renamed to mainPane
     public static Pane calcPane = new Pane();
     //create the main menu scene
-    public static Scene menuScene = new Scene(calcPane, 1000, 750);
+    public static Scene menuScene = new Scene(calcPane, 1000, 800);
     //create buttons for the calculator
     public static Button startCalcButton = new Button("▷"), closeCalcButton = new Button("X");
     //create the groups for the calculator
     public static Group graphGroup = new Group();
     //create the scenes for the calculator
-    public static Scene calcScene = new Scene(graphGroup, 1000, 750, Color.WHITE);
+    public static Scene calcScene = new Scene(graphGroup, 1000, 800, Color.WHITE);
     //create the groups for the buttons screen
     public static Group buttonsGroup = new Group();
     
     
     //create scene for the graph
     public static Pane graphPane = new Pane();
-    public static Scene graphScene = new Scene(graphPane,1000, 750, Color.WHITE);
+    public static Scene graphScene = new Scene(graphPane,1000, 800, Color.WHITE);
     // Text fields, labels, chart, radio buttons, and the main pane for UI elements
     private TextField field1, field2, field3, field4;
     private Label formulaDisplay;
@@ -140,26 +145,23 @@ public class GraphingCalculator extends Application {
 
 
 
-        // Event listeners to update the UI based on the selected function
-        linearRadioButton.setOnAction(e -> {
-            formulaDisplay.setText("FORMULA: y = mx + b");
-            organizeFields("Enter slope (m)", "Enter y-intercept (b)", null, null);
-            resetGraph();
+        //set function of buttons
+    {
+        one.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 1);
+            textbox.positionCaret(textbox.getText().length());
         });
-        absoluteRadioButton.setOnAction(e -> {
-            formulaDisplay.setText("FORMULA: y = |a * x|");
-            organizeFields("Enter coefficient (a)", null, null, null);
-            resetGraph();
+        two.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 2);
+            textbox.positionCaret(textbox.getText().length());
         });
-        parabolaRadioButton.setOnAction(e -> {
-            formulaDisplay.setText("FORMULA: y = ax^2 + bx + c");
-            organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (c)", null);
-            resetGraph();
+        three.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 3);
+            textbox.positionCaret(textbox.getText().length());
         });
-        squarerootRadioButton.setOnAction(e -> {
-            formulaDisplay.setText("FORMULA: y = a√b(x - h) + k");
-            organizeFields("Enter coefficient (a)", "Enter constant (b)", null, null);
-            resetGraph();
+        four.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 4);
+            textbox.positionCaret(textbox.getText().length());
         });
         five.setOnMousePressed(startButtonEvent -> {
             textbox.setText(textbox.getText() + 5);
