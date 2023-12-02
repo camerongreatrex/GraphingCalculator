@@ -15,24 +15,11 @@ import javafx.util.Duration;
 
 
 public class GraphingCalculator extends Application {
-    // Create the main calculator pane
-    public static Pane calcPane = new Pane();
-    // Create the scene for the calculator
-    public static Scene calcScene = new Scene(calcPane, 1000, 800, Color.WHITE);
-    // Create the graphing pane
-    public static Pane graphPane = new Pane();
-    // Create scene for the graph
-    public static Scene graphScene = new Scene(graphPane, 1000, 800, Color.WHITE);
-    // Create buttons for the main calculator
-    public static Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"),
-            six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
-            decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
-            multiply = new Button("X"), divide = new Button("÷"), modulus = new Button("%"), openBracket = new Button("("),
-            closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"),
-            enter = new Button("ENTER"), graph = new Button("GRAPHING");
-    // Create text box/display for calculations
-    TextField textbox = new TextField();
-    // Text fields, labels, line chart, and radio buttons,
+    // Create the main calculator pane and graph pane
+    private Pane calcPane, graphPane;
+    // Create the scene for the calculator and graph
+    private Scene calcScene, graphScene;
+    // Create text fields, labels, line chart, and radio buttons,
     private TextField field1, field2, field3, field4;
     private Label formulaDisplay;
     private LineChart<Number, Number> chart;
@@ -44,13 +31,27 @@ public class GraphingCalculator extends Application {
 
     @Override
     public void start(Stage stage) {
+        // Assign a pane to calcPane and assign calcPane to calcScene
+        calcPane = new Pane();
+        calcScene = new Scene(calcPane, 1000, 800, Color.WHITE);
+        // Assign a pane to graphPane and assign graphPane to graphScene
+        graphPane = new Pane();
+        graphScene = new Scene(graphPane, 1000, 800, Color.WHITE);
+        // Declare and initialize textbox
+        TextField textbox = new TextField();
+        // Declare and initialize button instances
+        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"),
+                six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
+                decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
+                multiply = new Button("X"), divide = new Button("÷"), modulus = new Button("%"), openBracket = new Button("("),
+                closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"),
+                enter = new Button("ENTER"), graph = new Button("GRAPHING");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
         stage.setTitle("Graphing Calculator");
         stage.setScene(calcScene);
-
-        // Set textbox of the calculator
+        // Assign textbox of the calculator
         textbox.setEditable(false);
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
@@ -58,8 +59,7 @@ public class GraphingCalculator extends Application {
         textbox.setLayoutX(80);
         textbox.setLayoutY(100);
         calcPane.getChildren().add(textbox);
-
-        // Set properties for the calculator buttons
+        // Assign properties for the calculator buttons
         setButton(one, 45, 30, 90, 500);
         setButton(two, 45, 30, one.getLayoutX() + 50, one.getLayoutY());
         setButton(three, 45, 30, one.getLayoutX() + 100, one.getLayoutY());
@@ -87,9 +87,8 @@ public class GraphingCalculator extends Application {
         clear.setStyle("-fx-font: 9 arial;");
         setButton(enter, 45, 30, negative.getLayoutX() + 50, negative.getLayoutY());
         enter.setStyle("-fx-font: 9 arial;");
-        setButton(graph, 45, 30, sin.getLayoutX(), sin.getLayoutY() - 50);
+        setButton(graph, 97, 30, sin.getLayoutX() + 48, sin.getLayoutY() - 50);
         graph.setStyle("-fx-font: 9 arial;");
-
         // Set function of buttons
         {
             one.setOnMousePressed(startButtonEvent -> {
@@ -200,86 +199,71 @@ public class GraphingCalculator extends Application {
             textbox.setText("");
             stage.setScene(graphScene);
         });
-
-        // Create X and Y axes for the chart
+        // Declare and initialize X and Y axes for the chart
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis();
         xAxis.setLabel("x");
         yAxis.setLabel("y");
-
-        // Create the line chart to display the graph
+        // Declare and initialize the line chart to display the graph
         chart = new LineChart<>(xAxis, yAxis);
         chart.setLayoutX(20);
         chart.setLayoutY(150);
         chart.setPrefSize(600, 600);
         chart.setLegendVisible(false);
         chart.setAnimated(false);
-
-        // Text fields for user input
+        // Declare and initialize text fields for user input
         field1 = new TextField();
         field1.setLayoutX(20);
         field1.setLayoutY(20);
         field1.setPrefWidth(180);
-
         field2 = new TextField();
         field2.setLayoutX(20);
         field2.setLayoutY(60);
         field2.setPrefWidth(180);
-
         field3 = new TextField();
         field3.setLayoutX(20);
         field3.setLayoutY(100);
         field3.setPrefWidth(180);
-
         field4 = new TextField();
         field4.setLayoutX(210);
         field4.setLayoutY(20);
         field4.setPrefWidth(180);
-
-        // Label to display the formula of the selected function
+        // Declare and initialize label to display the formula of the selected function
         formulaDisplay = new Label("FORMULA: y = mx + b");
         formulaDisplay.setLayoutX(20);
-
-        // Radio buttons to select the function type
+        // Declare and initialize radio buttons to select the function type
         linearRadioButton = new RadioButton("Linear Function");
         linearRadioButton.setSelected(true);
         linearRadioButton.setLayoutX(400);
         linearRadioButton.setLayoutY(20);
-
         absoluteRadioButton = new RadioButton("Absolute Function");
         absoluteRadioButton.setLayoutX(550);
         absoluteRadioButton.setLayoutY(60);
-
         parabolaRadioButton = new RadioButton("Parabola");
         parabolaRadioButton.setLayoutX(400);
         parabolaRadioButton.setLayoutY(60);
-
         squarerootRadioButton = new RadioButton("Square Root");
         squarerootRadioButton.setLayoutX(400);
         squarerootRadioButton.setLayoutY(100);
-
         cubicRadioButton = new RadioButton("Cubic");
         cubicRadioButton.setLayoutX(550);
         cubicRadioButton.setLayoutY(20);
-
+        // Declare and initialize toggle groups for all radio buttons
         ToggleGroup functionToggleGroup = new ToggleGroup();
         linearRadioButton.setToggleGroup(functionToggleGroup);
         absoluteRadioButton.setToggleGroup(functionToggleGroup);
         parabolaRadioButton.setToggleGroup(functionToggleGroup);
         squarerootRadioButton.setToggleGroup(functionToggleGroup);
         cubicRadioButton.setToggleGroup(functionToggleGroup);
-
-        // Buttons for plotting and resetting the graph
+        // Declare and initialize buttons for plotting, resetting, and exiting the graph
         Button plotGraphButton = new Button("Plot Graph");
         plotGraphButton.setLayoutX(700);
         plotGraphButton.setLayoutY(180);
         plotGraphButton.setOnAction(e -> plotGraph());
-
         Button resetButton = new Button("Reset Graph");
         resetButton.setLayoutX(700);
         resetButton.setLayoutY(220);
         resetButton.setOnAction(e -> resetGraph());
-
         Button backToCalc = new Button("Back");
         backToCalc.setLayoutX(700);
         backToCalc.setLayoutY(260);
@@ -287,16 +271,12 @@ public class GraphingCalculator extends Application {
             resetGraph();
             stage.setScene(calcScene);
         });
-
-        // Adding all elements to the main pane
+        // Add all elements to the main pane
         graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton,
                 parabolaRadioButton, squarerootRadioButton, cubicRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc);
-
-        // Set the default to linear function and organize fields accordingly
+        // Set the default to linear function and reset the graph to ensure everything is correct
         linearRadioButton.setSelected(true);
-        field3.setVisible(false);
         resetGraph();
-
         // Event listeners to update the UI based on the selected function
         linearRadioButton.setOnAction(e -> {
             formulaDisplay.setText("FORMULA: y = mx + b");
@@ -334,6 +314,7 @@ public class GraphingCalculator extends Application {
         button.setLayoutX(x);
         button.setLayoutY(y);
     }
+
     // Method for deciding what goes into the text fields along with which ones are displayed
     private void organizeFields(String prompt1, String prompt2, String prompt3, String prompt4) {
         field1.setPromptText(prompt1);
