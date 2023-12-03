@@ -364,26 +364,16 @@ public class GraphingCalculator extends Application {
         try {
             double slope = Double.parseDouble(field1.getText());
             double intercept = Double.parseDouble(field2.getText());
-
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -10; x <= 10; x += 0.5) {
                 double y = slope * x + intercept;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
-
             chart.getData().clear();
             chart.getData().add(series);
         } catch (NumberFormatException ex) {
-            Label errorLabel = new Label("Please enter valid numbers.");
-            errorLabel.setLayoutX(20);
-            errorLabel.setLayoutY(135);
-            graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
-            graphPane.getChildren().add(errorLabel);
-            // Hide the error label after 3 seconds
-            PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-            visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
-            visiblePause.play();
+            handleInvalidInputs();
         }
     }
 
@@ -391,26 +381,16 @@ public class GraphingCalculator extends Application {
     private void plotAbsoluteFunction() {
         try {
             double a = Double.parseDouble(field1.getText());
-
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -10; x <= 10; x += 0.5) {
                 double y = Math.abs(a * x);
                 series.getData().add(new XYChart.Data<>(x, y));
             }
-
             chart.getData().clear();
             chart.getData().add(series);
         } catch (NumberFormatException ex) {
-            Label errorLabel = new Label("Please enter a valid number for coefficient (a).");
-            errorLabel.setLayoutX(20);
-            errorLabel.setLayoutY(135);
-            graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
-            graphPane.getChildren().add(errorLabel);
-            // Hide the error label after 3 seconds
-            PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-            visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
-            visiblePause.play();
+            handleInvalidInputs();
         }
     }
 
@@ -420,29 +400,18 @@ public class GraphingCalculator extends Application {
             double a = Double.parseDouble(field1.getText());
             double b = Double.parseDouble(field2.getText());
             double c = Double.parseDouble(field3.getText());
-
             // Calculate the x-coordinate of the vertex to fix the bug of printing more on one quadrant of another
             double vertexX = -b / (2 * a);
-
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = vertexX - 20; x <= vertexX + 20; x += 0.1) {
                 double y = a * x * x + b * x + c;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
-
             chart.getData().clear();
             chart.getData().add(series);
         } catch (NumberFormatException ex) {
-            Label errorLabel = new Label("Please enter valid numbers");
-            errorLabel.setLayoutX(20);
-            errorLabel.setLayoutY(135);
-            graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
-            graphPane.getChildren().add(errorLabel);
-            // Hide the error label after 3 seconds
-            PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-            visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
-            visiblePause.play();
+            handleInvalidInputs();
         }
     }
 
@@ -451,26 +420,16 @@ public class GraphingCalculator extends Application {
         try {
             double a = Double.parseDouble(field1.getText());
             double b = Double.parseDouble(field2.getText());
-
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = 0; x <= 10; x += 0.5) {
                 double y = a * Math.sqrt(x) + b;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
-
             chart.getData().clear();
             chart.getData().add(series);
         } catch (NumberFormatException ex) {
-            Label errorLabel = new Label("Please enter valid numbers.");
-            errorLabel.setLayoutX(20);
-            errorLabel.setLayoutY(135);
-            graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
-            graphPane.getChildren().add(errorLabel);
-            // Hide the error label after 3 seconds
-            PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-            visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
-            visiblePause.play();
+            handleInvalidInputs();
         }
     }
 
@@ -481,27 +440,30 @@ public class GraphingCalculator extends Application {
             double b = Double.parseDouble(field2.getText());
             double c = Double.parseDouble(field3.getText());
             double d = Double.parseDouble(field4.getText());
-
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -10; x <= 10; x += 0.5) {
                 double y = a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
-
             chart.getData().clear();
             chart.getData().add(series);
         } catch (NumberFormatException ex) {
-            Label errorLabel = new Label("Please enter valid numbers.");
-            errorLabel.setLayoutX(20);
-            errorLabel.setLayoutY(175);
-            graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
-            graphPane.getChildren().add(errorLabel);
-            // Hide the error label after 3 seconds
-            PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-            visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
-            visiblePause.play();
+            handleInvalidInputs();
         }
+    }
+
+    //Method to handle input user input
+    private void handleInvalidInputs() {
+        Label errorLabel = new Label("Please enter valid numbers");
+        errorLabel.setLayoutX(20);
+        errorLabel.setLayoutY(135);
+        graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
+        graphPane.getChildren().add(errorLabel);
+        // Hide the error label after 3 seconds
+        PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+        visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
+        visiblePause.play();
     }
 
     // Method to reset the graph and input fields
