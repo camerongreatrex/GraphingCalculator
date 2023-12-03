@@ -404,7 +404,7 @@ public class GraphingCalculator extends Application {
             double vertexX = -b / (2 * a);
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-            for (double x = vertexX - 20; x <= vertexX + 20; x += 0.1) {
+            for (double x = vertexX - 10; x <= vertexX + 10; x += 0.1) {
                 double y = a * x * x + b * x + c;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
@@ -422,7 +422,7 @@ public class GraphingCalculator extends Application {
             double b = Double.parseDouble(field2.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-            for (double x = 0; x <= 10; x += 0.5) {
+            for (double x = 0; x <= 20; x += 0.5) {
                 double y = a * Math.sqrt(x) + b;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
