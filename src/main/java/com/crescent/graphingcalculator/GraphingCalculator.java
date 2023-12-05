@@ -23,7 +23,8 @@ public class GraphingCalculator extends Application {
     private TextField field1, field2, field3, field4;
     private Label formulaDisplay;
     private LineChart<Number, Number> chart;
-    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton;
+    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton,
+            squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
 
     public static void main(String[] args) {
         launch();
@@ -40,12 +41,7 @@ public class GraphingCalculator extends Application {
         // Declare and initialize textbox
         TextField textbox = new TextField();
         // Declare and initialize button instances
-        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"),
-                six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
-                decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
-                multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
-                closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"),
-                enter = new Button("ENTER"), graph = new Button("GRAPHING");
+        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
@@ -251,6 +247,15 @@ public class GraphingCalculator extends Application {
         cubicRadioButton = new RadioButton("Cubic");
         cubicRadioButton.setLayoutX(550);
         cubicRadioButton.setLayoutY(20);
+        sinRadioButton = new RadioButton("Sin");
+        sinRadioButton.setLayoutX(700);
+        sinRadioButton.setLayoutY(20);
+        cosRadioButton = new RadioButton("Cos");
+        cosRadioButton.setLayoutX(700);
+        cosRadioButton.setLayoutY(60);
+        tanRadioButton = new RadioButton("Tan");
+        tanRadioButton.setLayoutX(700);
+        tanRadioButton.setLayoutY(100);
         // Declare and initialize toggle groups for all radio buttons
         ToggleGroup functionToggleGroup = new ToggleGroup();
         linearRadioButton.setToggleGroup(functionToggleGroup);
@@ -259,6 +264,9 @@ public class GraphingCalculator extends Application {
         reciprocalRadioButton.setToggleGroup(functionToggleGroup);
         squarerootRadioButton.setToggleGroup(functionToggleGroup);
         cubicRadioButton.setToggleGroup(functionToggleGroup);
+        sinRadioButton.setToggleGroup(functionToggleGroup);
+        cosRadioButton.setToggleGroup(functionToggleGroup);
+        tanRadioButton.setToggleGroup(functionToggleGroup);
         // Declare and initialize buttons for plotting, resetting, and exiting the graph
         Button plotGraphButton = new Button("Plot Graph");
         plotGraphButton.setLayoutX(700);
@@ -277,7 +285,8 @@ public class GraphingCalculator extends Application {
         });
         // Add all elements to the main pane
         graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton,
-                parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc);
+                parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton,
+                cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc);
         // Set the default to linear function and reset the graph to ensure everything is correct
         linearRadioButton.setSelected(true);
         resetGraph();
@@ -311,6 +320,21 @@ public class GraphingCalculator extends Application {
         cubicRadioButton.setOnAction(e -> {
             formulaDisplay.setText("FORMULA: y = ax^3 + bx^2 + cx + d");
             organizeFields("Enter coefficient (a)", "Enter coefficient (b)", "Enter coefficient (c)", "Enter coefficient (d)");
+            resetGraph();
+        });
+        sinRadioButton.setOnAction(e -> {
+            formulaDisplay.setText("FORMULA: y = sin(x)");
+            organizeFields("Enter coefficient (a)", null, null, null);
+            resetGraph();
+        });
+        cosRadioButton.setOnAction(e -> {
+            formulaDisplay.setText("FORMULA: y = cos(x)");
+            organizeFields("Enter coefficient (a)", null, null, null);
+            resetGraph();
+        });
+        tanRadioButton.setOnAction(e -> {
+            formulaDisplay.setText("FORMULA: y = tan(x)");
+            organizeFields("Enter coefficient (a)", null, null, null);
             resetGraph();
         });
 
@@ -367,6 +391,12 @@ public class GraphingCalculator extends Application {
             plotCubicFunction();
         } else if (reciprocalRadioButton.isSelected()) {
             plotReciprocalFunction();
+        } else if (sinRadioButton.isSelected()) {
+            plotSinFunction();
+        } else if (cosRadioButton.isSelected()) {
+            plotCosFunction();
+        } else if (tanRadioButton.isSelected()) {
+            plotTanFunction();
         }
     }
 
@@ -483,7 +513,58 @@ public class GraphingCalculator extends Application {
         }
     }
 
-    //Method to handle input user input
+    // Method to plot sin
+    private void plotSinFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = -20; x <= 20; x += 0.5) {
+                double y = a * Math.sin(x);
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to plot cos
+    private void plotCosFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = -20; x <= 20; x += 0.5) {
+                double y = a * Math.cos(x);
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to plot tan
+    private void plotTanFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = -20; x <= 20; x += 0.5) {
+                double y = a * Math.tan(x);
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to handle input user input
     private void handleInvalidInputs() {
         Label errorLabel = new Label("Please enter valid numbers");
         errorLabel.setLayoutX(20);
@@ -514,6 +595,12 @@ public class GraphingCalculator extends Application {
             organizeFields("Enter coefficient (a)", "Enter constant (b)", null, null);
         } else if (cubicRadioButton.isSelected()) {
             organizeFields("Enter coefficient (a)", "Enter coefficient (b)", "Enter coefficient (c)", "Enter coefficient (d)");
+        } else if (sinRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", null, null, null);
+        } else if (cosRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", null, null, null);
+        } else if (tanRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", null, null, null);
         }
     }
 }
