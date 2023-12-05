@@ -23,7 +23,7 @@ public class GraphingCalculator extends Application {
     private TextField field1, field2, field3, field4;
     private Label formulaDisplay;
     private LineChart<Number, Number> chart;
-    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, squarerootRadioButton, cubicRadioButton;
+    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton;
 
     public static void main(String[] args) {
         launch();
@@ -43,7 +43,7 @@ public class GraphingCalculator extends Application {
         Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"),
                 six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
                 decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
-                multiply = new Button("X"), divide = new Button("÷"), modulus = new Button("%"), openBracket = new Button("("),
+                multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
                 closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"),
                 enter = new Button("ENTER"), graph = new Button("GRAPHING");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
@@ -142,11 +142,11 @@ public class GraphingCalculator extends Application {
                 textbox.positionCaret(textbox.getText().length());
             });
             multiply.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "x");
+                textbox.setText(textbox.getText() + "*");
                 textbox.positionCaret(textbox.getText().length());
             });
             divide.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "÷");
+                textbox.setText(textbox.getText() + "/");
                 textbox.positionCaret(textbox.getText().length());
             });
             modulus.setOnMousePressed(startButtonEvent -> {
@@ -242,6 +242,9 @@ public class GraphingCalculator extends Application {
         parabolaRadioButton = new RadioButton("Parabola");
         parabolaRadioButton.setLayoutX(400);
         parabolaRadioButton.setLayoutY(60);
+        reciprocalRadioButton = new RadioButton("Reciprocal");
+        reciprocalRadioButton.setLayoutX(550);
+        reciprocalRadioButton.setLayoutY(100);
         squarerootRadioButton = new RadioButton("Square Root");
         squarerootRadioButton.setLayoutX(400);
         squarerootRadioButton.setLayoutY(100);
@@ -253,6 +256,7 @@ public class GraphingCalculator extends Application {
         linearRadioButton.setToggleGroup(functionToggleGroup);
         absoluteRadioButton.setToggleGroup(functionToggleGroup);
         parabolaRadioButton.setToggleGroup(functionToggleGroup);
+        reciprocalRadioButton.setToggleGroup(functionToggleGroup);
         squarerootRadioButton.setToggleGroup(functionToggleGroup);
         cubicRadioButton.setToggleGroup(functionToggleGroup);
         // Declare and initialize buttons for plotting, resetting, and exiting the graph
@@ -273,7 +277,7 @@ public class GraphingCalculator extends Application {
         });
         // Add all elements to the main pane
         graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton,
-                parabolaRadioButton, squarerootRadioButton, cubicRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc);
+                parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc);
         // Set the default to linear function and reset the graph to ensure everything is correct
         linearRadioButton.setSelected(true);
         resetGraph();
@@ -291,6 +295,11 @@ public class GraphingCalculator extends Application {
         parabolaRadioButton.setOnAction(e -> {
             formulaDisplay.setText("FORMULA: y = ax^2 + bx + c");
             organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (c)", null);
+            resetGraph();
+        });
+        reciprocalRadioButton.setOnAction(e -> {
+            formulaDisplay.setText("FORMULA: y = a / x");
+            organizeFields("Enter coefficient (a)", null, null, null);
             resetGraph();
         });
         squarerootRadioButton.setOnAction(e -> {
@@ -356,6 +365,8 @@ public class GraphingCalculator extends Application {
             plotSquareRoot();
         } else if (cubicRadioButton.isSelected()) {
             plotCubicFunction();
+        } else if (reciprocalRadioButton.isSelected()) {
+            plotReciprocalFunction();
         }
     }
 
@@ -366,7 +377,7 @@ public class GraphingCalculator extends Application {
             double intercept = Double.parseDouble(field2.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-            for (double x = -10; x <= 10; x += 0.5) {
+            for (double x = -20; x <= 20; x += 0.5) {
                 double y = slope * x + intercept;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
@@ -383,7 +394,7 @@ public class GraphingCalculator extends Application {
             double a = Double.parseDouble(field1.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-            for (double x = -10; x <= 10; x += 0.5) {
+            for (double x = -20; x <= 20; x += 0.5) {
                 double y = Math.abs(a * x);
                 series.getData().add(new XYChart.Data<>(x, y));
             }
@@ -404,7 +415,7 @@ public class GraphingCalculator extends Application {
             double vertexX = -b / (2 * a);
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-            for (double x = vertexX - 10; x <= vertexX + 10; x += 0.1) {
+            for (double x = vertexX - 20; x <= vertexX + 20; x += 0.5) {
                 double y = a * x * x + b * x + c;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
@@ -433,6 +444,25 @@ public class GraphingCalculator extends Application {
         }
     }
 
+    // Method to plot reciprocal function
+    private void plotReciprocalFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = -20; x <= 20; x += 0.5) {
+                if (x != 0) {
+                    double y = a / x;
+                    series.getData().add(new XYChart.Data<>(x, y));
+                }
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
     // Method to plot a cubic function
     private void plotCubicFunction() {
         try {
@@ -442,7 +472,7 @@ public class GraphingCalculator extends Application {
             double d = Double.parseDouble(field4.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
-            for (double x = -10; x <= 10; x += 0.5) {
+            for (double x = -20; x <= 20; x += 0.5) {
                 double y = a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
