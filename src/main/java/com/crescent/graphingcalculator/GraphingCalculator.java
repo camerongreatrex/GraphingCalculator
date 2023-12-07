@@ -302,15 +302,24 @@ public class GraphingCalculator extends Application {
         zeroGraph.setLayoutY(300);
         zeroGraph.setOnAction(startButtonEvent -> {
             if (linearRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + -Integer.parseInt(field2.getText()) / Integer.parseInt(field1.getText()));
-            } else if (absoluteRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = 0");
+                trace.setText("ZERO = " + -Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText()));
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
+                parabolaSolve(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
+            } else if (squarerootRadioButton.isSelected() && graphCheck) {
+                trace.setText("ZERO = " + (-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText()));
+            } else if (cubicRadioButton.isSelected() && graphCheck) {
+                
+            } else if (absoluteRadioButton.isSelected() && graphCheck) {
+                trace.setText("ZERO = 0.0");
             } else if (reciprocalRadioButton.isSelected() && graphCheck) {
                 // trace.setText("ZERO = ∞");
                 trace.setText("THERE IS NO ZERO");
-            } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = ");
+            } else if (sinRadioButton.isSelected() && graphCheck) {
+                trace.setText("ZERO = " + Math.asin(Double.parseDouble(field1.getText())));
+            } else if (cosRadioButton.isSelected() && graphCheck) {
+                trace.setText("ZERO = " + Math.acos(Double.parseDouble(field1.getText())));
+            } else if (tanRadioButton.isSelected() && graphCheck) {
+                trace.setText("ZERO = " + Math.atan(Double.parseDouble(field1.getText())));
             }
         });
 
@@ -318,7 +327,7 @@ public class GraphingCalculator extends Application {
         // Add all elements to the main pane
         graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton,
                 parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton,
-                cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc);
+                cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc, zeroGraph, trace);
         // Set the default to linear function and reset the graph to ensure everything is correct
         linearRadioButton.setSelected(true);
         resetGraph();
@@ -344,8 +353,8 @@ public class GraphingCalculator extends Application {
             resetGraph();
         });
         squarerootRadioButton.setOnAction(e -> {
-            formulaDisplay.setText("FORMULA: y = a√b(x - h) + k");
-            organizeFields("Enter coefficient (a)", "Enter constant (b)", null, null);
+            formulaDisplay.setText("FORMULA: y = a√(b(x - h)) + k");
+            organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter horizontal translation (h)", "Enter vertical translation (k)");
             resetGraph();
         });
 
@@ -489,15 +498,26 @@ public class GraphingCalculator extends Application {
         }
     }
 
+    private void parabolaSolve(double a, double b, double c) {
+        double discriminant = b * b - 4 * a * c, x1, x2;
+        if (discriminant >= 0) {
+            x1 = (-b - Math.sqrt(discriminant)) / (2 * a);
+            x2 = (-b + Math.sqrt(discriminant)) / (2 * a);
+            trace.setText("ZERO = " + x1 + " and " + x2);
+        }
+    }
+
     // Method to plot a square root function
     private void plotSquareRoot() {
         try {
             double a = Double.parseDouble(field1.getText());
             double b = Double.parseDouble(field2.getText());
+            double h = Double.parseDouble(field3.getText());
+            double k = Double.parseDouble(field4.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = 0; x <= 20; x += 0.5) {
-                double y = a * Math.sqrt(x) + b;
+                double y = a * Math.sqrt(b * (x + h)) + k;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -627,7 +647,7 @@ public class GraphingCalculator extends Application {
         } else if (parabolaRadioButton.isSelected()) {
             organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (c)", null);
         } else if (squarerootRadioButton.isSelected()) {
-            organizeFields("Enter coefficient (a)", "Enter constant (b)", null, null);
+            organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (h)", "Enter constant (k)");
         } else if (cubicRadioButton.isSelected()) {
             organizeFields("Enter coefficient (a)", "Enter coefficient (b)", "Enter coefficient (c)", "Enter coefficient (d)");
         } else if (sinRadioButton.isSelected()) {
