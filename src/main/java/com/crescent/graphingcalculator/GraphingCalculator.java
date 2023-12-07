@@ -21,8 +21,11 @@ public class GraphingCalculator extends Application {
     private Scene calcScene, graphScene;
     // Create text fields, labels, line chart, and radio buttons,
     private TextField field1, field2, field3, field4;
+    // Create the formula text display
     private Label formulaDisplay;
+    // Create the line chart
     private LineChart<Number, Number> chart;
+    // Create the selection (radio) buttons
     private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton,
             squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
 
@@ -56,34 +59,34 @@ public class GraphingCalculator extends Application {
         textbox.setLayoutY(100);
         calcPane.getChildren().add(textbox);
         // Assign properties for the calculator buttons
-        setButton(one, 45, 30, 90, 500);
-        setButton(two, 45, 30, one.getLayoutX() + 50, one.getLayoutY());
-        setButton(three, 45, 30, one.getLayoutX() + 100, one.getLayoutY());
-        setButton(four, 45, 30, one.getLayoutX(), one.getLayoutY() - 50);
-        setButton(five, 45, 30, two.getLayoutX(), two.getLayoutY() - 50);
-        setButton(six, 45, 30, three.getLayoutX(), three.getLayoutY() - 50);
-        setButton(seven, 45, 30, one.getLayoutX(), four.getLayoutY() - 50);
-        setButton(eight, 45, 30, two.getLayoutX(), five.getLayoutY() - 50);
-        setButton(nine, 45, 30, three.getLayoutX(), six.getLayoutY() - 50);
-        setButton(zero, 45, 30, one.getLayoutX(), one.getLayoutY() + 50);
-        setButton(decimalPoint, 45, 30, two.getLayoutX(), zero.getLayoutY());
-        setButton(negative, 45, 30, three.getLayoutX(), zero.getLayoutY());
-        setButton(plus, 45, 30, three.getLayoutX() + 50, three.getLayoutY());
-        setButton(minus, 45, 30, plus.getLayoutX(), plus.getLayoutY() - 50);
-        setButton(multiply, 45, 30, plus.getLayoutX(), minus.getLayoutY() - 50);
-        setButton(divide, 45, 30, multiply.getLayoutX(), multiply.getLayoutY() - 50);
-        setButton(exponent, 45, 30, divide.getLayoutX(), divide.getLayoutY() - 50);
-        setButton(modulus, 45, 30, nine.getLayoutX(), nine.getLayoutY() - 50);
-        setButton(openBracket, 45, 30, seven.getLayoutX(), seven.getLayoutY() - 50);
-        setButton(closeBracket, 45, 30, eight.getLayoutX(), eight.getLayoutY() - 50);
-        setButton(sin, 45, 30, openBracket.getLayoutX(), openBracket.getLayoutY() - 50);
-        setButton(cos, 45, 30, closeBracket.getLayoutX(), closeBracket.getLayoutY() - 50);
-        setButton(tan, 45, 30, modulus.getLayoutX(), modulus.getLayoutY() - 50);
-        setButton(clear, 45, 30, exponent.getLayoutX(), exponent.getLayoutY() - 50);
+        setButton(one, 45, 90, 500);
+        setButton(two, 45, one.getLayoutX() + 50, one.getLayoutY());
+        setButton(three, 45, one.getLayoutX() + 100, one.getLayoutY());
+        setButton(four, 45, one.getLayoutX(), one.getLayoutY() - 50);
+        setButton(five, 45, two.getLayoutX(), two.getLayoutY() - 50);
+        setButton(six, 45, three.getLayoutX(), three.getLayoutY() - 50);
+        setButton(seven, 45, one.getLayoutX(), four.getLayoutY() - 50);
+        setButton(eight, 45, two.getLayoutX(), five.getLayoutY() - 50);
+        setButton(nine, 45, three.getLayoutX(), six.getLayoutY() - 50);
+        setButton(zero, 45, one.getLayoutX(), one.getLayoutY() + 50);
+        setButton(decimalPoint, 45, two.getLayoutX(), zero.getLayoutY());
+        setButton(negative, 45, three.getLayoutX(), zero.getLayoutY());
+        setButton(plus, 45, three.getLayoutX() + 50, three.getLayoutY());
+        setButton(minus, 45, plus.getLayoutX(), plus.getLayoutY() - 50);
+        setButton(multiply, 45, plus.getLayoutX(), minus.getLayoutY() - 50);
+        setButton(divide, 45, multiply.getLayoutX(), multiply.getLayoutY() - 50);
+        setButton(exponent, 45, divide.getLayoutX(), divide.getLayoutY() - 50);
+        setButton(modulus, 45, nine.getLayoutX(), nine.getLayoutY() - 50);
+        setButton(openBracket, 45, seven.getLayoutX(), seven.getLayoutY() - 50);
+        setButton(closeBracket, 45, eight.getLayoutX(), eight.getLayoutY() - 50);
+        setButton(sin, 45, openBracket.getLayoutX(), openBracket.getLayoutY() - 50);
+        setButton(cos, 45, closeBracket.getLayoutX(), closeBracket.getLayoutY() - 50);
+        setButton(tan, 45, modulus.getLayoutX(), modulus.getLayoutY() - 50);
+        setButton(clear, 45, exponent.getLayoutX(), exponent.getLayoutY() - 50);
         clear.setStyle("-fx-font: 9 arial;");
-        setButton(enter, 45, 30, negative.getLayoutX() + 50, negative.getLayoutY());
+        setButton(enter, 45, negative.getLayoutX() + 50, negative.getLayoutY());
         enter.setStyle("-fx-font: 9 arial;");
-        setButton(graph, 97, 30, sin.getLayoutX() + 48, sin.getLayoutY() - 50);
+        setButton(graph, 97, sin.getLayoutX() + 48, sin.getLayoutY() - 50);
         graph.setStyle("-fx-font: 9 arial;");
         // Set function of buttons
         {
@@ -182,7 +185,6 @@ public class GraphingCalculator extends Application {
                 textbox.positionCaret(textbox.getText().length());
             });
             enter.setOnMousePressed(startButtonEvent -> {
-
 
                 //WIP WIP WIP WIP
 
@@ -341,9 +343,9 @@ public class GraphingCalculator extends Application {
     }
 
     // Method for setting up number buttons
-    public void setButton(Button button, int width, int height, double x, double y) {
+    private void setButton(Button button, int width, double x, double y) {
         calcPane.getChildren().add(button);
-        button.setPrefSize(width, height);
+        button.setPrefSize(width, 30);
         button.setLayoutX(x);
         button.setLayoutY(y);
     }
@@ -547,7 +549,7 @@ public class GraphingCalculator extends Application {
         }
     }
 
-    // Method to plot tan
+    // Method to plot tan (bugged)
     private void plotTanFunction() {
         try {
             double a = Double.parseDouble(field1.getText());
