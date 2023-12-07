@@ -504,6 +504,8 @@ public class GraphingCalculator extends Application {
             x1 = (-b - Math.sqrt(discriminant)) / (2 * a);
             x2 = (-b + Math.sqrt(discriminant)) / (2 * a);
             trace.setText("ZERO = " + x1 + " and " + x2);
+        } else {
+            trace.setText("THERE IS NO ZERO");
         }
     }
 
