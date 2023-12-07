@@ -413,32 +413,24 @@ public class GraphingCalculator extends Application {
     private void plotGraph() {
         if (linearRadioButton.isSelected()) {
             plotLine();
-            graphCheck = true;
         } else if (absoluteRadioButton.isSelected()) {
             plotAbsoluteFunction();
-            graphCheck = true;
         } else if (parabolaRadioButton.isSelected()) {
             plotParabola();
-            graphCheck = true;
         } else if (squarerootRadioButton.isSelected()) {
             plotSquareRoot();
-            graphCheck = true;
         } else if (cubicRadioButton.isSelected()) {
             plotCubicFunction();
-            graphCheck = true;
         } else if (reciprocalRadioButton.isSelected()) {
             plotReciprocalFunction();
-            graphCheck = true;
         } else if (sinRadioButton.isSelected()) {
             plotSinFunction();
-            graphCheck = true;
         } else if (cosRadioButton.isSelected()) {
             plotCosFunction();
-            graphCheck = true;
         } else if (tanRadioButton.isSelected()) {
             plotTanFunction();
-            graphCheck = true;
         }
+        graphCheck = true;
     }
 
     // Method to plot a linear function
