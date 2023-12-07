@@ -288,19 +288,17 @@ public class GraphingCalculator extends Application {
         trace.setLayoutX(800);
         trace.setLayoutY(300);
         Button zeroGraph = new Button("ZERO");
-        ///CHANGE ZERO
-        //ZERO IS WHEN Y IS 0
         zeroGraph.setLayoutX(700);
         zeroGraph.setLayoutY(300);
         zeroGraph.setOnAction(startButtonEvent -> {
             if (linearRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + field2.getText());
+                trace.setText("ZERO = " + -Integer.parseInt(field2.getText()) / Integer.parseInt(field1.getText()));
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = 0");
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + field3.getText());
             } else if (reciprocalRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = ∞");
+                // trace.setText("ZERO = ∞");
+                trace.setText("THERE IS NO ZERO");
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = ");
             }
