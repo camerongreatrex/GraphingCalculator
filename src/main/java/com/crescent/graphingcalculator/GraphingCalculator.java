@@ -22,7 +22,7 @@ public class GraphingCalculator extends Application {
     // Create the scene for the calculator and graph
     private Scene calcScene, graphScene;
     // Create text fields, labels, line chart, and radio buttons,
-    private TextField field1, field2, field3, field4;
+    private TextField field1, field2, field3, field4, valueField;
     // Create the formula text display
     private Label formulaDisplay;
     // Create the line chart
@@ -234,6 +234,11 @@ public class GraphingCalculator extends Application {
         field4.setLayoutX(210);
         field4.setLayoutY(20);
         field4.setPrefWidth(180);
+        valueField = new TextField();
+        valueField.setLayoutX(800);
+        valueField.setLayoutY(340);
+        valueField.setPrefWidth(100);
+        valueField.setPromptText("X = ");
         // Declare and initialize label to display the formula of the selected function
         formulaDisplay = new Label("FORMULA: y = mx + b");
         formulaDisplay.setLayoutX(20);
@@ -297,14 +302,16 @@ public class GraphingCalculator extends Application {
         //graph "trace" buttons + display text
         trace.setLayoutX(800);
         trace.setLayoutY(300);
+        //create "zero" button + function
         Button zeroGraph = new Button("ZERO");
         zeroGraph.setLayoutX(700);
         zeroGraph.setLayoutY(300);
         zeroGraph.setOnAction(startButtonEvent -> {
+            resetTrace();
             if (linearRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = " + -Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText()));
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
-                parabolaSolve(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
+                solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = " + (-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText()));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
@@ -323,11 +330,38 @@ public class GraphingCalculator extends Application {
             }
         });
 
+        //create "value" button + function(if x = __, y = ?)
+        Button ValueGraph = new Button("X=");
+        ValueGraph.setLayoutX(700);
+        ValueGraph.setLayoutY(340);
+        ValueGraph.setOnAction(startButtonEvent -> {
+            if (linearRadioButton.isSelected() && graphCheck) {
+                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()));
+            } else if (parabolaRadioButton.isSelected() && graphCheck) {
+
+            } else if (squarerootRadioButton.isSelected() && graphCheck) {
+
+            } else if (cubicRadioButton.isSelected() && graphCheck) {
+
+            } else if (absoluteRadioButton.isSelected() && graphCheck) {
+
+            } else if (reciprocalRadioButton.isSelected() && graphCheck) {
+
+            } else if (sinRadioButton.isSelected() && graphCheck) {
+
+            } else if (cosRadioButton.isSelected() && graphCheck) {
+
+            } else if (tanRadioButton.isSelected() && graphCheck) {
+
+            }
+        });
+
+
 
         // Add all elements to the main pane
         graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton,
                 parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton,
-                cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc, zeroGraph, trace);
+                cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc, zeroGraph, trace, valueField, ValueGraph);
         // Set the default to linear function and reset the graph to ensure everything is correct
         linearRadioButton.setSelected(true);
         resetGraph();
@@ -415,12 +449,14 @@ public class GraphingCalculator extends Application {
             field4.setVisible(false);
             field4.clear();
         }
-
+        resetTrace();
     }
 
     // Method to plot the selected graph (linear, absolute, parabolic, square root, cubic)
     private void plotGraph() {
+        resetTrace();
         if (linearRadioButton.isSelected()) {
+            valueField.setVisible(true);
             plotLine();
         } else if (absoluteRadioButton.isSelected()) {
             plotAbsoluteFunction();
@@ -498,7 +534,7 @@ public class GraphingCalculator extends Application {
         }
     }
 
-    private void parabolaSolve(double a, double b, double c) {
+    private void solveParabola(double a, double b, double c) {
         double discriminant = b * b - 4 * a * c, x1, x2;
         if (discriminant >= 0) {
             x1 = (-b - Math.sqrt(discriminant)) / (2 * a);
@@ -640,7 +676,7 @@ public class GraphingCalculator extends Application {
         field3.clear();
         field4.clear();
         graphCheck = false;
-        trace.setText("");
+        resetTrace();
 
         if (linearRadioButton.isSelected()) {
             organizeFields("Enter slope (m)", "Enter y-intercept (b)", null, null);
@@ -659,5 +695,10 @@ public class GraphingCalculator extends Application {
         } else if (tanRadioButton.isSelected()) {
             organizeFields("Enter coefficient (a)", null, null, null);
         }
+    }
+
+    private void resetTrace() {
+        valueField.clear();
+        trace.setText("");
     }
 }
