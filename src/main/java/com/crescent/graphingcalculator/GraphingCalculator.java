@@ -338,7 +338,8 @@ public class GraphingCalculator extends Application {
             if (linearRadioButton.isSelected() && graphCheck) {
                 trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()));
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
-
+                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
 
             } else if (cubicRadioButton.isSelected() && graphCheck) {
