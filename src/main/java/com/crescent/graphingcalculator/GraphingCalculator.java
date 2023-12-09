@@ -329,7 +329,7 @@ public class GraphingCalculator extends Application {
                 trace.setText("ZERO = " + Math.atan(Double.parseDouble(field1.getText())));
             }
         });
-
+        
         //create "value" button + function(if x = __, y = ?)
         Button ValueGraph = new Button("X=");
         ValueGraph.setLayoutX(700);
@@ -341,7 +341,11 @@ public class GraphingCalculator extends Application {
                 trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
                 + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
-
+                //a√(b(x - h)) + k
+                trace.setText("Y = " + Double.parseDouble(field1.getText())
+                * Math.sqrt(Double.parseDouble(field2.getText())
+                    * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText())))
+                + Double.parseDouble(field4.getText()));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
 
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
