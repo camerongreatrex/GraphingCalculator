@@ -336,8 +336,10 @@ public class GraphingCalculator extends Application {
         ValueGraph.setLayoutY(340);
         ValueGraph.setOnAction(startButtonEvent -> {
             if (linearRadioButton.isSelected() && graphCheck) {
+                //mx + b
                 trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()));
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
+                //ax^2 + bx + c
                 trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
                 + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
@@ -347,17 +349,22 @@ public class GraphingCalculator extends Application {
                     * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText())))
                 + Double.parseDouble(field4.getText()));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
-
+                //ax^3 + bx^2 + cx + d
+                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                 + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                 + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText()));
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
-
+                //|a * x|
+                trace.setText("Y = " + Math.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText())));
             } else if (reciprocalRadioButton.isSelected() && graphCheck) {
-
+                //y = a / x
+                trace.setText("Y = " + Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText()));
             } else if (sinRadioButton.isSelected() && graphCheck) {
-
+                trace.setText("Y = " + Math.sin(Double.parseDouble(valueField.getText())));
             } else if (cosRadioButton.isSelected() && graphCheck) {
-
+                trace.setText("Y = " + Math.cos(Double.parseDouble(valueField.getText())));
             } else if (tanRadioButton.isSelected() && graphCheck) {
-
+                trace.setText("Y = " + Math.tan(Double.parseDouble(valueField.getText())));
             }
         });
 
