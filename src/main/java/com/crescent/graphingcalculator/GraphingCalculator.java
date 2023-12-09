@@ -96,6 +96,7 @@ public class GraphingCalculator extends Application {
         enter.setStyle("-fx-font: 9 arial;");
         setButton(graph, 97, sin.getLayoutX() + 48, sin.getLayoutY() - 50);
         graph.setStyle("-fx-font: 9 arial;");
+
         // Set function of buttons
         {
             one.setOnMousePressed(startButtonEvent -> {
@@ -302,20 +303,23 @@ public class GraphingCalculator extends Application {
         //graph "trace" buttons + display text
         trace.setLayoutX(800);
         trace.setLayoutY(300);
-        //create "zero" button + function
+        //create "zero" button + function(is y = 0, x = ?)
         Button zeroGraph = new Button("ZERO");
         zeroGraph.setLayoutX(700);
         zeroGraph.setLayoutY(300);
         zeroGraph.setOnAction(startButtonEvent -> {
             resetTrace();
+            //round the numbers
+            //*use round() to round to nearest 100th
             if (linearRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = " + -Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText()));
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
                 solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + (-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText()));
+                trace.setText("ZERO = " + (-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText()))
+                + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText()));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
-                
+                solveCubic();
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = 0.0");
             } else if (reciprocalRadioButton.isSelected() && graphCheck) {
@@ -350,7 +354,7 @@ public class GraphingCalculator extends Application {
                 + Double.parseDouble(field4.getText()));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
                 //ax^3 + bx^2 + cx + d
-                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Math.pow(Double.parseDouble(valueField.getText()), 3)
                  + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
                  + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText()));
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
@@ -551,7 +555,7 @@ public class GraphingCalculator extends Application {
         if (discriminant >= 0) {
             x1 = (-b - Math.sqrt(discriminant)) / (2 * a);
             x2 = (-b + Math.sqrt(discriminant)) / (2 * a);
-            trace.setText("ZERO = " + x1 + " and " + x2);
+            trace.setText("ZERO = " + round(x1) + " and " + round(x2));
         } else {
             trace.setText("THERE IS NO ZERO");
         }
@@ -614,6 +618,15 @@ public class GraphingCalculator extends Application {
         } catch (NumberFormatException ex) {
             handleInvalidInputs();
         }
+    }
+
+    private void solveCubic() {
+        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText())
+                            - 4 * Math.pow(Double.parseDouble(field3.getText()), 3);
+        double root1 = Math.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
+        Double root2 = Math.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
+        Double root3 = root1 + root2;
+        trace.setText("ZERO = " + round(root1) + ", " + round(root2) + ", " + round(root3));
     }
 
     // Method to plot sin
@@ -712,5 +725,9 @@ public class GraphingCalculator extends Application {
     private void resetTrace() {
         valueField.clear();
         trace.setText("");
+    }
+
+    private double round(double a) {
+        return (double)Math.round(a * 100) / 100;
     }
 }
