@@ -63,11 +63,11 @@ public class GraphingCalculator extends Application {
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
         textbox.setMaxWidth(210);
-        textbox.setLayoutX(80);
+        textbox.setLayoutX(395);
         textbox.setLayoutY(100);
         calcPane.getChildren().add(textbox);
         // Assign properties for the calculator buttons
-        setButton(one, 45, 90, 500);
+        setButton(one, 45, 395, 500);
         setButton(two, 45, one.getLayoutX() + 50, one.getLayoutY());
         setButton(three, 45, one.getLayoutX() + 100, one.getLayoutY());
         setButton(four, 45, one.getLayoutX(), one.getLayoutY() - 50);
@@ -316,7 +316,7 @@ public class GraphingCalculator extends Application {
                 trace.setText("ZERO = " + round((-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText()))
                 + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
-solveCubic();
+                solveCubic();
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = 0.0");
             } else if (reciprocalRadioButton.isSelected() && graphCheck) {
