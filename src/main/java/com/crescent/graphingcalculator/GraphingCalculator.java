@@ -192,10 +192,7 @@ public class GraphingCalculator extends Application {
                 textbox.setText(textbox.getText() + "(-)");
                 textbox.positionCaret(textbox.getText().length());
             });
-            enter.setOnMousePressed(startButtonEvent -> {
-
-                //WIP WIP WIP WIP
-
+            enter.setOnAction(startButtonEvent -> {
 
             });
             clear.setOnMousePressed(startButtonEvent -> textbox.setText(""));
@@ -308,7 +305,7 @@ public class GraphingCalculator extends Application {
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = " + (-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText()));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
-                
+
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = 0.0");
             } else if (reciprocalRadioButton.isSelected() && graphCheck) {
@@ -533,16 +530,25 @@ public class GraphingCalculator extends Application {
     private void plotReciprocalFunction() {
         try {
             double a = Double.parseDouble(field1.getText());
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+            XYChart.Series<Number, Number> positiveSeries = new XYChart.Series<>();
+            XYChart.Series<Number, Number> negativeSeries = new XYChart.Series<>();
+            // Set the style for both series and points (same color)
+            String seriesStyle = "-fx-stroke: orange;";
+            String pointStyle = "-fx-background-color: orange, white; -fx-background-insets: 0, 2; -fx-background-radius: 5px;";
 
-            for (double x = -20; x <= 20; x += 0.5) {
-                if (x != 0) {
-                    double y = a / x;
-                    series.getData().add(new XYChart.Data<>(x, y));
-                }
+            for (double x = 0.5; x <= 10; x += 0.5) {
+                double y = a / x;
+                positiveSeries.getData().add(new XYChart.Data<>(x, y));
+            }
+            for (double x = -10; x < 0; x += 0.5) {
+                double y = a / x;
+                negativeSeries.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
-            chart.getData().add(series);
+            chart.getData().addAll(positiveSeries, negativeSeries);
+            // Apply the style to both series
+            positiveSeries.getNode().setStyle(seriesStyle);
+            positiveSeries.getData().forEach(data -> data.getNode().setStyle(pointStyle));
         } catch (NumberFormatException ex) {
             handleInvalidInputs();
         }
@@ -607,10 +613,13 @@ public class GraphingCalculator extends Application {
         try {
             double a = Double.parseDouble(field1.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-            for (double x = -20; x <= 20; x += 0.5) {
+            // Plotting the tangent function over a limited range to avoid issues
+            for (double x = -Math.PI / 2 + 0.1; x <= Math.PI / 2 - 0.1; x += 0.1) {
                 double y = a * Math.tan(x);
-                series.getData().add(new XYChart.Data<>(x, y));
+                // Handling the vertical asymptotes by checking for large y values
+                if (Double.isFinite(y) && Math.abs(y) < 50) {
+                    series.getData().add(new XYChart.Data<>(x, y));
+                }
             }
             chart.getData().clear();
             chart.getData().add(series);
