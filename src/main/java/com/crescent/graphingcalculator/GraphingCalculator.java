@@ -2,6 +2,8 @@ package com.crescent.graphingcalculator;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -52,7 +54,13 @@ public class GraphingCalculator extends Application {
         // Declare and initialize textbox
         TextField textbox = new TextField();
         // Declare and initialize button instances
-        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING");
+        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"),
+                five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"),
+                nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"),
+                plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"),
+                divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"),
+                sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"),
+                enter = new Button("ENTER"), graph = new Button("GRAPHING");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
@@ -63,11 +71,11 @@ public class GraphingCalculator extends Application {
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
         textbox.setMaxWidth(210);
-        textbox.setLayoutX(80);
+        textbox.setLayoutX(395);
         textbox.setLayoutY(100);
         calcPane.getChildren().add(textbox);
         // Assign properties for the calculator buttons
-        setButton(one, 45, 90, 500);
+        setButton(one, 45, 395, 500);
         setButton(two, 45, one.getLayoutX() + 50, one.getLayoutY());
         setButton(three, 45, one.getLayoutX() + 100, one.getLayoutY());
         setButton(four, 45, one.getLayoutX(), one.getLayoutY() - 50);
@@ -284,7 +292,10 @@ public class GraphingCalculator extends Application {
         Button plotGraphButton = new Button("Plot Graph");
         plotGraphButton.setLayoutX(700);
         plotGraphButton.setLayoutY(180);
-        plotGraphButton.setOnAction(e -> plotGraph());
+        plotGraphButton.setOnAction(e -> {
+            plotGraph();
+            addPointHovering();
+        });
         Button resetButton = new Button("Reset Graph");
         resetButton.setLayoutX(700);
         resetButton.setLayoutY(220);
@@ -297,7 +308,7 @@ public class GraphingCalculator extends Application {
             stage.setScene(calcScene);
         });
         // Graph "trace" buttons + display text
-        trace.setLayoutX(800);
+        trace.setLayoutX(780);
         trace.setLayoutY(300);
         // Create "zero" button
         Button zeroGraph = getZeroGraph();
@@ -361,7 +372,7 @@ public class GraphingCalculator extends Application {
 
     }
 
-    // Method to return the y value at an x on any graph
+    // Method to return the y value at an x on any graph - intellij formatted
     @NotNull
     private Button getValueGraph() {
         Button ValueGraph = new Button("X=");
@@ -370,40 +381,40 @@ public class GraphingCalculator extends Application {
         ValueGraph.setOnAction(startButtonEvent -> {
             if (linearRadioButton.isSelected() && graphCheck) {
                 // mx + b
-                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()));
+                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
                 // ax^2 + bx + c
-                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
-                + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()));
+                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                        + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText())));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
                 // a√(b(x - h)) + k
-                trace.setText("Y = " + Double.parseDouble(field1.getText())
-                * Math.sqrt(Double.parseDouble(field2.getText())
-                    * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText())))
-                + Double.parseDouble(field4.getText()));
+                trace.setText("Y = " + round(Double.parseDouble(field1.getText())
+                        * Math.sqrt(Double.parseDouble(field2.getText())
+                        * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText())))
+                        + Double.parseDouble(field4.getText())));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
                 // ax^3 + bx^2 + cx + d
-                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Math.pow(Double.parseDouble(valueField.getText()), 3)
-                 + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
-                 + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText()));
+                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Math.pow(Double.parseDouble(valueField.getText()), 3)
+                        + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                        + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText())));
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
                 // |a * x|
-                trace.setText("Y = " + Math.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText())));
+                trace.setText("Y = " + round(Math.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()))));
             } else if (reciprocalRadioButton.isSelected() && graphCheck) {
                 // y = a / x
-                trace.setText("Y = " + Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText()));
+                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
             } else if (sinRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + Math.sin(Double.parseDouble(valueField.getText())));
+                trace.setText("Y = " + round(Math.sin(Double.parseDouble(valueField.getText()))));
             } else if (cosRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + Math.cos(Double.parseDouble(valueField.getText())));
+                trace.setText("Y = " + round(Math.cos(Double.parseDouble(valueField.getText()))));
             } else if (tanRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + Math.tan(Double.parseDouble(valueField.getText())));
+                trace.setText("Y = " + round(Math.tan(Double.parseDouble(valueField.getText()))));
             }
         });
         return ValueGraph;
     }
 
-    // Method to return the zeros of the graph
+    // Method to return the zeros of the graph - intellij formatted
     @NotNull
     private Button getZeroGraph() {
         Button zeroGraph = new Button("ZERO");
@@ -418,15 +429,21 @@ public class GraphingCalculator extends Application {
                 solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = " + round((-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText()))
-                + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
+                        + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
                 solveCubic();
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = 0.0");
             } else if (reciprocalRadioButton.isSelected() && graphCheck) {
                 trace.setText("THERE IS NO ZERO");
+            } else if (sinRadioButton.isSelected() && graphCheck) {
+                trace.setText("Not Calculating For Sin");
+            } else if (cosRadioButton.isSelected() && graphCheck) {
+                trace.setText("Not Calculating For Cos");
+            } else if (tanRadioButton.isSelected() && graphCheck) {
+                trace.setText("Not Calculating For Tan");
             } else {
-                trace.setText("Not Calculating Zeros For this Function");
+                trace.setText("Graph A Function Please");
             }
         });
         return zeroGraph;
@@ -632,7 +649,7 @@ public class GraphingCalculator extends Application {
 
     private void solveCubic() {
         double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText())
-                            - 4 * Math.pow(Double.parseDouble(field3.getText()), 3);
+                - 4 * Math.pow(Double.parseDouble(field3.getText()), 3);
         double root1 = Math.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
         double root2 = Math.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
         double root3 = root1 + root2;
@@ -706,6 +723,40 @@ public class GraphingCalculator extends Application {
         visiblePause.play();
     }
 
+    // Method for point hovering
+    private void addPointHovering() {
+        // Iterate through the chart, along with all the data
+        for (XYChart.Series<Number, Number> series : chart.getData()) {
+            for (XYChart.Data<Number, Number> data : series.getData()) {
+                // Round the x and y values
+                double roundedX = round(data.getXValue().doubleValue());
+                double roundedY = round(data.getYValue().doubleValue());
+                // Create a tooltip and node to hold then display all the data on screen in a hovered textbox
+                Node node = data.getNode();
+                Tooltip tooltip = new Tooltip("(" + roundedX + ", " + roundedY + ")");
+                Tooltip.install(node, tooltip);
+                // Show the tooltip as the mouse is hovered over the node that holds the tooltip a point in the scene
+                node.setOnMouseEntered(event -> {
+                    Point2D pointInScene = new Point2D(event.getSceneX(), event.getSceneY());
+                    tooltip.show(graphPane.getScene().getWindow(), pointInScene.getX() + 10, pointInScene.getY() + 10);
+                });
+
+                node.setOnMouseExited(event -> tooltip.hide());
+            }
+        }
+    }
+
+    // Reset the text field for zeros and y values
+    private void resetTrace() {
+        valueField.clear();
+        trace.setText("");
+    }
+
+    // Quick method to round the zeros to two decimal places
+    private double round(double a) {
+        return (double) Math.round(a * 100) / 100;
+    }
+
     // Method to reset the graph and input fields
     private void resetGraph() {
         chart.getData().clear();
@@ -733,14 +784,5 @@ public class GraphingCalculator extends Application {
         } else if (tanRadioButton.isSelected()) {
             organizeFields("Enter coefficient (a)", null, null, null);
         }
-    }
-
-    private void resetTrace() {
-        valueField.clear();
-        trace.setText("");
-    }
-
-    private double round(double a) {
-        return (double)Math.round(a * 100) / 100;
     }
 }
