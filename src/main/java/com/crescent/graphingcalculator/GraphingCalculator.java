@@ -60,7 +60,8 @@ public class GraphingCalculator extends Application {
                 plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"),
                 divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"),
                 sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"),
-                enter = new Button("ENTER"), graph = new Button("GRAPHING");
+                enter = new Button("ENTER"), graph = new Button("GRAPHING"),
+                stats1 = new Button("stats"), stats2 = new Button("stats"), stats3 = new Button("stats");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
@@ -99,6 +100,9 @@ public class GraphingCalculator extends Application {
         setButton(cos, 45, closeBracket.getLayoutX(), closeBracket.getLayoutY() - 50);
         setButton(tan, 45, modulus.getLayoutX(), modulus.getLayoutY() - 50);
         setButton(clear, 45, exponent.getLayoutX(), exponent.getLayoutY() - 50);
+        setButton(stats1, 45, seven.getLayoutX() - 50, seven.getLayoutY());
+        setButton(stats2, 45, four.getLayoutX() - 50, four.getLayoutY());
+        setButton(stats3, 45, one.getLayoutX() - 50, one.getLayoutY());
         clear.setStyle("-fx-font: 9 arial;");
         setButton(enter, 45, negative.getLayoutX() + 50, negative.getLayoutY());
         enter.setStyle("-fx-font: 9 arial;");
