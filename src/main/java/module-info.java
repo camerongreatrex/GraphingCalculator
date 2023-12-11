@@ -10,6 +10,7 @@ module com.crescent.graphingcalculator {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires annotations;
 
     opens com.crescent.graphingcalculator to javafx.fxml;
     exports com.crescent.graphingcalculator;

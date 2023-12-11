@@ -13,7 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
+import org.jetbrains.annotations.NotNull;
 
 
 public class GraphingCalculator extends Application {
@@ -296,74 +296,13 @@ public class GraphingCalculator extends Application {
             resetGraph();
             stage.setScene(calcScene);
         });
-
-        //graph "trace" buttons + display text
+        // Graph "trace" buttons + display text
         trace.setLayoutX(800);
         trace.setLayoutY(300);
-        //create "zero" button + function(is y = 0, x = ?)
-        Button zeroGraph = new Button("ZERO");
-        zeroGraph.setLayoutX(700);
-        zeroGraph.setLayoutY(300);
-        zeroGraph.setOnAction(startButtonEvent -> {
-            resetTrace();
-            //round the numbers
-            //*use round() to round to nearest 100th
-            if (linearRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + round(-Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText())));
-            } else if (parabolaRadioButton.isSelected() && graphCheck) {
-                solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
-            } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + round((-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText()))
-                + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
-            } else if (cubicRadioButton.isSelected() && graphCheck) {
-solveCubic();
-            } else if (absoluteRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = 0.0");
-            } else if (reciprocalRadioButton.isSelected() && graphCheck) {
-                // trace.setText("ZERO = ∞");
-                trace.setText("THERE IS NO ZERO");
-            }
-        });
-        
-        //create "value" button + function(if x = __, y = ?)
-        Button ValueGraph = new Button("X=");
-        ValueGraph.setLayoutX(700);
-        ValueGraph.setLayoutY(340);
-        ValueGraph.setOnAction(startButtonEvent -> {
-            if (linearRadioButton.isSelected() && graphCheck) {
-                //mx + b
-                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()));
-            } else if (parabolaRadioButton.isSelected() && graphCheck) {
-                //ax^2 + bx + c
-                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
-                + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()));
-            } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                //a√(b(x - h)) + k
-                trace.setText("Y = " + Double.parseDouble(field1.getText())
-                * Math.sqrt(Double.parseDouble(field2.getText())
-                    * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText())))
-                + Double.parseDouble(field4.getText()));
-            } else if (cubicRadioButton.isSelected() && graphCheck) {
-                //ax^3 + bx^2 + cx + d
-                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Math.pow(Double.parseDouble(valueField.getText()), 3)
-                 + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
-                 + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText()));
-            } else if (absoluteRadioButton.isSelected() && graphCheck) {
-                //|a * x|
-                trace.setText("Y = " + Math.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText())));
-            } else if (reciprocalRadioButton.isSelected() && graphCheck) {
-                //y = a / x
-                trace.setText("Y = " + Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText()));
-            } else if (sinRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + Math.sin(Double.parseDouble(valueField.getText())));
-            } else if (cosRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + Math.cos(Double.parseDouble(valueField.getText())));
-            } else if (tanRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + Math.tan(Double.parseDouble(valueField.getText())));
-            }
-        });
-
-
+        // Create "zero" button
+        Button zeroGraph = getZeroGraph();
+        // Create "value" button 
+        Button ValueGraph = getValueGraph();
 
         // Add all elements to the main pane
         graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton,
@@ -420,6 +359,77 @@ solveCubic();
             resetGraph();
         });
 
+    }
+
+    // Method to return the y value at an x on any graph
+    @NotNull
+    private Button getValueGraph() {
+        Button ValueGraph = new Button("X=");
+        ValueGraph.setLayoutX(700);
+        ValueGraph.setLayoutY(340);
+        ValueGraph.setOnAction(startButtonEvent -> {
+            if (linearRadioButton.isSelected() && graphCheck) {
+                // mx + b
+                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()));
+            } else if (parabolaRadioButton.isSelected() && graphCheck) {
+                // ax^2 + bx + c
+                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()));
+            } else if (squarerootRadioButton.isSelected() && graphCheck) {
+                // a√(b(x - h)) + k
+                trace.setText("Y = " + Double.parseDouble(field1.getText())
+                * Math.sqrt(Double.parseDouble(field2.getText())
+                    * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText())))
+                + Double.parseDouble(field4.getText()));
+            } else if (cubicRadioButton.isSelected() && graphCheck) {
+                // ax^3 + bx^2 + cx + d
+                trace.setText("Y = " + Double.parseDouble(field1.getText()) * Math.pow(Double.parseDouble(valueField.getText()), 3)
+                 + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                 + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText()));
+            } else if (absoluteRadioButton.isSelected() && graphCheck) {
+                // |a * x|
+                trace.setText("Y = " + Math.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText())));
+            } else if (reciprocalRadioButton.isSelected() && graphCheck) {
+                // y = a / x
+                trace.setText("Y = " + Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText()));
+            } else if (sinRadioButton.isSelected() && graphCheck) {
+                trace.setText("Y = " + Math.sin(Double.parseDouble(valueField.getText())));
+            } else if (cosRadioButton.isSelected() && graphCheck) {
+                trace.setText("Y = " + Math.cos(Double.parseDouble(valueField.getText())));
+            } else if (tanRadioButton.isSelected() && graphCheck) {
+                trace.setText("Y = " + Math.tan(Double.parseDouble(valueField.getText())));
+            }
+        });
+        return ValueGraph;
+    }
+
+    // Method to return the zeros of the graph
+    @NotNull
+    private Button getZeroGraph() {
+        Button zeroGraph = new Button("ZERO");
+        zeroGraph.setLayoutX(700);
+        zeroGraph.setLayoutY(300);
+        zeroGraph.setOnAction(startButtonEvent -> {
+            resetTrace();
+            // Use round() to round to nearest 100th
+            if (linearRadioButton.isSelected() && graphCheck) {
+                trace.setText("ZERO = " + round(-Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText())));
+            } else if (parabolaRadioButton.isSelected() && graphCheck) {
+                solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
+            } else if (squarerootRadioButton.isSelected() && graphCheck) {
+                trace.setText("ZERO = " + round((-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText()))
+                + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
+            } else if (cubicRadioButton.isSelected() && graphCheck) {
+                solveCubic();
+            } else if (absoluteRadioButton.isSelected() && graphCheck) {
+                trace.setText("ZERO = 0.0");
+            } else if (reciprocalRadioButton.isSelected() && graphCheck) {
+                trace.setText("THERE IS NO ZERO");
+            } else {
+                trace.setText("Not Calculating Zeros For this Function");
+            }
+        });
+        return zeroGraph;
     }
 
     // Method for setting up number buttons
@@ -624,8 +634,8 @@ solveCubic();
         double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText())
                             - 4 * Math.pow(Double.parseDouble(field3.getText()), 3);
         double root1 = Math.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
-        Double root2 = Math.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
-        Double root3 = root1 + root2;
+        double root2 = Math.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
+        double root3 = root1 + root2;
         trace.setText("ZERO = " + round(root1) + ", " + round(root2) + ", " + round(root3));
     }
 
@@ -663,7 +673,7 @@ solveCubic();
         }
     }
 
-    // Method to plot tan (bugged)
+    // Method to plot tan
     private void plotTanFunction() {
         try {
             double a = Double.parseDouble(field1.getText());
