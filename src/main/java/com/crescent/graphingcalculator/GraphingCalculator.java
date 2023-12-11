@@ -384,36 +384,39 @@ public class GraphingCalculator extends Application {
         ValueGraph.setLayoutX(700);
         ValueGraph.setLayoutY(340);
         ValueGraph.setOnAction(startButtonEvent -> {
-            if (linearRadioButton.isSelected() && graphCheck) {
-                // mx + b
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
-            } else if (parabolaRadioButton.isSelected() && graphCheck) {
-                // ax^2 + bx + c
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
-                        + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText())));
-            } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                // a√(b(x - h)) + k
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText())
-                        * Math.sqrt(Double.parseDouble(field2.getText())
-                        * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText())))
-                        + Double.parseDouble(field4.getText())));
-            } else if (cubicRadioButton.isSelected() && graphCheck) {
-                // ax^3 + bx^2 + cx + d
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Math.pow(Double.parseDouble(valueField.getText()), 3)
-                        + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
-                        + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText())));
-            } else if (absoluteRadioButton.isSelected() && graphCheck) {
-                // |a * x|
-                trace.setText("Y = " + round(Math.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()))));
-            } else if (reciprocalRadioButton.isSelected() && graphCheck) {
-                // y = a / x
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
-            } else if (sinRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + round(Math.sin(Double.parseDouble(valueField.getText()))));
-            } else if (cosRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + round(Math.cos(Double.parseDouble(valueField.getText()))));
-            } else if (tanRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + round(Math.tan(Double.parseDouble(valueField.getText()))));
+            try {
+                if (linearRadioButton.isSelected() && graphCheck) {
+                    // mx + b
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
+                } else if (parabolaRadioButton.isSelected() && graphCheck) {
+                    // ax^2 + bx + c
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                            + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText())));
+                } else if (squarerootRadioButton.isSelected() && graphCheck) {
+                    // a√(b(x - h)) + k
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText())
+                            * Math.sqrt(Double.parseDouble(field2.getText())
+                            * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText())))
+                            + Double.parseDouble(field4.getText())));
+                } else if (cubicRadioButton.isSelected() && graphCheck) {
+                    // ax^3 + bx^2 + cx + d
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Math.pow(Double.parseDouble(valueField.getText()), 3)
+                            + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                            + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText())));
+                } else if (absoluteRadioButton.isSelected() && graphCheck) {
+                    // |a * x|
+                    trace.setText("Y = " + round(Math.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()))));
+                } else if (reciprocalRadioButton.isSelected() && graphCheck) {
+                    // y = a / x
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
+                } else if (sinRadioButton.isSelected() && graphCheck) {
+                    trace.setText("Y = " + round(Math.sin(Double.parseDouble(valueField.getText()))));
+                } else if (cosRadioButton.isSelected() && graphCheck) {
+                    trace.setText("Y = " + round(Math.cos(Double.parseDouble(valueField.getText()))));
+                } else if (tanRadioButton.isSelected() && graphCheck) {
+                    trace.setText("Y = " + round(Math.tan(Double.parseDouble(valueField.getText()))));
+                }
+            } catch (NumberFormatException ignored) {
             }
         });
         return ValueGraph;
