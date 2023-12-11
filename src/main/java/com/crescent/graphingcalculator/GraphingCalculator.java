@@ -312,12 +312,12 @@ public class GraphingCalculator extends Application {
             //round the numbers
             //*use round() to round to nearest 100th
             if (linearRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + -Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText()));
+                trace.setText("ZERO = " + round(-Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText())));
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
                 solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + (-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText()))
-                + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText()));
+                trace.setText("ZERO = " + round((-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText()))
+                + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
                 solveCubic();
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
@@ -325,12 +325,6 @@ public class GraphingCalculator extends Application {
             } else if (reciprocalRadioButton.isSelected() && graphCheck) {
                 // trace.setText("ZERO = ∞");
                 trace.setText("THERE IS NO ZERO");
-            } else if (sinRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + Math.asin(Double.parseDouble(field1.getText())));
-            } else if (cosRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + Math.acos(Double.parseDouble(field1.getText())));
-            } else if (tanRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + Math.atan(Double.parseDouble(field1.getText())));
             }
         });
         
