@@ -33,9 +33,9 @@ This project is a Java-based graphing calculator application that allows users t
 
 ## Contributors
 
-- [Cameron Greatrex](link-to-cameron-github) - @camerongreatrex
-- [Julian Chen](link-to-julian-github) - @JulianWChen
-- [Jeff Qiu](link-to-jeff-github) - @sphealmeon
+- [Cameron Greatrex]([link-to-cameron-github](https://github.com/camerongreatrex)) - @camerongreatrex
+- [Julian Chen]([link-to-julian-github](https://github.com/JulianWChen)) - @JulianWChen
+- [Jeff Qiu]([link-to-jeff-github](https://github.com/sphealmeon)) - @sphealmeon
 
 ## Acknowledgments
 
@@ -43,7 +43,7 @@ This project is a Java-based graphing calculator application that allows users t
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE.md) - see the LICENSE file for details.
+This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
 
 ## Support
 
