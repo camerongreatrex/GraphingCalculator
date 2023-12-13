@@ -2,6 +2,7 @@ package com.crescent.graphingcalculator;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -10,13 +11,22 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+// Must add this library from the lib folder into libraries in your compiler
+import org.apache.commons.math3.util.FastMath;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GraphingCalculator extends Application {
     // Create the main calculator pane and graph pane
@@ -30,18 +40,29 @@ public class GraphingCalculator extends Application {
     // Create the line chart
     private LineChart<Number, Number> chart;
     // Create the selection (radio) buttons
-    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton,
-            squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
+    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
+    // Create graph check variable
+    private boolean graphCheck = false;
+    // Create graph "trace" button
+    private Text trace = new Text();
+    // Create music variables
+    private Button playpauseButton;
+    private Label songLabel, currentSongTime, songTotal;
+    private Slider volumeSlider;
+    private ProgressBar songProgressBar;
+    private Media media;
+    private MediaPlayer mediaPlayer;
+    private int songNumber;
+    private ArrayList<File> songs;
+    private Timer timer;
+    private boolean running;
 
-    // create graph check variable
-    public boolean graphCheck = false;
-    // create graph "trace" button
-    Text trace = new Text();
+    public GraphingCalculator() {
+    }
 
     public static void main(String[] args) {
         launch();
     }
-
 
     @Override
     public void start(Stage stage) {
@@ -54,14 +75,7 @@ public class GraphingCalculator extends Application {
         // Declare and initialize textbox
         TextField textbox = new TextField();
         // Declare and initialize button instances
-        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"),
-                five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"),
-                nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"),
-                plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"),
-                divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"),
-                sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"),
-                enter = new Button("ENTER"), graph = new Button("GRAPHING"), sound = new Button("♪"),
-                stats1 = new Button("stats"), stats2 = new Button("stats"), stats3 = new Button("stats");
+        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), stats1 = new Button("stats"), stats2 = new Button("stats"), stats3 = new Button("stats");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
@@ -72,9 +86,73 @@ public class GraphingCalculator extends Application {
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
         textbox.setMaxWidth(210);
-        textbox.setLayoutX(395);
-        textbox.setLayoutY(100);
+        textbox.setLayoutX(390);
+        textbox.setLayoutY(190);
         calcPane.getChildren().add(textbox);
+        // Initialize the song button and label variables
+        playpauseButton = new Button("⏯");
+        playpauseButton.setLayoutX(475);
+        playpauseButton.setLayoutY(20);
+        playpauseButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        songLabel = new Label();
+        songLabel.setLayoutX(170);
+        songLabel.setLayoutY(30);
+        currentSongTime = new Label();
+        currentSongTime.setLayoutX(270);
+        currentSongTime.setLayoutY(80);
+        songTotal = new Label();
+        songTotal.setLayoutX(702);
+        songTotal.setLayoutY(80);
+
+        Button restartButton = new Button("Restart");
+        restartButton.setLayoutX(335);
+        restartButton.setLayoutY(20);
+        restartButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        restartButton.setOnAction(event -> restartMedia());
+        Button nextButton = new Button("▷|");
+        nextButton.setLayoutX(509);
+        nextButton.setLayoutY(20);
+        nextButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        nextButton.setOnAction(event -> nextSong());
+        Button previousButton = new Button("|◁");
+        previousButton.setLayoutX(440);
+        previousButton.setLayoutY(20);
+        previousButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        previousButton.setOnAction(event -> previousSong());
+        // Initialize volume icon (as a non-interactive Label)
+        Label volumeIcon = new Label("🔊");
+        volumeIcon.setLayoutX(583);
+        volumeIcon.setLayoutY(20);
+        volumeIcon.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        // Initialize a volume slider
+        volumeSlider = new Slider();
+        volumeSlider.setMin(0);
+        volumeSlider.setMax(100);
+        volumeSlider.setValue(50);
+        volumeSlider.setLayoutX(623);
+        volumeSlider.setLayoutY(37);
+        // Initialize a progress bar
+        songProgressBar = new ProgressBar(0);
+        songProgressBar.setLayoutX(300);
+        songProgressBar.setLayoutY(80);
+        songProgressBar.setPrefWidth(400);
+        songProgressBar.setStyle("-fx-accent: #1DB954;");
+        // Add volume control functionality
+        volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (mediaPlayer != null) {
+                // Set volume based on the slider value
+                mediaPlayer.setVolume(newValue.doubleValue() / 600);
+            }
+        });
+        songs = new ArrayList<>();
+        File directory = new File("src/main/java/lib/music");
+        File[] files = directory.listFiles();
+        if (files != null) {
+            songs.addAll(Arrays.asList(files));
+        }
+        calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+        startMedia();
+
         // Assign properties for the calculator buttons
         setButton(one, 45, 395, 500);
         setButton(two, 45, one.getLayoutX() + 50, one.getLayoutY());
@@ -108,7 +186,6 @@ public class GraphingCalculator extends Application {
         setButton(stats1, 45, seven.getLayoutX() - 50, seven.getLayoutY());
         setButton(stats2, 45, four.getLayoutX() - 50, four.getLayoutY());
         setButton(stats3, 45, one.getLayoutX() - 50, one.getLayoutY());
-        setButton(sound, 45, seven.getLayoutX(), graph.getLayoutY());
 
         // Set function of buttons
         {
@@ -319,11 +396,8 @@ public class GraphingCalculator extends Application {
         Button zeroGraph = getZeroGraph();
         // Create "value" button 
         Button ValueGraph = getValueGraph();
-
         // Add all elements to the main pane
-        graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton,
-                parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton,
-                cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc, zeroGraph, trace, valueField, ValueGraph);
+        graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc, zeroGraph, trace, valueField, ValueGraph);
         // Set the default to linear function and reset the graph to ensure everything is correct
         linearRadioButton.setSelected(true);
         resetGraph();
@@ -377,6 +451,135 @@ public class GraphingCalculator extends Application {
 
     }
 
+    // Music Methods
+    public void startMedia() {
+        playpauseButton.setOnAction(event -> {
+            try {
+                if (mediaPlayer == null) {
+                    media = new Media(songs.get(songNumber).toURI().toString());
+                    mediaPlayer = new MediaPlayer(media);
+                    songLabel.setText(songs.get(songNumber).getName());
+                    mediaPlayer.setVolume(volumeSlider.getValue() / 600);
+                    beginTimer();
+                }
+                mediaPlayer.setVolume(volumeSlider.getValue() / 600);
+
+                if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                    mediaPlayer.pause();
+                    // Cancel timer to keep track of process
+                    cancelTimer();
+                } else {
+                    mediaPlayer.play();
+                    // Start timer to keep track of process
+                    beginTimer();
+                }
+            } catch (Exception ignored) {
+
+            }
+        });
+    }
+
+    public void nextSong() {
+        try {
+            if (songNumber < songs.size() - 1) {
+                songNumber++;
+                mediaPlayer.stop();
+                if (running) {
+                    cancelTimer();
+                }
+
+            } else {
+                songNumber = 0;
+                mediaPlayer.stop();
+            }
+            media = new Media(songs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(songs.get(songNumber).getName());
+            mediaPlayer.setVolume(volumeSlider.getValue() / 600);
+
+            mediaPlayer.play();
+            beginTimer();
+        } catch (Exception ignored) {
+
+        }
+    }
+
+
+    public void previousSong() {
+        try {
+            if (songNumber > 0) {
+                songNumber--;
+
+            } else {
+                songNumber = songs.size() - 1;
+
+            }
+            mediaPlayer.stop();
+            if (running) {
+                cancelTimer();
+            }
+            media = new Media(songs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(songs.get(songNumber).getName());
+            mediaPlayer.setVolume(volumeSlider.getValue() / 600);
+
+            mediaPlayer.play();
+            beginTimer();
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    public void restartMedia() {
+        try {
+            mediaPlayer.seek(Duration.seconds(0));
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    public void beginTimer() {
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            public void run() {
+                // Set running to true
+                running = true;
+                // Get the current and end time of the song
+                double current = mediaPlayer.getCurrentTime().toSeconds();
+                double end = media.getDuration().toSeconds();
+                songProgressBar.setProgress(current / end);
+
+                // Calculate current time and total length in proper format (minutes:seconds)
+                int currentMinutes = (int) current / 60;
+                int currentSeconds = (int) current % 60;
+                int totalMinutes = (int) end / 60;
+                int totalSeconds = (int) end % 60;
+
+                // Update the songLabel to display current time and total length
+                String currentTime = String.format("%02d:%02d", currentMinutes, currentSeconds);
+                String totalTime = String.format("%02d:%02d", totalMinutes, totalSeconds);
+                // UI-related operations must happen in the primary javafx thread, not the timer task therefore
+                // it must "run later" which is directly after a timer iteration
+                // Essentially queuing the task until after the thread opens up
+                Platform.runLater(() -> {
+                    currentSongTime.setText(currentTime);
+                    songTotal.setText(totalTime);
+                });
+
+                if (current / end == 1) {
+                    cancelTimer();
+                }
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, 0, 1000);
+    }
+
+    public void cancelTimer() {
+        running = false;
+        timer.cancel();
+    }
+
     // Method to return the y value at an x on any graph - intellij formatted
     @NotNull
     private Button getValueGraph() {
@@ -384,36 +587,33 @@ public class GraphingCalculator extends Application {
         ValueGraph.setLayoutX(700);
         ValueGraph.setLayoutY(340);
         ValueGraph.setOnAction(startButtonEvent -> {
-            if (linearRadioButton.isSelected() && graphCheck) {
-                // mx + b
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
-            } else if (parabolaRadioButton.isSelected() && graphCheck) {
-                // ax^2 + bx + c
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
-                        + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText())));
-            } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                // a√(b(x - h)) + k
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText())
-                        * Math.sqrt(Double.parseDouble(field2.getText())
-                        * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText())))
-                        + Double.parseDouble(field4.getText())));
-            } else if (cubicRadioButton.isSelected() && graphCheck) {
-                // ax^3 + bx^2 + cx + d
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Math.pow(Double.parseDouble(valueField.getText()), 3)
-                        + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
-                        + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText())));
-            } else if (absoluteRadioButton.isSelected() && graphCheck) {
-                // |a * x|
-                trace.setText("Y = " + round(Math.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()))));
-            } else if (reciprocalRadioButton.isSelected() && graphCheck) {
-                // y = a / x
-                trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
-            } else if (sinRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + round(Math.sin(Double.parseDouble(valueField.getText()))));
-            } else if (cosRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + round(Math.cos(Double.parseDouble(valueField.getText()))));
-            } else if (tanRadioButton.isSelected() && graphCheck) {
-                trace.setText("Y = " + round(Math.tan(Double.parseDouble(valueField.getText()))));
+            try {
+                if (linearRadioButton.isSelected() && graphCheck) {
+                    // mx + b
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
+                } else if (parabolaRadioButton.isSelected() && graphCheck) {
+                    // ax^2 + bx + c
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText())));
+                } else if (squarerootRadioButton.isSelected() && graphCheck) {
+                    // a√(b(x - h)) + k
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * FastMath.sqrt(Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText()))) + Double.parseDouble(field4.getText())));
+                } else if (cubicRadioButton.isSelected() && graphCheck) {
+                    // ax^3 + bx^2 + cx + d
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * FastMath.pow(Double.parseDouble(valueField.getText()), 3) + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText())));
+                } else if (absoluteRadioButton.isSelected() && graphCheck) {
+                    // |a * x|
+                    trace.setText("Y = " + round(FastMath.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()))));
+                } else if (reciprocalRadioButton.isSelected() && graphCheck) {
+                    // y = a / x
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
+                } else if (sinRadioButton.isSelected() && graphCheck) {
+                    trace.setText("Y = " + round(FastMath.sin(Double.parseDouble(valueField.getText()))));
+                } else if (cosRadioButton.isSelected() && graphCheck) {
+                    trace.setText("Y = " + round(FastMath.cos(Double.parseDouble(valueField.getText()))));
+                } else if (tanRadioButton.isSelected() && graphCheck) {
+                    trace.setText("Y = " + round(FastMath.tan(Double.parseDouble(valueField.getText()))));
+                }
+            } catch (NumberFormatException ignored) {
             }
         });
         return ValueGraph;
@@ -433,8 +633,7 @@ public class GraphingCalculator extends Application {
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
                 solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + round((-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText()))
-                        + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
+                trace.setText("ZERO = " + round((-FastMath.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
                 solveCubic();
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
@@ -542,7 +741,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -20; x <= 20; x += 0.5) {
-                double y = Math.abs(a * x);
+                double y = FastMath.abs(a * x);
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -576,8 +775,8 @@ public class GraphingCalculator extends Application {
     private void solveParabola(double a, double b, double c) {
         double discriminant = b * b - 4 * a * c, x1, x2;
         if (discriminant >= 0) {
-            x1 = (-b - Math.sqrt(discriminant)) / (2 * a);
-            x2 = (-b + Math.sqrt(discriminant)) / (2 * a);
+            x1 = (-b - FastMath.sqrt(discriminant)) / (2 * a);
+            x2 = (-b + FastMath.sqrt(discriminant)) / (2 * a);
             trace.setText("ZERO = " + round(x1) + " and " + round(x2));
         } else {
             trace.setText("THERE IS NO ZERO");
@@ -594,7 +793,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = 0; x <= 20; x += 0.5) {
-                double y = a * Math.sqrt(b * (x + h)) + k;
+                double y = a * FastMath.sqrt(b * (x + h)) + k;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -642,7 +841,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -20; x <= 20; x += 0.5) {
-                double y = a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d;
+                double y = a * FastMath.pow(x, 3) + b * FastMath.pow(x, 2) + c * x + d;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -653,10 +852,9 @@ public class GraphingCalculator extends Application {
     }
 
     private void solveCubic() {
-        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText())
-                - 4 * Math.pow(Double.parseDouble(field3.getText()), 3);
-        double root1 = Math.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
-        double root2 = Math.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
+        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText()) - 4 * FastMath.pow(Double.parseDouble(field3.getText()), 3);
+        double root1 = FastMath.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
+        double root2 = FastMath.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
         double root3 = root1 + root2;
         trace.setText("ZERO = " + round(root1) + ", " + round(root2) + ", " + round(root3));
     }
@@ -668,7 +866,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -20; x <= 20; x += 0.5) {
-                double y = a * Math.sin(x);
+                double y = a * FastMath.sin(x);
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -685,7 +883,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -20; x <= 20; x += 0.5) {
-                double y = a * Math.cos(x);
+                double y = a * FastMath.cos(x);
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -701,10 +899,10 @@ public class GraphingCalculator extends Application {
             double a = Double.parseDouble(field1.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             // Plotting the tangent function over a limited range to avoid issues
-            for (double x = -Math.PI / 2 + 0.1; x <= Math.PI / 2 - 0.1; x += 0.1) {
-                double y = a * Math.tan(x);
+            for (double x = -FastMath.PI / 2 + 0.1; x <= FastMath.PI / 2 - 0.1; x += 0.1) {
+                double y = a * FastMath.tan(x);
                 // Handling the vertical asymptotes by checking for large y values
-                if (Double.isFinite(y) && Math.abs(y) < 50) {
+                if (Double.isFinite(y) && FastMath.abs(y) < 50) {
                     series.getData().add(new XYChart.Data<>(x, y));
                 }
             }
@@ -759,7 +957,7 @@ public class GraphingCalculator extends Application {
 
     // Quick method to round the zeros to two decimal places
     private double round(double a) {
-        return (double) Math.round(a * 100) / 100;
+        return (double) FastMath.round(a * 100) / 100;
     }
 
     // Method to reset the graph and input fields
