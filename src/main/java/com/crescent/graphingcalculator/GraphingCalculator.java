@@ -377,8 +377,8 @@ public class GraphingCalculator extends Application {
         resetButton.setLayoutY(220);
         resetButton.setOnAction(e -> resetGraph());
         Button backToCalc = new Button("Back");
-        backToCalc.setLayoutX(700);
-        backToCalc.setLayoutY(260);
+        backToCalc.setLayoutX(850);
+        backToCalc.setLayoutY(50);
         backToCalc.setOnAction(startButtonEvent -> {
             resetGraph();
             //move music controls back to main calculator page
@@ -386,8 +386,8 @@ public class GraphingCalculator extends Application {
             stage.setScene(calcScene);
         });
         // Graph "trace" buttons + display text
-        trace.setLayoutX(780);
-        trace.setLayoutY(300);
+        trace.setLayoutX(790);
+        trace.setLayoutY(318);
         // Create "zero" button
         Button zeroGraph = getZeroGraph();
         // Create "value" button 
@@ -628,7 +628,7 @@ public class GraphingCalculator extends Application {
         songProgressBar.setPrefWidth(250);
         volumeIcon.setLayoutX(710);
         volumeIcon.setLayoutY(610);
-        volumeSlider.setLayoutX(740);
+        volumeSlider.setLayoutX(750);
         volumeSlider.setLayoutY(625);
     }
 
