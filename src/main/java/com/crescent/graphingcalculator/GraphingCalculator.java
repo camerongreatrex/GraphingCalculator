@@ -40,14 +40,15 @@ public class GraphingCalculator extends Application {
     // Create the line chart
     private LineChart<Number, Number> chart;
     // Create the selection (radio) buttons
-    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
+    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton,
+    squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
     // Create graph check variable
     private boolean graphCheck = false;
     // Create graph "trace" button
     private Text trace = new Text();
     // Create music variables
-    private Button playpauseButton;
-    private Label songLabel, currentSongTime, songTotal;
+    private Button playpauseButton, restartButton, nextButton, previousButton;
+    private Label songLabel, currentSongTime, songTotal, volumeIcon;
     private Slider volumeSlider;
     private ProgressBar songProgressBar;
     private Media media;
@@ -90,52 +91,32 @@ public class GraphingCalculator extends Application {
         textbox.setLayoutY(190);
         calcPane.getChildren().add(textbox);
         // Initialize the song button and label variables
+
         playpauseButton = new Button("⏯");
-        playpauseButton.setLayoutX(475);
-        playpauseButton.setLayoutY(20);
         playpauseButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         songLabel = new Label();
-        songLabel.setLayoutX(170);
-        songLabel.setLayoutY(30);
         currentSongTime = new Label();
-        currentSongTime.setLayoutX(270);
-        currentSongTime.setLayoutY(80);
         songTotal = new Label();
-        songTotal.setLayoutX(702);
-        songTotal.setLayoutY(80);
 
-        Button restartButton = new Button("Restart");
-        restartButton.setLayoutX(335);
-        restartButton.setLayoutY(20);
+        restartButton = new Button("Restart");
         restartButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         restartButton.setOnAction(event -> restartMedia());
-        Button nextButton = new Button("▷|");
-        nextButton.setLayoutX(509);
-        nextButton.setLayoutY(20);
+        nextButton = new Button("▷|");
         nextButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         nextButton.setOnAction(event -> nextSong());
-        Button previousButton = new Button("|◁");
-        previousButton.setLayoutX(440);
-        previousButton.setLayoutY(20);
+        previousButton = new Button("|◁");
         previousButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         previousButton.setOnAction(event -> previousSong());
         // Initialize volume icon (as a non-interactive Label)
-        Label volumeIcon = new Label("🔊");
-        volumeIcon.setLayoutX(583);
-        volumeIcon.setLayoutY(20);
+        volumeIcon = new Label("🔊");
         volumeIcon.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         // Initialize a volume slider
         volumeSlider = new Slider();
         volumeSlider.setMin(0);
         volumeSlider.setMax(100);
         volumeSlider.setValue(50);
-        volumeSlider.setLayoutX(623);
-        volumeSlider.setLayoutY(37);
         // Initialize a progress bar
         songProgressBar = new ProgressBar(0);
-        songProgressBar.setLayoutX(300);
-        songProgressBar.setLayoutY(80);
-        songProgressBar.setPrefWidth(400);
         songProgressBar.setStyle("-fx-accent: #1DB954;");
         // Add volume control functionality
         volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -150,8 +131,10 @@ public class GraphingCalculator extends Application {
         if (files != null) {
             songs.addAll(Arrays.asList(files));
         }
-        calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+        
+        musicToMain();
         startMedia();
+
 
         // Assign properties for the calculator buttons
         setButton(one, 45, 395, 500);
@@ -291,6 +274,8 @@ public class GraphingCalculator extends Application {
         // Graph button to toggle on/off graphing feature
         graph.setOnAction(startButtonEvent -> {
             textbox.setText("");
+            //move music to graphing page
+            musicToGraph();
             stage.setScene(graphScene);
         });
         // Declare and initialize X and Y axes for the chart
@@ -387,6 +372,8 @@ public class GraphingCalculator extends Application {
         backToCalc.setLayoutY(260);
         backToCalc.setOnAction(startButtonEvent -> {
             resetGraph();
+            //move music controls back to main calculator page
+            musicToMain();
             stage.setScene(calcScene);
         });
         // Graph "trace" buttons + display text
@@ -397,7 +384,10 @@ public class GraphingCalculator extends Application {
         // Create "value" button 
         Button ValueGraph = getValueGraph();
         // Add all elements to the main pane
-        graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc, zeroGraph, trace, valueField, ValueGraph);
+        graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton,
+            absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton,
+            cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton, formulaDisplay,
+            plotGraphButton, resetButton, backToCalc, zeroGraph, trace, valueField, ValueGraph);
         // Set the default to linear function and reset the graph to ensure everything is correct
         linearRadioButton.setSelected(true);
         resetGraph();
@@ -452,7 +442,7 @@ public class GraphingCalculator extends Application {
     }
 
     // Music Methods
-    public void startMedia() {
+    private void startMedia() {
         playpauseButton.setOnAction(event -> {
             try {
                 if (mediaPlayer == null) {
@@ -479,7 +469,7 @@ public class GraphingCalculator extends Application {
         });
     }
 
-    public void nextSong() {
+    private void nextSong() {
         try {
             if (songNumber < songs.size() - 1) {
                 songNumber++;
@@ -505,7 +495,7 @@ public class GraphingCalculator extends Application {
     }
 
 
-    public void previousSong() {
+    private void previousSong() {
         try {
             if (songNumber > 0) {
                 songNumber--;
@@ -530,7 +520,7 @@ public class GraphingCalculator extends Application {
         }
     }
 
-    public void restartMedia() {
+    private void restartMedia() {
         try {
             mediaPlayer.seek(Duration.seconds(0));
         } catch (Exception ignored) {
@@ -538,7 +528,7 @@ public class GraphingCalculator extends Application {
         }
     }
 
-    public void beginTimer() {
+    private void beginTimer() {
         timer = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
@@ -575,10 +565,64 @@ public class GraphingCalculator extends Application {
         timer.scheduleAtFixedRate(task, 0, 1000);
     }
 
-    public void cancelTimer() {
+    private void cancelTimer() {
         running = false;
         timer.cancel();
     }
+
+    //set layout of music functions on calculator
+    private void musicToMain() {
+        calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton,
+            songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+        restartButton.setLayoutX(335);
+        restartButton.setLayoutY(20);
+        previousButton.setLayoutX(440);
+        previousButton.setLayoutY(20);
+        playpauseButton.setLayoutX(475);
+        playpauseButton.setLayoutY(20);
+        nextButton.setLayoutX(509);
+        nextButton.setLayoutY(20);
+        songLabel.setLayoutX(170);
+        songLabel.setLayoutY(30);
+        currentSongTime.setLayoutX(270);
+        currentSongTime.setLayoutY(80);
+        songTotal.setLayoutX(702);
+        songTotal.setLayoutY(80);
+        songProgressBar.setLayoutX(300);
+        songProgressBar.setLayoutY(80);
+        songProgressBar.setPrefWidth(400);
+        volumeIcon.setLayoutX(583);
+        volumeIcon.setLayoutY(20);
+        volumeSlider.setLayoutX(623);
+        volumeSlider.setLayoutY(37);
+    }
+
+    private void musicToGraph() {
+        graphPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton,
+            songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+        restartButton.setLayoutX(700);
+        restartButton.setLayoutY(500);
+        previousButton.setLayoutX(800);
+        previousButton.setLayoutY(500);
+        playpauseButton.setLayoutX(830);
+        playpauseButton.setLayoutY(500);
+        nextButton.setLayoutX(860);
+        nextButton.setLayoutY(500);
+        songLabel.setLayoutX(170);
+        songLabel.setLayoutY(30);
+        currentSongTime.setLayoutX(700);
+        currentSongTime.setLayoutY(600);
+        songTotal.setLayoutX(900);
+        songTotal.setLayoutY(600);
+        songProgressBar.setLayoutX(730);
+        songProgressBar.setLayoutY(600);
+        songProgressBar.setPrefWidth(250);
+        volumeIcon.setLayoutX(583);
+        volumeIcon.setLayoutY(20);
+        volumeSlider.setLayoutX(623);
+        volumeSlider.setLayoutY(37);
+    }
+
 
     // Method to return the y value at an x on any graph - intellij formatted
     @NotNull
