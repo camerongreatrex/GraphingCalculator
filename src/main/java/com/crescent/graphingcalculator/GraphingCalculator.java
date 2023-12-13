@@ -2,6 +2,7 @@ package com.crescent.graphingcalculator;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -44,7 +45,7 @@ public class GraphingCalculator extends Application {
     private Text trace = new Text();
     // Create music variables
     private Button playpauseButton;
-    private Label songLabel;
+    private Label songLabel, currentSongTime, songTotal;
     private Slider volumeSlider;
     private ProgressBar songProgressBar;
     private Media media;
@@ -94,6 +95,13 @@ public class GraphingCalculator extends Application {
         songLabel = new Label();
         songLabel.setLayoutX(170);
         songLabel.setLayoutY(30);
+        currentSongTime = new Label();
+        currentSongTime.setLayoutX(270);
+        currentSongTime.setLayoutY(80);
+        songTotal = new Label();
+        songTotal.setLayoutX(702);
+        songTotal.setLayoutY(80);
+
         Button restartButton = new Button("Restart");
         restartButton.setLayoutX(335);
         restartButton.setLayoutY(20);
@@ -114,7 +122,6 @@ public class GraphingCalculator extends Application {
         volumeIcon.setLayoutX(583);
         volumeIcon.setLayoutY(20);
         volumeIcon.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
-
         // Initialize a volume slider
         volumeSlider = new Slider();
         volumeSlider.setMin(0);
@@ -128,7 +135,6 @@ public class GraphingCalculator extends Application {
         songProgressBar.setLayoutY(80);
         songProgressBar.setPrefWidth(400);
         songProgressBar.setStyle("-fx-accent: #1DB954;");
-
         // Add volume control functionality
         volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (mediaPlayer != null) {
@@ -142,8 +148,8 @@ public class GraphingCalculator extends Application {
         if (files != null) {
             songs.addAll(Arrays.asList(files));
         }
-        calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, songLabel, songProgressBar, volumeSlider, volumeIcon);
-        playpauseMedia();
+        calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+        startMedia();
 
         // Assign properties for the calculator buttons
         setButton(one, 45, 395, 500);
@@ -444,7 +450,7 @@ public class GraphingCalculator extends Application {
     }
 
     // Music Methods
-    public void playpauseMedia() {
+    public void startMedia() {
         playpauseButton.setOnAction(event -> {
             try {
                 if (mediaPlayer == null) {
@@ -534,13 +540,31 @@ public class GraphingCalculator extends Application {
         timer = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
+                // Set running to true
                 running = true;
+                // Get the current and end time of the song
                 double current = mediaPlayer.getCurrentTime().toSeconds();
                 double end = media.getDuration().toSeconds();
                 songProgressBar.setProgress(current / end);
 
-                if (current / end == 1) {
+                // Calculate current time and total length in proper format (minutes:seconds)
+                int currentMinutes = (int) current / 60;
+                int currentSeconds = (int) current % 60;
+                int totalMinutes = (int) end / 60;
+                int totalSeconds = (int) end % 60;
 
+                // Update the songLabel to display current time and total length
+                String currentTime = String.format("%02d:%02d", currentMinutes, currentSeconds);
+                String totalTime = String.format("%02d:%02d", totalMinutes, totalSeconds);
+                // UI-related operations must happen in the primary javafx thread, not the timer task therefore
+                // it must "run later" which is directly after a timer iteration
+                // Essentially queuing the task until after the thread opens up
+                Platform.runLater(() -> {
+                    currentSongTime.setText(currentTime);
+                    songTotal.setText(totalTime);
+                });
+
+                if (current / end == 1) {
                     cancelTimer();
                 }
             }
