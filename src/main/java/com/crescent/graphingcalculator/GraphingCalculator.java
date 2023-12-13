@@ -591,8 +591,8 @@ public class GraphingCalculator extends Application {
         playpauseButton.setLayoutY(20);
         nextButton.setLayoutX(509);
         nextButton.setLayoutY(20);
-        songLabel.setLayoutX(170);
-        songLabel.setLayoutY(30);
+        songLabel.setLayoutX(410);
+        songLabel.setLayoutY(100);
         currentSongTime.setLayoutX(270);
         currentSongTime.setLayoutY(80);
         songTotal.setLayoutX(702);
@@ -617,19 +617,19 @@ public class GraphingCalculator extends Application {
         playpauseButton.setLayoutY(500);
         nextButton.setLayoutX(860);
         nextButton.setLayoutY(500);
-        songLabel.setLayoutX(170);
-        songLabel.setLayoutY(30);
+        songLabel.setLayoutX(730);
+        songLabel.setLayoutY(560);
         currentSongTime.setLayoutX(650);
-        currentSongTime.setLayoutY(600);
+        currentSongTime.setLayoutY(580);
         songTotal.setLayoutX(940);
-        songTotal.setLayoutY(600);
+        songTotal.setLayoutY(580);
         songProgressBar.setLayoutX(680);
-        songProgressBar.setLayoutY(600);
+        songProgressBar.setLayoutY(580);
         songProgressBar.setPrefWidth(250);
-        volumeIcon.setLayoutX(583);
-        volumeIcon.setLayoutY(20);
-        volumeSlider.setLayoutX(623);
-        volumeSlider.setLayoutY(37);
+        volumeIcon.setLayoutX(710);
+        volumeIcon.setLayoutY(610);
+        volumeSlider.setLayoutX(740);
+        volumeSlider.setLayoutY(625);
     }
 
 
