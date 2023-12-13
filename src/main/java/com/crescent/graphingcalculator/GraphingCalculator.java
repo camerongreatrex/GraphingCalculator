@@ -610,11 +610,11 @@ public class GraphingCalculator extends Application {
         nextButton.setLayoutY(500);
         songLabel.setLayoutX(170);
         songLabel.setLayoutY(30);
-        currentSongTime.setLayoutX(700);
+        currentSongTime.setLayoutX(650);
         currentSongTime.setLayoutY(600);
-        songTotal.setLayoutX(900);
+        songTotal.setLayoutX(940);
         songTotal.setLayoutY(600);
-        songProgressBar.setLayoutX(730);
+        songProgressBar.setLayoutX(680);
         songProgressBar.setLayoutY(600);
         songProgressBar.setPrefWidth(250);
         volumeIcon.setLayoutX(583);
