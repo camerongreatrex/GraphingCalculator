@@ -18,6 +18,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+// Must add this library from the lib folder into libraries in your compiler
+import org.apache.commons.math3.util.FastMath;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -594,22 +596,22 @@ public class GraphingCalculator extends Application {
                     trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText())));
                 } else if (squarerootRadioButton.isSelected() && graphCheck) {
                     // a√(b(x - h)) + k
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Math.sqrt(Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText()))) + Double.parseDouble(field4.getText())));
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * FastMath.sqrt(Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText()))) + Double.parseDouble(field4.getText())));
                 } else if (cubicRadioButton.isSelected() && graphCheck) {
                     // ax^3 + bx^2 + cx + d
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Math.pow(Double.parseDouble(valueField.getText()), 3) + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText())));
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * FastMath.pow(Double.parseDouble(valueField.getText()), 3) + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText())));
                 } else if (absoluteRadioButton.isSelected() && graphCheck) {
                     // |a * x|
-                    trace.setText("Y = " + round(Math.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()))));
+                    trace.setText("Y = " + round(FastMath.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()))));
                 } else if (reciprocalRadioButton.isSelected() && graphCheck) {
                     // y = a / x
                     trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
                 } else if (sinRadioButton.isSelected() && graphCheck) {
-                    trace.setText("Y = " + round(Math.sin(Double.parseDouble(valueField.getText()))));
+                    trace.setText("Y = " + round(FastMath.sin(Double.parseDouble(valueField.getText()))));
                 } else if (cosRadioButton.isSelected() && graphCheck) {
-                    trace.setText("Y = " + round(Math.cos(Double.parseDouble(valueField.getText()))));
+                    trace.setText("Y = " + round(FastMath.cos(Double.parseDouble(valueField.getText()))));
                 } else if (tanRadioButton.isSelected() && graphCheck) {
-                    trace.setText("Y = " + round(Math.tan(Double.parseDouble(valueField.getText()))));
+                    trace.setText("Y = " + round(FastMath.tan(Double.parseDouble(valueField.getText()))));
                 }
             } catch (NumberFormatException ignored) {
             }
@@ -631,7 +633,7 @@ public class GraphingCalculator extends Application {
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
                 solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + round((-Math.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
+                trace.setText("ZERO = " + round((-FastMath.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
                 solveCubic();
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
@@ -739,7 +741,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -20; x <= 20; x += 0.5) {
-                double y = Math.abs(a * x);
+                double y = FastMath.abs(a * x);
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -773,8 +775,8 @@ public class GraphingCalculator extends Application {
     private void solveParabola(double a, double b, double c) {
         double discriminant = b * b - 4 * a * c, x1, x2;
         if (discriminant >= 0) {
-            x1 = (-b - Math.sqrt(discriminant)) / (2 * a);
-            x2 = (-b + Math.sqrt(discriminant)) / (2 * a);
+            x1 = (-b - FastMath.sqrt(discriminant)) / (2 * a);
+            x2 = (-b + FastMath.sqrt(discriminant)) / (2 * a);
             trace.setText("ZERO = " + round(x1) + " and " + round(x2));
         } else {
             trace.setText("THERE IS NO ZERO");
@@ -791,7 +793,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = 0; x <= 20; x += 0.5) {
-                double y = a * Math.sqrt(b * (x + h)) + k;
+                double y = a * FastMath.sqrt(b * (x + h)) + k;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -839,7 +841,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -20; x <= 20; x += 0.5) {
-                double y = a * Math.pow(x, 3) + b * Math.pow(x, 2) + c * x + d;
+                double y = a * FastMath.pow(x, 3) + b * FastMath.pow(x, 2) + c * x + d;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -850,9 +852,9 @@ public class GraphingCalculator extends Application {
     }
 
     private void solveCubic() {
-        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText()) - 4 * Math.pow(Double.parseDouble(field3.getText()), 3);
-        double root1 = Math.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
-        double root2 = Math.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
+        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText()) - 4 * FastMath.pow(Double.parseDouble(field3.getText()), 3);
+        double root1 = FastMath.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
+        double root2 = FastMath.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
         double root3 = root1 + root2;
         trace.setText("ZERO = " + round(root1) + ", " + round(root2) + ", " + round(root3));
     }
@@ -864,7 +866,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -20; x <= 20; x += 0.5) {
-                double y = a * Math.sin(x);
+                double y = a * FastMath.sin(x);
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -881,7 +883,7 @@ public class GraphingCalculator extends Application {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
             for (double x = -20; x <= 20; x += 0.5) {
-                double y = a * Math.cos(x);
+                double y = a * FastMath.cos(x);
                 series.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
@@ -897,10 +899,10 @@ public class GraphingCalculator extends Application {
             double a = Double.parseDouble(field1.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             // Plotting the tangent function over a limited range to avoid issues
-            for (double x = -Math.PI / 2 + 0.1; x <= Math.PI / 2 - 0.1; x += 0.1) {
-                double y = a * Math.tan(x);
+            for (double x = -FastMath.PI / 2 + 0.1; x <= FastMath.PI / 2 - 0.1; x += 0.1) {
+                double y = a * FastMath.tan(x);
                 // Handling the vertical asymptotes by checking for large y values
-                if (Double.isFinite(y) && Math.abs(y) < 50) {
+                if (Double.isFinite(y) && FastMath.abs(y) < 50) {
                     series.getData().add(new XYChart.Data<>(x, y));
                 }
             }
@@ -955,7 +957,7 @@ public class GraphingCalculator extends Application {
 
     // Quick method to round the zeros to two decimal places
     private double round(double a) {
-        return (double) Math.round(a * 100) / 100;
+        return (double) FastMath.round(a * 100) / 100;
     }
 
     // Method to reset the graph and input fields
