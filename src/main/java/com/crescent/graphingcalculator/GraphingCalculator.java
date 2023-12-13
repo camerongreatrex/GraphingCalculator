@@ -40,7 +40,8 @@ public class GraphingCalculator extends Application {
     // Create the line chart
     private LineChart<Number, Number> chart;
     // Create the selection (radio) buttons
-    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
+    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton,
+            squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
     // Create graph check variable
     private boolean graphCheck = false;
     // Create graph "trace" button
@@ -75,7 +76,16 @@ public class GraphingCalculator extends Application {
         // Declare and initialize textbox
         TextField textbox = new TextField();
         // Declare and initialize button instances
-        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), stats1 = new Button("stats"), stats2 = new Button("stats"), stats3 = new Button("stats");
+        Button one = new Button("1"), two = new Button("2"), three = new Button("3"),
+                four = new Button("4"), five = new Button("5"), six = new Button("6"),
+                seven = new Button("7"), eight = new Button("8"), nine = new Button("9"),
+                zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"),
+                plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"),
+                multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"),
+                openBracket = new Button("("), closeBracket = new Button(")"), sin = new Button("SIN"),
+                cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"),
+                enter = new Button("ENTER"), graph = new Button("GRAPHING"), stats1 = new Button("stats"),
+                stats2 = new Button("stats"), stats3 = new Button("stats");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
@@ -96,7 +106,7 @@ public class GraphingCalculator extends Application {
         playpauseButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         songLabel = new Label();
         songLabel.setLayoutX(170);
-        songLabel.setLayoutY(30);
+        songLabel.setLayoutY(60);
         currentSongTime = new Label();
         currentSongTime.setLayoutX(270);
         currentSongTime.setLayoutY(80);
@@ -150,7 +160,8 @@ public class GraphingCalculator extends Application {
         if (files != null) {
             songs.addAll(Arrays.asList(files));
         }
-        calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+        calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton,
+                songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
         startMedia();
 
         // Assign properties for the calculator buttons
@@ -397,7 +408,10 @@ public class GraphingCalculator extends Application {
         // Create "value" button 
         Button ValueGraph = getValueGraph();
         // Add all elements to the main pane
-        graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc, zeroGraph, trace, valueField, ValueGraph);
+        graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton,
+                absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton,
+                cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton, formulaDisplay,
+                plotGraphButton, resetButton, backToCalc, zeroGraph, trace, valueField, ValueGraph);
         // Set the default to linear function and reset the graph to ensure everything is correct
         linearRadioButton.setSelected(true);
         resetGraph();
@@ -590,19 +604,30 @@ public class GraphingCalculator extends Application {
             try {
                 if (linearRadioButton.isSelected() && graphCheck) {
                     // mx + b
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
                 } else if (parabolaRadioButton.isSelected() && graphCheck) {
                     // ax^2 + bx + c
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText())));
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field3.getText())));
                 } else if (squarerootRadioButton.isSelected() && graphCheck) {
                     // a√(b(x - h)) + k
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * FastMath.sqrt(Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText()))) + Double.parseDouble(field4.getText())));
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            FastMath.sqrt(Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText())
+                                    - Double.parseDouble(field3.getText()))) + Double.parseDouble(field4.getText())));
                 } else if (cubicRadioButton.isSelected() && graphCheck) {
                     // ax^3 + bx^2 + cx + d
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * FastMath.pow(Double.parseDouble(valueField.getText()), 3) + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText())));
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            FastMath.pow(Double.parseDouble(valueField.getText()), 3) + Double.parseDouble(field2.getText()) *
+                            Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field4.getText())));
                 } else if (absoluteRadioButton.isSelected() && graphCheck) {
                     // |a * x|
-                    trace.setText("Y = " + round(FastMath.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()))));
+                    trace.setText("Y = " + round(FastMath.abs(Double.parseDouble(field1.getText()) *
+                            Double.parseDouble(valueField.getText()))));
                 } else if (reciprocalRadioButton.isSelected() && graphCheck) {
                     // y = a / x
                     trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
@@ -631,9 +656,12 @@ public class GraphingCalculator extends Application {
             if (linearRadioButton.isSelected() && graphCheck) {
                 trace.setText("ZERO = " + round(-Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText())));
             } else if (parabolaRadioButton.isSelected() && graphCheck) {
-                solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
+                solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()),
+                        Double.parseDouble(field3.getText()));
             } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + round((-FastMath.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
+                trace.setText("ZERO = " + round((-FastMath.sqrt(Double.parseDouble(field4.getText()) /
+                        Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) /
+                        Double.parseDouble(field2.getText())));
             } else if (cubicRadioButton.isSelected() && graphCheck) {
                 solveCubic();
             } else if (absoluteRadioButton.isSelected() && graphCheck) {
@@ -852,7 +880,8 @@ public class GraphingCalculator extends Application {
     }
 
     private void solveCubic() {
-        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText()) - 4 * FastMath.pow(Double.parseDouble(field3.getText()), 3);
+        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText()) - 4 *
+                FastMath.pow(Double.parseDouble(field3.getText()), 3);
         double root1 = FastMath.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
         double root2 = FastMath.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
         double root3 = root1 + root2;
