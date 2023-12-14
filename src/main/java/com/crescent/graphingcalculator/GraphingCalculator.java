@@ -73,8 +73,6 @@ public class GraphingCalculator extends Application {
         // Assign a pane to graphPane and assign graphPane to graphScene
         graphPane = new Pane();
         graphScene = new Scene(graphPane, 1000, 800, Color.WHITE);
-        // Declare and initialize textbox
-        TextField textbox = new TextField();
         // Declare and initialize button instances
         Button one = new Button("1"), two = new Button("2"), three = new Button("3"),
                 four = new Button("4"), five = new Button("5"), six = new Button("6"),
@@ -91,7 +89,8 @@ public class GraphingCalculator extends Application {
         stage.setResizable(false);
         stage.setTitle("Graphing Calculator");
         stage.setScene(calcScene);
-        // Assign textbox of the calculator
+        // Declare, initialize and format textbox
+        TextField textbox = new TextField();
         textbox.setEditable(false);
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
@@ -106,7 +105,12 @@ public class GraphingCalculator extends Application {
         songLabel = new Label();
         currentSongTime = new Label();
         songTotal = new Label();
-        restartButton = new Button("Restart");
+        songTotal.setLayoutX(702);
+        songTotal.setLayoutY(80);
+
+        Button restartButton = new Button("Restart");
+        restartButton.setLayoutX(335);
+        restartButton.setLayoutY(20);
         restartButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         restartButton.setOnAction(event -> restartMedia());
         nextButton = new Button("▷|");
@@ -143,7 +147,7 @@ public class GraphingCalculator extends Application {
         if (files != null) {
             songs.addAll(Arrays.asList(files));
         }
-        
+
         // Start with music functions on main calculator page
         musicToMain();
         startMedia();
@@ -288,7 +292,7 @@ public class GraphingCalculator extends Application {
         graph.setOnAction(startButtonEvent -> {
             // Reset calculator textfield
             textbox.setText("");
-            //move music to graphing page
+            // Move music to graphing page
             musicToGraph();
             stage.setScene(graphScene);
         });
@@ -299,7 +303,7 @@ public class GraphingCalculator extends Application {
         xAxis.setLabel("X");
         yAxis.setLabel("Y");
 
-        // Declare and initialize the line chart to display the graph
+        // Declare, initialize and format the line chart to display the graph
         chart = new LineChart<>(xAxis, yAxis);
         chart.setLayoutX(20);
         chart.setLayoutY(150);
@@ -307,7 +311,7 @@ public class GraphingCalculator extends Application {
         chart.setLegendVisible(false);
         chart.setAnimated(false);
 
-        // Declare and initialize text fields for user input
+        // Declare, initialize and format text fields for user input
         field1 = new TextField();
         field1.setLayoutX(20);
         field1.setLayoutY(20);
@@ -330,11 +334,11 @@ public class GraphingCalculator extends Application {
         valueField.setPrefWidth(100);
         valueField.setPromptText("X = ");
 
-        // Declare and initialize label to display the formula of the selected function
+        // Declare and initialize label to display the formula of the selected function (starting with linear)
         formulaDisplay = new Label("FORMULA: y = mx + b");
         formulaDisplay.setLayoutX(20);
 
-        // Declare and initialize radio buttons to select the function type
+        // Declare, initialize and format radio buttons to select the function type
         linearRadioButton = new RadioButton("Linear Function");
         linearRadioButton.setSelected(true);
         linearRadioButton.setLayoutX(400);
@@ -380,18 +384,23 @@ public class GraphingCalculator extends Application {
         Button plotGraphButton = new Button("Plot Graph");
         plotGraphButton.setLayoutX(700);
         plotGraphButton.setLayoutY(180);
+        // Plot the graph and allow for point hovering on press
         plotGraphButton.setOnAction(e -> {
             plotGraph();
             addPointHovering();
         });
+        // Declare, initialize and format sidebar buttons
         Button resetButton = new Button("Reset Graph");
         resetButton.setLayoutX(700);
         resetButton.setLayoutY(220);
+        // Reset the graph on press
         resetButton.setOnAction(e -> resetGraph());
         Button backToCalc = new Button("Back");
         backToCalc.setLayoutX(850);
         backToCalc.setLayoutY(50);
+        // Return to the calculator scene and reset the graph on press
         backToCalc.setOnAction(startButtonEvent -> {
+            // Reset the graph
             // Reset the graph
             resetGraph();
             // Move music controls back to main calculator page
@@ -414,6 +423,8 @@ public class GraphingCalculator extends Application {
         linearRadioButton.setSelected(true);
         resetGraph();
         // Event listeners to update the UI based on the selected function
+        // Reset the graph when a new type is selected, change the formula needed to be entered, only make the correct
+        // amount of fields
         linearRadioButton.setOnAction(e -> {
             formulaDisplay.setText("FORMULA: y = mx + b");
             organizeFields("Enter slope (m)", "Enter y-intercept (b)", null, null);
@@ -465,19 +476,21 @@ public class GraphingCalculator extends Application {
 
     // Music Methods
     private void startMedia() {
+        // Handles when the play or pause button is pressed then starts the music
         playpauseButton.setOnAction(event -> {
-            //change button from play to pause(+vice versa) when clicked
+            // Change button from play to pause(+vice versa) when clicked
             if (playpause) {
                 playpauseButton.setText("⏸");
                 playpauseButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 8.5px;");
-                playpause = !playpause;
             } else {
                 playpauseButton.setText("▶");
                 playpauseButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12.5px;");
-                playpause = !playpause;
             }
+            playpause = !playpause;
 
             try {
+                // If there is media, add the first song to the player and set the label and volume to the default values
+                // then start the timer to handle the progress bar
                 if (mediaPlayer == null) {
                     media = new Media(songs.get(songNumber).toURI().toString());
                     mediaPlayer = new MediaPlayer(media);
@@ -489,7 +502,7 @@ public class GraphingCalculator extends Application {
 
                 if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
                     mediaPlayer.pause();
-                    // Cancel timer to keep track of process
+                    // Stop timer to keep track of process
                     cancelTimer();
                 } else {
                     mediaPlayer.play();
@@ -502,9 +515,11 @@ public class GraphingCalculator extends Application {
         });
     }
 
-    // Next song button - play the next song in the playlist
+    // Handles when the next song button is pressed and plays the next song
     private void nextSong() {
         try {
+            // If it is not the last song, add one to the current song number and stop the old song
+            // If it is the last song, go back to the first one in the array
             if (songNumber < songs.size() - 1) {
                 songNumber++;
                 mediaPlayer.stop();
@@ -516,6 +531,7 @@ public class GraphingCalculator extends Application {
                 songNumber = 0;
                 mediaPlayer.stop();
             }
+            // Add the next song to the media player, song label, set the volume to the default value, and play the song
             media = new Media(songs.get(songNumber).toURI().toString());
             mediaPlayer = new MediaPlayer(media);
             songLabel.setText(songs.get(songNumber).getName());
@@ -531,6 +547,8 @@ public class GraphingCalculator extends Application {
     // Previous song button to play the previous song
     private void previousSong() {
         try {
+            // If it is not the first song, play the previous and stop the old song
+            // If it is the first song, go back to the last song in the array
             if (songNumber > 0) {
                 songNumber--;
 
@@ -542,6 +560,7 @@ public class GraphingCalculator extends Application {
             if (running) {
                 cancelTimer();
             }
+            // Add the previous song to the media player, song label, set the volume to the default value, and play the song
             media = new Media(songs.get(songNumber).toURI().toString());
             mediaPlayer = new MediaPlayer(media);
             songLabel.setText(songs.get(songNumber).getName());
@@ -557,18 +576,20 @@ public class GraphingCalculator extends Application {
     // Restart the song
     private void restartMedia() {
         try {
+            // Reset the player to 0 seconds
             mediaPlayer.seek(Duration.seconds(0));
         } catch (Exception ignored) {
 
         }
     }
 
-    // Timer to set the progress bar
+    // Handles the timer for the progress bar and starts when a song starts playing - iterates every second
     private void beginTimer() {
+        // Declare and initialize the timer and timer task thread
         timer = new Timer();
         TimerTask task = new TimerTask() {
             public void run() {
-                // Set running to true
+                // Set timer running to true
                 running = true;
                 // Get the current and end time of the song
                 double current = mediaPlayer.getCurrentTime().toSeconds();
@@ -592,7 +613,7 @@ public class GraphingCalculator extends Application {
                     songTotal.setText(totalTime);
                 });
 
-                //stop timer when song is done or restart song if looped
+                // Stop timer when song is done or restart song if looped
                 if (!loop && current / end == 1) {
                     nextSong();
                 } else if (loop && current / end == 1) {
@@ -600,17 +621,18 @@ public class GraphingCalculator extends Application {
                 }
             }
         };
-
+        // Iterate every second
         timer.scheduleAtFixedRate(task, 0, 1000);
     }
 
-    // Cancel the timer
+    // Handles when the timer is stopped
     private void cancelTimer() {
+        //set running to false and cancel the timer
         running = false;
         timer.cancel();
     }
 
-    // loop song
+    // Loop song
     private void loopSong() {
         if (!loop) {
             loopButton.setStyle("-fx-background-color: #147a38; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
@@ -623,7 +645,7 @@ public class GraphingCalculator extends Application {
     //set layout of music functions on calculator
     private void musicToMain() {
         calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, loopButton,
-            songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+                songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
         restartButton.setLayoutX(300);
         restartButton.setLayoutY(20);
         previousButton.setLayoutX(440);
@@ -652,7 +674,7 @@ public class GraphingCalculator extends Application {
     //set layout of music function on graph
     private void musicToGraph() {
         graphPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, loopButton,
-            songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+                songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
         restartButton.setLayoutX(690);
         restartButton.setLayoutY(500);
         previousButton.setLayoutX(800);
@@ -678,52 +700,56 @@ public class GraphingCalculator extends Application {
         volumeSlider.setLayoutY(625);
     }
 
-
     // Method to return the y value at an x on any graph - intellij formatted
     @NotNull
     private Button getValueGraph() {
+        // Declare and initialize the x value button on the graph
         Button ValueGraph = new Button("X=");
         ValueGraph.setLayoutX(700);
         ValueGraph.setLayoutY(340);
         ValueGraph.setOnAction(startButtonEvent -> {
+            // Try catch to ensure no error if the valueField is null
             try {
-                if (linearRadioButton.isSelected() && graphCheck) {
+                // For each function, set x = text field to the y value when x = a certain value (similar to the math in
+                // the function point plotting as long as a graph is plotted and the value field has a number in it
+                if (linearRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                     // mx + b
                     trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
                             Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
-                } else if (parabolaRadioButton.isSelected() && graphCheck) {
+                } else if (parabolaRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                     // ax^2 + bx + c
                     trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
                             Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) +
                             Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) +
                             Double.parseDouble(field3.getText())));
-                } else if (squarerootRadioButton.isSelected() && graphCheck) {
+                } else if (squarerootRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                     // a√(b(x - h)) + k
                     trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
                             FastMath.sqrt(Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText())
                                     - Double.parseDouble(field3.getText()))) + Double.parseDouble(field4.getText())));
-                } else if (cubicRadioButton.isSelected() && graphCheck) {
+                } else if (cubicRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                     // ax^3 + bx^2 + cx + d
                     trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
                             FastMath.pow(Double.parseDouble(valueField.getText()), 3) + Double.parseDouble(field2.getText()) *
                             Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) +
                             Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) +
                             Double.parseDouble(field4.getText())));
-                } else if (absoluteRadioButton.isSelected() && graphCheck) {
+                } else if (absoluteRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                     // |a * x|
                     trace.setText("Y = " + round(FastMath.abs(Double.parseDouble(field1.getText()) *
                             Double.parseDouble(valueField.getText()))));
-                } else if (reciprocalRadioButton.isSelected() && graphCheck) {
+                } else if (reciprocalRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                     // y = a / x
                     trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
-                } else if (sinRadioButton.isSelected() && graphCheck) {
+                } else if (sinRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                     trace.setText("Y = " + round(FastMath.sin(Double.parseDouble(valueField.getText()))));
-                } else if (cosRadioButton.isSelected() && graphCheck) {
+                } else if (cosRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                     trace.setText("Y = " + round(FastMath.cos(Double.parseDouble(valueField.getText()))));
-                } else if (tanRadioButton.isSelected() && graphCheck) {
+                } else if (tanRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                     trace.setText("Y = " + round(FastMath.tan(Double.parseDouble(valueField.getText()))));
                 }
             } catch (NumberFormatException ignored) {
+
             }
         });
         return ValueGraph;
@@ -732,32 +758,36 @@ public class GraphingCalculator extends Application {
     // Method to return the zeros of the graph - intellij formatted
     @NotNull
     private Button getZeroGraph() {
+        // Declare and initialize the zeros button on the graph
         Button zeroGraph = new Button("ZERO");
         zeroGraph.setLayoutX(700);
         zeroGraph.setLayoutY(300);
         zeroGraph.setOnAction(startButtonEvent -> {
+            // Reset the trace textbox
             resetTrace();
+            // Set the text accordingly (if the right button is selected, the graph exists, and valueField has a value
+            // to the x intercepts of each graph (minus redundant functions that don't need x ints calculated)
             // Use round() to round to nearest 100th
-            if (linearRadioButton.isSelected() && graphCheck) {
+            if (linearRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                 trace.setText("ZERO = " + round(-Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText())));
-            } else if (parabolaRadioButton.isSelected() && graphCheck) {
+            } else if (parabolaRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                 solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()),
                         Double.parseDouble(field3.getText()));
-            } else if (squarerootRadioButton.isSelected() && graphCheck) {
+            } else if (squarerootRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                 trace.setText("ZERO = " + round((-FastMath.sqrt(Double.parseDouble(field4.getText()) /
                         Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) /
                         Double.parseDouble(field2.getText())));
-            } else if (cubicRadioButton.isSelected() && graphCheck) {
+            } else if (cubicRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                 solveCubic();
-            } else if (absoluteRadioButton.isSelected() && graphCheck) {
+            } else if (absoluteRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                 trace.setText("ZERO = 0.0");
-            } else if (reciprocalRadioButton.isSelected() && graphCheck) {
+            } else if (reciprocalRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                 trace.setText("THERE IS NO ZERO");
-            } else if (sinRadioButton.isSelected() && graphCheck) {
+            } else if (sinRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                 trace.setText("Not Calculating For Sin");
-            } else if (cosRadioButton.isSelected() && graphCheck) {
+            } else if (cosRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                 trace.setText("Not Calculating For Cos");
-            } else if (tanRadioButton.isSelected() && graphCheck) {
+            } else if (tanRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
                 trace.setText("Not Calculating For Tan");
             } else {
                 trace.setText("Graph A Function Please");
@@ -766,7 +796,7 @@ public class GraphingCalculator extends Application {
         return zeroGraph;
     }
 
-    // Method for setting up number buttons
+    // Method for setting up number buttons in relation to all buttons, so they are the same size
     private void setButton(Button button, int width, double x, double y) {
         calcPane.getChildren().add(button);
         button.setPrefSize(width, 30);
@@ -780,6 +810,7 @@ public class GraphingCalculator extends Application {
         field2.setPromptText(prompt2);
         field3.setPromptText(prompt3);
         field4.setPromptText(prompt4);
+        // Display just enough prompts based on the function being used
         if (prompt2 != null) {
             field2.setVisible(true);
             field2.setPromptText(prompt2);
@@ -826,12 +857,15 @@ public class GraphingCalculator extends Application {
         } else if (tanRadioButton.isSelected()) {
             plotTanFunction();
         }
+        // Set graphCheck to true once the graph is plotted
         graphCheck = true;
     }
 
     // Method to plot a linear function
     private void plotLine() {
+        // Try-catch for inputs that are not numbers
         try {
+            // Set the variables to the first and second fields depending on the amount needed for the equation
             double slope = Double.parseDouble(field1.getText());
             double intercept = Double.parseDouble(field2.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
@@ -840,9 +874,11 @@ public class GraphingCalculator extends Application {
                 double y = slope * x + intercept;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
+            // Add the new data and remove the old data
             chart.getData().clear();
             chart.getData().add(series);
         } catch (NumberFormatException ex) {
+            // Call the invalid input function and ask for proper inputs
             handleInvalidInputs();
         }
     }
@@ -863,6 +899,10 @@ public class GraphingCalculator extends Application {
             handleInvalidInputs();
         }
     }
+
+
+    //TODO: FIX THE PARABOLA FUNCTION PLOTTING THE WRONG VALUES
+
 
     // Method to plot a parabolic function
     private void plotParabola() {
@@ -1029,7 +1069,7 @@ public class GraphingCalculator extends Application {
         }
     }
 
-    // Method to handle input user input
+    // Method to handle invalid user input
     private void handleInvalidInputs() {
         Label errorLabel = new Label("Please enter valid numbers");
         errorLabel.setLayoutX(20);
@@ -1042,7 +1082,7 @@ public class GraphingCalculator extends Application {
         visiblePause.play();
     }
 
-    // Method for point hovering
+    // Method to display the point being hovered over
     private void addPointHovering() {
         // Iterate through the chart, along with all the data
         for (XYChart.Series<Number, Number> series : chart.getData()) {
@@ -1065,13 +1105,13 @@ public class GraphingCalculator extends Application {
         }
     }
 
-    // Reset the text field for zeros and y values
+    // Method to reset the text field for zeros and y values
     private void resetTrace() {
         valueField.clear();
         trace.setText("");
     }
 
-    // Quick method to round the zeros to two decimal places
+    // Method to round the zeros to two decimal places
     private double round(double a) {
         return (double) FastMath.round(a * 100) / 100;
     }
