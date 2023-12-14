@@ -594,7 +594,7 @@ public class GraphingCalculator extends Application {
 
                 //stop timer when song is done or restart song if looped
                 if (!loop && current / end == 1) {
-                    cancelTimer();
+                    nextSong();
                 } else if (loop && current / end == 1) {
                     restartMedia();
                 }
