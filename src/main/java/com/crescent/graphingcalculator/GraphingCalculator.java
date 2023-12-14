@@ -56,7 +56,7 @@ public class GraphingCalculator extends Application {
     private int songNumber;
     private ArrayList<File> songs;
     private Timer timer;
-    private boolean running, loop;
+    private boolean running, loop, playpause;
 
     public GraphingCalculator() {
     }
@@ -466,6 +466,17 @@ public class GraphingCalculator extends Application {
     // Music Methods
     private void startMedia() {
         playpauseButton.setOnAction(event -> {
+            //change button from play to pause(+vice versa) when clicked
+            if (playpause) {
+                playpauseButton.setText("⏸");
+                playpauseButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 8.5px;");
+                playpause = !playpause;
+            } else {
+                playpauseButton.setText("▶");
+                playpauseButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12.5px;");
+                playpause = !playpause;
+            }
+
             try {
                 if (mediaPlayer == null) {
                     media = new Media(songs.get(songNumber).toURI().toString());
@@ -581,9 +592,11 @@ public class GraphingCalculator extends Application {
                     songTotal.setText(totalTime);
                 });
 
-                //stop timer when song is done
-                if (current / end == 1) {
+                //stop timer when song is done or restart song if looped
+                if (!loop && current / end == 1) {
                     cancelTimer();
+                } else if (loop && current / end == 1) {
+                    restartMedia();
                 }
             }
         };
@@ -599,11 +612,12 @@ public class GraphingCalculator extends Application {
 
     // loop song
     private void loopSong() {
-        if (loop) {
-
+        if (!loop) {
+            loopButton.setStyle("-fx-background-color: #147a38; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         } else {
-
+            loopButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         }
+        loop = !loop;
     }
 
     //set layout of music functions on calculator
@@ -614,7 +628,7 @@ public class GraphingCalculator extends Application {
         restartButton.setLayoutY(20);
         previousButton.setLayoutX(440);
         previousButton.setLayoutY(20);
-        playpauseButton.setLayoutX(475);
+        playpauseButton.setLayoutX(476);
         playpauseButton.setLayoutY(20);
         nextButton.setLayoutX(509);
         nextButton.setLayoutY(20);
