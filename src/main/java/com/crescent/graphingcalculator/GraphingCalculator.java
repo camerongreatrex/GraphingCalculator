@@ -921,10 +921,12 @@ public class GraphingCalculator extends Application {
     // Method to solve/find the zero of a parabolic function
     private void solveParabola(double a, double b, double c) {
         double discriminant = b * b - 4 * a * c, x1, x2;
-        if (discriminant >= 0) {
             x1 = (-b - FastMath.sqrt(discriminant)) / (2 * a);
             x2 = (-b + FastMath.sqrt(discriminant)) / (2 * a);
+        if (discriminant > 0) {
             trace.setText("ZERO = " + round(x1) + " and " + round(x2));
+        } else if (discriminant == 0) {
+            trace.setText("ZERO = " + round(x1));
         } else {
             trace.setText("THERE IS NO ZERO");
         }
