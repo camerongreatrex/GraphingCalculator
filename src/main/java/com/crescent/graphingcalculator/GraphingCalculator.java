@@ -105,12 +105,7 @@ public class GraphingCalculator extends Application {
         songLabel = new Label();
         currentSongTime = new Label();
         songTotal = new Label();
-        songTotal.setLayoutX(702);
-        songTotal.setLayoutY(80);
-
-        Button restartButton = new Button("Restart");
-        restartButton.setLayoutX(335);
-        restartButton.setLayoutY(20);
+        restartButton = new Button("Restart");
         restartButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         restartButton.setOnAction(event -> restartMedia());
         nextButton = new Button("▷|");
