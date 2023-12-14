@@ -152,7 +152,6 @@ public class GraphingCalculator extends Application {
         musicToMain();
         startMedia();
 
-
         // Assign properties for the calculator buttons
         setButton(one, 45, 395, 500);
         setButton(two, 45, one.getLayoutX() + 50, one.getLayoutY());
@@ -400,7 +399,6 @@ public class GraphingCalculator extends Application {
         backToCalc.setLayoutY(50);
         // Return to the calculator scene and reset the graph on press
         backToCalc.setOnAction(startButtonEvent -> {
-            // Reset the graph
             // Reset the graph
             resetGraph();
             // Move music controls back to main calculator page
