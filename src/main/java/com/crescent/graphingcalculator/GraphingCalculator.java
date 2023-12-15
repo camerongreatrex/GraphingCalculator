@@ -474,7 +474,7 @@ public class GraphingCalculator extends Application {
     }
 
     // Method for deciding what goes into the text fields along with which ones are displayed
-    // Each function has it's own number of prompts that get inputting into the method
+    // Each function has its own number of prompts that get inputting into the method
     private void organizeFields(String prompt1, String prompt2, String prompt3, String prompt4) {
         field1.setPromptText(prompt1);
         field2.setPromptText(prompt2);
