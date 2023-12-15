@@ -1115,9 +1115,7 @@ public class GraphingCalculator extends Application {
                         mediaPlayer.stop();
                         media = new Media(songs.get(random).toURI().toString());
                         mediaPlayer = new MediaPlayer(media);
-                        Platform.runLater(() -> {
-                            songLabel.setText(songs.get(random).getName());
-                        });
+                        Platform.runLater(() -> songLabel.setText(songs.get(random).getName()));
                         mediaPlayer.setVolume(volumeSlider.getValue() / 600);
                         mediaPlayer.play();
                         beginTimer();
