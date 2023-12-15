@@ -18,7 +18,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-// Must add this library from the lib folder into libraries in your compiler
 import org.apache.commons.math3.util.FastMath;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +28,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GraphingCalculator extends Application {
+    // Create graph "trace" button
+    // Can be final because trace points to the same text object, but the state (text held) can be changed
+    private final Text trace = new Text();
     // Create the main calculator pane and graph pane
     private Pane calcPane, graphPane;
     // Create the scene for the calculator and graph
@@ -44,8 +46,6 @@ public class GraphingCalculator extends Application {
             squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
     // Create graph check variable
     private boolean graphCheck = false;
-    // Create graph "trace" button
-    private Text trace = new Text();
     // Create music variables
     private Button playpauseButton, restartButton, nextButton, previousButton, loopButton;
     private Label songLabel, currentSongTime, songTotal, volumeIcon;
@@ -57,9 +57,6 @@ public class GraphingCalculator extends Application {
     private ArrayList<File> songs;
     private Timer timer;
     private boolean running, loop, playpause;
-
-    public GraphingCalculator() {
-    }
 
     public static void main(String[] args) {
         launch();
@@ -84,11 +81,13 @@ public class GraphingCalculator extends Application {
                 cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"),
                 enter = new Button("ENTER"), graph = new Button("GRAPHING"), stats1 = new Button("stats"),
                 stats2 = new Button("stats"), stats3 = new Button("stats");
+
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
         stage.setTitle("Graphing Calculator");
         stage.setScene(calcScene);
+
         // Declare, initialize and format textbox
         TextField textbox = new TextField();
         textbox.setEditable(false);
@@ -99,7 +98,7 @@ public class GraphingCalculator extends Application {
         textbox.setLayoutY(190);
         calcPane.getChildren().add(textbox);
 
-        // Initialize the song button and label variables
+        // Initialize the song button, label, slider and progress bar variables
         playpauseButton = new Button("⏯");
         playpauseButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         songLabel = new Label();
@@ -117,25 +116,24 @@ public class GraphingCalculator extends Application {
         loopButton = new Button("⟳");
         loopButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         loopButton.setOnAction(event -> loopSong());
-
-        // Initialize volume icon (as a non-interactive Label)
         volumeIcon = new Label("🔊");
         volumeIcon.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
-        // Initialize a volume slider
         volumeSlider = new Slider();
         volumeSlider.setMin(0);
         volumeSlider.setMax(100);
         volumeSlider.setValue(50);
-        // Initialize a progress bar
         songProgressBar = new ProgressBar(0);
         songProgressBar.setStyle("-fx-accent: #1DB954;");
+
         // Add volume control functionality
         volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (mediaPlayer != null) {
-                // Set volume based on the slider value
+                // Set volume based on the slider value (divide by 600, so it isn't crazy loud)
                 mediaPlayer.setVolume(newValue.doubleValue() / 600);
             }
         });
+
+        //  Create an arraylist of songs in the music lib directory and add all the songs to the arraylist
         songs = new ArrayList<>();
         File directory = new File("src/main/java/lib/music");
         File[] files = directory.listFiles();
@@ -143,7 +141,7 @@ public class GraphingCalculator extends Application {
             songs.addAll(Arrays.asList(files));
         }
 
-        // Start with music functions on main calculator page
+        // Start displaying music functions on main calculator page
         musicToMain();
         startMedia();
 
@@ -181,113 +179,111 @@ public class GraphingCalculator extends Application {
         setButton(stats2, 45, four.getLayoutX() - 50, four.getLayoutY());
         setButton(stats3, 45, one.getLayoutX() - 50, one.getLayoutY());
 
-        // Set function of buttons
-        {
-            one.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 1);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            two.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 2);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            three.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 3);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            four.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 4);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            five.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 5);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            six.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 6);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            seven.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 7);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            eight.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 8);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            nine.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 9);
-                textbox.positionCaret(textbox.getText().length());
-            });
-            zero.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + 0);
-                textbox.positionCaret(textbox.getText().length());
-            });
-        }
-        {
-            plus.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "+");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            minus.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "-");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            multiply.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "*");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            divide.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "/");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            modulus.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "%");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            openBracket.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "(");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            closeBracket.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + ")");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            sin.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "SIN(");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            cos.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "COS(");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            tan.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "TAN(");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            exponent.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "^");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            decimalPoint.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + ".");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            negative.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "(-)");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            enter.setOnAction(startButtonEvent -> {
+        // Set the functions of all calculator buttons
+        one.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 1);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        two.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 2);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        three.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 3);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        four.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 4);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        five.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 5);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        six.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 6);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        seven.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 7);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        eight.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 8);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        nine.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 9);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        zero.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + 0);
+            textbox.positionCaret(textbox.getText().length());
+        });
+        plus.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "+");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        minus.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "-");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        multiply.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "*");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        divide.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "/");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        modulus.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "%");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        openBracket.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "(");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        closeBracket.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + ")");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        sin.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "SIN(");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        cos.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "COS(");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        tan.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "TAN(");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        exponent.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "^");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        decimalPoint.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + ".");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        negative.setOnMousePressed(startButtonEvent -> {
+            textbox.setText(textbox.getText() + "(-)");
+            textbox.positionCaret(textbox.getText().length());
+        });
+        enter.setOnAction(startButtonEvent -> {
 
-            });
-            clear.setOnMousePressed(startButtonEvent -> textbox.setText(""));
-        }
+        });
+        clear.setOnMousePressed(startButtonEvent -> textbox.setText(""));
+
         // Graph button to toggle on/off graphing feature
         graph.setOnAction(startButtonEvent -> {
             // Reset calculator textfield
             textbox.setText("");
             // Move music to graphing page
             musicToGraph();
+            // Set the scene to the graphing scene
             stage.setScene(graphScene);
         });
 
@@ -378,11 +374,12 @@ public class GraphingCalculator extends Application {
         Button plotGraphButton = new Button("Plot Graph");
         plotGraphButton.setLayoutX(700);
         plotGraphButton.setLayoutY(180);
-        // Plot the graph and allow for point hovering on press
+        // Plot the graph and allow for point hovering over points
         plotGraphButton.setOnAction(e -> {
             plotGraph();
             addPointHovering();
         });
+
         // Declare, initialize and format sidebar buttons
         Button resetButton = new Button("Reset Graph");
         resetButton.setLayoutX(700);
@@ -398,9 +395,11 @@ public class GraphingCalculator extends Application {
             resetGraph();
             // Move music controls back to main calculator page
             musicToMain();
+            //Set the scene to the main calculator scene
             stage.setScene(calcScene);
         });
-        // Graph "trace" buttons + display text
+
+        // Graph trace buttons + display text
         trace.setLayoutX(790);
         trace.setLayoutY(318);
         // Create "zero" button
@@ -464,7 +463,455 @@ public class GraphingCalculator extends Application {
             organizeFields("Enter coefficient (a)", null, null, null);
             resetGraph();
         });
+    }
 
+    // Method for setting up number buttons in relation to all buttons, so they are the same size
+    private void setButton(Button button, int width, double x, double y) {
+        calcPane.getChildren().add(button);
+        button.setPrefSize(width, 30);
+        button.setLayoutX(x);
+        button.setLayoutY(y);
+    }
+
+    // Method for deciding what goes into the text fields along with which ones are displayed
+    // Each function has it's own number of prompts that get inputting into the method
+    private void organizeFields(String prompt1, String prompt2, String prompt3, String prompt4) {
+        field1.setPromptText(prompt1);
+        field2.setPromptText(prompt2);
+        field3.setPromptText(prompt3);
+        field4.setPromptText(prompt4);
+
+        // Display just enough prompts based on the function being used
+        if (prompt2 != null) {
+            field2.setVisible(true);
+            field2.setPromptText(prompt2);
+        } else {
+            field2.setVisible(false);
+            field2.clear();
+        }
+        if (prompt3 != null) {
+            field3.setVisible(true);
+            field3.setPromptText(prompt3);
+        } else {
+            field3.setVisible(false);
+            field3.clear();
+        }
+        if (prompt4 != null) {
+            field4.setVisible(true);
+        } else {
+            field4.setVisible(false);
+            field4.clear();
+        }
+        resetTrace();
+    }
+
+    // Method to plot the selected graph (linear, absolute, parabolic, square root, cubic)
+    private void plotGraph() {
+        resetTrace();
+        if (linearRadioButton.isSelected()) {
+            valueField.setVisible(true);
+            plotLine();
+        } else if (absoluteRadioButton.isSelected()) {
+            plotAbsoluteFunction();
+        } else if (parabolaRadioButton.isSelected()) {
+            plotParabola();
+        } else if (squarerootRadioButton.isSelected()) {
+            plotSquareRoot();
+        } else if (cubicRadioButton.isSelected()) {
+            plotCubicFunction();
+        } else if (reciprocalRadioButton.isSelected()) {
+            plotReciprocalFunction();
+        } else if (sinRadioButton.isSelected()) {
+            plotSinFunction();
+        } else if (cosRadioButton.isSelected()) {
+            plotCosFunction();
+        } else if (tanRadioButton.isSelected()) {
+            plotTanFunction();
+        }
+        // Set graphCheck to true once the graph is plotted
+        graphCheck = true;
+    }
+
+    // Method to plot a linear function
+    private void plotLine() {
+        // Try-catch for inputs that are not numbers
+        try {
+            // Set the variables to the first and second fields depending on the amount needed for the equation
+            double slope = Double.parseDouble(field1.getText());
+            double intercept = Double.parseDouble(field2.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+            // Plot all y values from -20 to +20, and similar for other graphs as well
+            for (double x = -20; x <= 20; x += 0.5) {
+                double y = slope * x + intercept;
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            // Add the new data and remove the old data from previous charts
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            // Call the invalid input function and ask for proper inputs
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to plot an absolute function
+    private void plotAbsoluteFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = -20; x <= 20; x += 0.5) {
+                double y = FastMath.abs(a * x);
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to plot a parabolic function
+    private void plotParabola() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            double b = Double.parseDouble(field2.getText());
+            double c = Double.parseDouble(field3.getText());
+            // Calculate the x-coordinate of the vertex to fix the bug of plotting more points on one quadrant than another
+            double vertexX = -b / (2 * a);
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = vertexX - 20; x <= vertexX + 20; x += 0.5) {
+                double y = a * x * x + b * x + c;
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to solve/find the zero of a parabolic function
+    private void solveParabola(double a, double b, double c) {
+        double discriminant = b * b - 4 * a * c, x1, x2;
+        x1 = (-b - FastMath.sqrt(discriminant)) / (2 * a);
+        x2 = (-b + FastMath.sqrt(discriminant)) / (2 * a);
+        if (discriminant > 0) {
+            trace.setText("ZERO = " + round(x1) + " and " + round(x2));
+        } else if (discriminant == 0) {
+            trace.setText("ZERO = " + round(x1));
+        } else {
+            trace.setText("THERE IS NO ZERO");
+        }
+    }
+
+    // Method to plot a square root function
+    private void plotSquareRoot() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            double b = Double.parseDouble(field2.getText());
+            double h = Double.parseDouble(field3.getText());
+            double k = Double.parseDouble(field4.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = 0; x <= 20; x += 0.5) {
+                double y = a * FastMath.sqrt(b * (x + h)) + k;
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to plot reciprocal function
+    private void plotReciprocalFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            // Uses two series' to prevent a line from being drawn across the asymptotes and falsely connecting the function
+            XYChart.Series<Number, Number> positiveSeries = new XYChart.Series<>();
+            XYChart.Series<Number, Number> negativeSeries = new XYChart.Series<>();
+            // Set the style for both series and points (same color)
+            String seriesStyle = "-fx-stroke: orange;";
+            String pointStyle = "-fx-background-color: orange, white; -fx-background-insets: 0, 2; -fx-background-radius: 5px;";
+
+            for (double x = 0.5; x <= 10; x += 0.5) {
+                double y = a / x;
+                positiveSeries.getData().add(new XYChart.Data<>(x, y));
+            }
+            for (double x = -10; x < 0; x += 0.5) {
+                double y = a / x;
+                negativeSeries.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            // Add the data separately to avoid "varargs" warning
+            chart.getData().add(positiveSeries);
+            chart.getData().add(negativeSeries);
+            // Apply the style to both series
+            positiveSeries.getNode().setStyle(seriesStyle);
+            positiveSeries.getData().forEach(data -> data.getNode().setStyle(pointStyle));
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to plot a cubic function
+    private void plotCubicFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            double b = Double.parseDouble(field2.getText());
+            double c = Double.parseDouble(field3.getText());
+            double d = Double.parseDouble(field4.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = -20; x <= 20; x += 0.5) {
+                double y = a * FastMath.pow(x, 3) + b * FastMath.pow(x, 2) + c * x + d;
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to solve/find the zero of a cubic function
+    private void solveCubic() {
+        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText()) - 4 *
+                FastMath.pow(Double.parseDouble(field3.getText()), 3);
+        double root1 = FastMath.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
+        double root2 = FastMath.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
+        double root3 = root1 + root2;
+        trace.setText("ZERO = " + round(root1) + ", " + round(root2) + ", " + round(root3));
+    }
+
+    // Method to plot sin
+    private void plotSinFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = -20; x <= 20; x += 0.5) {
+                double y = a * FastMath.sin(x);
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to plot cos
+    private void plotCosFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+
+            for (double x = -20; x <= 20; x += 0.5) {
+                double y = a * FastMath.cos(x);
+                series.getData().add(new XYChart.Data<>(x, y));
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to plot tan
+    private void plotTanFunction() {
+        try {
+            double a = Double.parseDouble(field1.getText());
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+            // Plotting the tangent function over a limited range to duplication issues
+            for (double x = -FastMath.PI / 2 + 0.1; x <= FastMath.PI / 2 - 0.1; x += 0.05) {
+                double y = a * FastMath.tan(x);
+                // Handling the vertical asymptotes by checking for large y values
+                if (Double.isFinite(y) && FastMath.abs(y) < 50) {
+                    series.getData().add(new XYChart.Data<>(x, y));
+                }
+            }
+            chart.getData().clear();
+            chart.getData().add(series);
+        } catch (NumberFormatException ex) {
+            handleInvalidInputs();
+        }
+    }
+
+    // Method to return the y value at an x on any graph - intellij formatted
+    @NotNull
+    private Button getValueGraph() {
+        // Declare and initialize the x value button on the graph
+        Button ValueGraph = new Button("X=");
+        ValueGraph.setLayoutX(700);
+        ValueGraph.setLayoutY(340);
+        ValueGraph.setOnAction(startButtonEvent -> {
+            // Try catch to ensure no error if the valueField is null
+            try {
+                // For each function, set x = text field to the y value when x = a certain value (similar to the math in
+                // the function point plotting as long as a graph is plotted and the value field has a number in it
+                if (linearRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // mx + b
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
+                } else if (parabolaRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // ax^2 + bx + c
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field3.getText())));
+                } else if (squarerootRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // a√(b(x - h)) + k
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            FastMath.sqrt(Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText())
+                                    - Double.parseDouble(field3.getText()))) + Double.parseDouble(field4.getText())));
+                } else if (cubicRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // ax^3 + bx^2 + cx + d
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            FastMath.pow(Double.parseDouble(valueField.getText()), 3) + Double.parseDouble(field2.getText()) *
+                            Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field4.getText())));
+                } else if (absoluteRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // |a * x|
+                    trace.setText("Y = " + round(FastMath.abs(Double.parseDouble(field1.getText()) *
+                            Double.parseDouble(valueField.getText()))));
+                } else if (reciprocalRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // y = a / x
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
+                } else if (sinRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    trace.setText("Y = " + round(FastMath.sin(Double.parseDouble(valueField.getText()))));
+                } else if (cosRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    trace.setText("Y = " + round(FastMath.cos(Double.parseDouble(valueField.getText()))));
+                } else if (tanRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    trace.setText("Y = " + round(FastMath.tan(Double.parseDouble(valueField.getText()))));
+                }
+            } catch (NumberFormatException ignored) {
+
+            }
+        });
+        return ValueGraph;
+    }
+
+    // Method to return the zeros of the graph - intellij formatted
+    @NotNull
+    private Button getZeroGraph() {
+        // Declare and initialize the zeros button on the graph
+        Button zeroGraph = new Button("ZERO");
+        zeroGraph.setLayoutX(700);
+        zeroGraph.setLayoutY(300);
+        zeroGraph.setOnAction(startButtonEvent -> {
+            // Reset the trace textbox
+            resetTrace();
+            // Set the text accordingly (if the right button is selected, the graph exists, and valueField has a value
+            // to the x intercepts of each graph (minus redundant functions that don't need x ints calculated)
+            // Use round() to round to nearest 100th
+            if (linearRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("ZERO = " + round(-Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText())));
+            } else if (parabolaRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()),
+                        Double.parseDouble(field3.getText()));
+            } else if (squarerootRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("ZERO = " + round((-FastMath.sqrt(Double.parseDouble(field4.getText()) /
+                        Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) /
+                        Double.parseDouble(field2.getText())));
+            } else if (cubicRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                solveCubic();
+            } else if (absoluteRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("ZERO = 0.0");
+            } else if (reciprocalRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("THERE IS NO ZERO");
+            } else if (sinRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("Not Calculating For Sin");
+            } else if (cosRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("Not Calculating For Cos");
+            } else if (tanRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("Not Calculating For Tan");
+            } else {
+                trace.setText("Graph A Function Please");
+            }
+        });
+        return zeroGraph;
+    }
+
+    // Method to round the zeros to two decimal places
+    private double round(double a) {
+        return (double) FastMath.round(a * 100) / 100;
+    }
+
+    // Method to reset the text field for zeros and y values
+    private void resetTrace() {
+        valueField.clear();
+        trace.setText("");
+    }
+
+    // Method to display the point being hovered over
+    private void addPointHovering() {
+        // Iterate through the chart, along with all the data
+        for (XYChart.Series<Number, Number> series : chart.getData()) {
+            for (XYChart.Data<Number, Number> data : series.getData()) {
+                // Round the x and y values
+                double roundedX = round(data.getXValue().doubleValue());
+                double roundedY = round(data.getYValue().doubleValue());
+                // Create a tooltip and node to hold then display all the data on screen in a hovered textbox
+                Node node = data.getNode();
+                Tooltip tooltip = new Tooltip("(" + roundedX + ", " + roundedY + ")");
+                Tooltip.install(node, tooltip);
+                // Show the tooltip as the mouse is hovered over the node that holds the tooltip a point in the scene
+                node.setOnMouseEntered(event -> {
+                    Point2D pointInScene = new Point2D(event.getSceneX(), event.getSceneY());
+                    tooltip.show(graphPane.getScene().getWindow(), pointInScene.getX() + 100, pointInScene.getY() + 100);
+                });
+                // Hide the tooltip after the mouse is no longer hovered over a point
+                node.setOnMouseExited(event -> tooltip.hide());
+            }
+        }
+    }
+
+    // Method to handle invalid user input
+    private void handleInvalidInputs() {
+        // Assign values to the error label
+        Label errorLabel = new Label("Please enter valid numbers");
+        errorLabel.setLayoutX(20);
+        errorLabel.setLayoutY(135);
+        graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
+        graphPane.getChildren().add(errorLabel);
+        // Hide the error label after 3 seconds
+        PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+        visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
+        visiblePause.play();
+    }
+
+    // Method to reset the graph and input fields
+    private void resetGraph() {
+        chart.getData().clear();
+        field1.clear();
+        field2.clear();
+        field3.clear();
+        field4.clear();
+        graphCheck = false;
+        resetTrace();
+        // Reorganizes the fields that are displayed for each function
+        if (linearRadioButton.isSelected()) {
+            organizeFields("Enter slope (m)", "Enter y-intercept (b)", null, null);
+        } else if (absoluteRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", null, null, null);
+        } else if (parabolaRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (c)", null);
+        } else if (squarerootRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (h)", "Enter constant (k)");
+        } else if (cubicRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", "Enter coefficient (b)", "Enter coefficient (c)", "Enter coefficient (d)");
+        } else if (sinRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", null, null, null);
+        } else if (cosRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", null, null, null);
+        } else if (tanRadioButton.isSelected()) {
+            organizeFields("Enter coefficient (a)", null, null, null);
+        }
     }
 
     // Music Methods
@@ -627,6 +1074,7 @@ public class GraphingCalculator extends Application {
 
     // Loop song
     private void loopSong() {
+        //When the loop is not on, set it to the light green, and when it is, set it to the dark green and finally change the state after the colour is changed
         if (!loop) {
             loopButton.setStyle("-fx-background-color: #147a38; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         } else {
@@ -635,7 +1083,7 @@ public class GraphingCalculator extends Application {
         loop = !loop;
     }
 
-    //set layout of music functions on calculator
+    //set layout of music functions on calculator and add them to the pane
     private void musicToMain() {
         calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, loopButton,
                 songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
@@ -664,7 +1112,7 @@ public class GraphingCalculator extends Application {
         volumeSlider.setLayoutY(37);
     }
 
-    //set layout of music function on graph
+    //set layout of music functions on graph and add them to the pane
     private void musicToGraph() {
         graphPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, loopButton,
                 songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
@@ -691,452 +1139,5 @@ public class GraphingCalculator extends Application {
         volumeIcon.setLayoutY(610);
         volumeSlider.setLayoutX(750);
         volumeSlider.setLayoutY(625);
-    }
-
-    // Method to return the y value at an x on any graph - intellij formatted
-    @NotNull
-    private Button getValueGraph() {
-        // Declare and initialize the x value button on the graph
-        Button ValueGraph = new Button("X=");
-        ValueGraph.setLayoutX(700);
-        ValueGraph.setLayoutY(340);
-        ValueGraph.setOnAction(startButtonEvent -> {
-            // Try catch to ensure no error if the valueField is null
-            try {
-                // For each function, set x = text field to the y value when x = a certain value (similar to the math in
-                // the function point plotting as long as a graph is plotted and the value field has a number in it
-                if (linearRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                    // mx + b
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
-                            Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
-                } else if (parabolaRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                    // ax^2 + bx + c
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
-                            Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) +
-                            Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) +
-                            Double.parseDouble(field3.getText())));
-                } else if (squarerootRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                    // a√(b(x - h)) + k
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
-                            FastMath.sqrt(Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText())
-                                    - Double.parseDouble(field3.getText()))) + Double.parseDouble(field4.getText())));
-                } else if (cubicRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                    // ax^3 + bx^2 + cx + d
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
-                            FastMath.pow(Double.parseDouble(valueField.getText()), 3) + Double.parseDouble(field2.getText()) *
-                            Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) +
-                            Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) +
-                            Double.parseDouble(field4.getText())));
-                } else if (absoluteRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                    // |a * x|
-                    trace.setText("Y = " + round(FastMath.abs(Double.parseDouble(field1.getText()) *
-                            Double.parseDouble(valueField.getText()))));
-                } else if (reciprocalRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                    // y = a / x
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
-                } else if (sinRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                    trace.setText("Y = " + round(FastMath.sin(Double.parseDouble(valueField.getText()))));
-                } else if (cosRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                    trace.setText("Y = " + round(FastMath.cos(Double.parseDouble(valueField.getText()))));
-                } else if (tanRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                    trace.setText("Y = " + round(FastMath.tan(Double.parseDouble(valueField.getText()))));
-                }
-            } catch (NumberFormatException ignored) {
-
-            }
-        });
-        return ValueGraph;
-    }
-
-    // Method to return the zeros of the graph - intellij formatted
-    @NotNull
-    private Button getZeroGraph() {
-        // Declare and initialize the zeros button on the graph
-        Button zeroGraph = new Button("ZERO");
-        zeroGraph.setLayoutX(700);
-        zeroGraph.setLayoutY(300);
-        zeroGraph.setOnAction(startButtonEvent -> {
-            // Reset the trace textbox
-            resetTrace();
-            // Set the text accordingly (if the right button is selected, the graph exists, and valueField has a value
-            // to the x intercepts of each graph (minus redundant functions that don't need x ints calculated)
-            // Use round() to round to nearest 100th
-            if (linearRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                trace.setText("ZERO = " + round(-Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText())));
-            } else if (parabolaRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()),
-                        Double.parseDouble(field3.getText()));
-            } else if (squarerootRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                trace.setText("ZERO = " + round((-FastMath.sqrt(Double.parseDouble(field4.getText()) /
-                        Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) /
-                        Double.parseDouble(field2.getText())));
-            } else if (cubicRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                solveCubic();
-            } else if (absoluteRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                trace.setText("ZERO = 0.0");
-            } else if (reciprocalRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                trace.setText("THERE IS NO ZERO");
-            } else if (sinRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                trace.setText("Not Calculating For Sin");
-            } else if (cosRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                trace.setText("Not Calculating For Cos");
-            } else if (tanRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
-                trace.setText("Not Calculating For Tan");
-            } else {
-                trace.setText("Graph A Function Please");
-            }
-        });
-        return zeroGraph;
-    }
-
-    // Method for setting up number buttons in relation to all buttons, so they are the same size
-    private void setButton(Button button, int width, double x, double y) {
-        calcPane.getChildren().add(button);
-        button.setPrefSize(width, 30);
-        button.setLayoutX(x);
-        button.setLayoutY(y);
-    }
-
-    // Method for deciding what goes into the text fields along with which ones are displayed
-    private void organizeFields(String prompt1, String prompt2, String prompt3, String prompt4) {
-        field1.setPromptText(prompt1);
-        field2.setPromptText(prompt2);
-        field3.setPromptText(prompt3);
-        field4.setPromptText(prompt4);
-        // Display just enough prompts based on the function being used
-        if (prompt2 != null) {
-            field2.setVisible(true);
-            field2.setPromptText(prompt2);
-        } else {
-            field2.setVisible(false);
-            field2.clear();
-        }
-        if (prompt3 != null) {
-            field3.setVisible(true);
-            field3.setPromptText(prompt3);
-        } else {
-            field3.setVisible(false);
-            field3.clear();
-        }
-        if (prompt4 != null) {
-            field4.setVisible(true);
-        } else {
-            field4.setVisible(false);
-            field4.clear();
-        }
-        resetTrace();
-    }
-
-    // Method to plot the selected graph (linear, absolute, parabolic, square root, cubic)
-    private void plotGraph() {
-        resetTrace();
-        if (linearRadioButton.isSelected()) {
-            valueField.setVisible(true);
-            plotLine();
-        } else if (absoluteRadioButton.isSelected()) {
-            plotAbsoluteFunction();
-        } else if (parabolaRadioButton.isSelected()) {
-            plotParabola();
-        } else if (squarerootRadioButton.isSelected()) {
-            plotSquareRoot();
-        } else if (cubicRadioButton.isSelected()) {
-            plotCubicFunction();
-        } else if (reciprocalRadioButton.isSelected()) {
-            plotReciprocalFunction();
-        } else if (sinRadioButton.isSelected()) {
-            plotSinFunction();
-        } else if (cosRadioButton.isSelected()) {
-            plotCosFunction();
-        } else if (tanRadioButton.isSelected()) {
-            plotTanFunction();
-        }
-        // Set graphCheck to true once the graph is plotted
-        graphCheck = true;
-    }
-
-    // Method to plot a linear function
-    private void plotLine() {
-        // Try-catch for inputs that are not numbers
-        try {
-            // Set the variables to the first and second fields depending on the amount needed for the equation
-            double slope = Double.parseDouble(field1.getText());
-            double intercept = Double.parseDouble(field2.getText());
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-            for (double x = -20; x <= 20; x += 0.5) {
-                double y = slope * x + intercept;
-                series.getData().add(new XYChart.Data<>(x, y));
-            }
-            // Add the new data and remove the old data
-            chart.getData().clear();
-            chart.getData().add(series);
-        } catch (NumberFormatException ex) {
-            // Call the invalid input function and ask for proper inputs
-            handleInvalidInputs();
-        }
-    }
-
-    // Method to plot an absolute function
-    private void plotAbsoluteFunction() {
-        try {
-            double a = Double.parseDouble(field1.getText());
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-            for (double x = -20; x <= 20; x += 0.5) {
-                double y = FastMath.abs(a * x);
-                series.getData().add(new XYChart.Data<>(x, y));
-            }
-            chart.getData().clear();
-            chart.getData().add(series);
-        } catch (NumberFormatException ex) {
-            handleInvalidInputs();
-        }
-    }
-
-
-    //TODO: FIX THE PARABOLA FUNCTION PLOTTING THE WRONG VALUES
-
-
-    // Method to plot a parabolic function
-    private void plotParabola() {
-        try {
-            double a = Double.parseDouble(field1.getText());
-            double b = Double.parseDouble(field2.getText());
-            double c = Double.parseDouble(field3.getText());
-            // Calculate the x-coordinate of the vertex to fix the bug of printing more on one quadrant of another
-            double vertexX = -b / (2 * a);
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-            for (double x = vertexX - 20; x <= vertexX + 20; x += 0.5) {
-                double y = a * x * x + b * x + c;
-                series.getData().add(new XYChart.Data<>(x, y));
-            }
-            chart.getData().clear();
-            chart.getData().add(series);
-        } catch (NumberFormatException ex) {
-            handleInvalidInputs();
-        }
-    }
-
-    // Method to solve/find the zero of a parabolic function
-    private void solveParabola(double a, double b, double c) {
-        double discriminant = b * b - 4 * a * c, x1, x2;
-            x1 = (-b - FastMath.sqrt(discriminant)) / (2 * a);
-            x2 = (-b + FastMath.sqrt(discriminant)) / (2 * a);
-        if (discriminant > 0) {
-            trace.setText("ZERO = " + round(x1) + " and " + round(x2));
-        } else if (discriminant == 0) {
-            trace.setText("ZERO = " + round(x1));
-        } else {
-            trace.setText("THERE IS NO ZERO");
-        }
-    }
-
-    // Method to plot a square root function
-    private void plotSquareRoot() {
-        try {
-            double a = Double.parseDouble(field1.getText());
-            double b = Double.parseDouble(field2.getText());
-            double h = Double.parseDouble(field3.getText());
-            double k = Double.parseDouble(field4.getText());
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-            for (double x = 0; x <= 20; x += 0.5) {
-                double y = a * FastMath.sqrt(b * (x + h)) + k;
-                series.getData().add(new XYChart.Data<>(x, y));
-            }
-            chart.getData().clear();
-            chart.getData().add(series);
-        } catch (NumberFormatException ex) {
-            handleInvalidInputs();
-        }
-    }
-
-    // Method to plot reciprocal function
-    private void plotReciprocalFunction() {
-        try {
-            double a = Double.parseDouble(field1.getText());
-            XYChart.Series<Number, Number> positiveSeries = new XYChart.Series<>();
-            XYChart.Series<Number, Number> negativeSeries = new XYChart.Series<>();
-            // Set the style for both series and points (same color)
-            String seriesStyle = "-fx-stroke: orange;";
-            String pointStyle = "-fx-background-color: orange, white; -fx-background-insets: 0, 2; -fx-background-radius: 5px;";
-
-            for (double x = 0.5; x <= 10; x += 0.5) {
-                double y = a / x;
-                positiveSeries.getData().add(new XYChart.Data<>(x, y));
-            }
-            for (double x = -10; x < 0; x += 0.5) {
-                double y = a / x;
-                negativeSeries.getData().add(new XYChart.Data<>(x, y));
-            }
-            chart.getData().clear();
-            chart.getData().addAll(positiveSeries, negativeSeries);
-            // Apply the style to both series
-            positiveSeries.getNode().setStyle(seriesStyle);
-            positiveSeries.getData().forEach(data -> data.getNode().setStyle(pointStyle));
-        } catch (NumberFormatException ex) {
-            handleInvalidInputs();
-        }
-    }
-
-    // Method to plot a cubic function
-    private void plotCubicFunction() {
-        try {
-            double a = Double.parseDouble(field1.getText());
-            double b = Double.parseDouble(field2.getText());
-            double c = Double.parseDouble(field3.getText());
-            double d = Double.parseDouble(field4.getText());
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-            for (double x = -20; x <= 20; x += 0.5) {
-                double y = a * FastMath.pow(x, 3) + b * FastMath.pow(x, 2) + c * x + d;
-                series.getData().add(new XYChart.Data<>(x, y));
-            }
-            chart.getData().clear();
-            chart.getData().add(series);
-        } catch (NumberFormatException ex) {
-            handleInvalidInputs();
-        }
-    }
-
-    // Method to solve/find the zero of a cubic function
-    private void solveCubic() {
-        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText()) - 4 *
-                FastMath.pow(Double.parseDouble(field3.getText()), 3);
-        double root1 = FastMath.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
-        double root2 = FastMath.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
-        double root3 = root1 + root2;
-        trace.setText("ZERO = " + round(root1) + ", " + round(root2) + ", " + round(root3));
-    }
-
-    // Method to plot sin
-    private void plotSinFunction() {
-        try {
-            double a = Double.parseDouble(field1.getText());
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-            for (double x = -20; x <= 20; x += 0.5) {
-                double y = a * FastMath.sin(x);
-                series.getData().add(new XYChart.Data<>(x, y));
-            }
-            chart.getData().clear();
-            chart.getData().add(series);
-        } catch (NumberFormatException ex) {
-            handleInvalidInputs();
-        }
-    }
-
-    // Method to plot cos
-    private void plotCosFunction() {
-        try {
-            double a = Double.parseDouble(field1.getText());
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-            for (double x = -20; x <= 20; x += 0.5) {
-                double y = a * FastMath.cos(x);
-                series.getData().add(new XYChart.Data<>(x, y));
-            }
-            chart.getData().clear();
-            chart.getData().add(series);
-        } catch (NumberFormatException ex) {
-            handleInvalidInputs();
-        }
-    }
-
-    // Method to plot tan
-    private void plotTanFunction() {
-        try {
-            double a = Double.parseDouble(field1.getText());
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-            // Plotting the tangent function over a limited range to avoid issues
-            for (double x = -FastMath.PI / 2 + 0.1; x <= FastMath.PI / 2 - 0.1; x += 0.1) {
-                double y = a * FastMath.tan(x);
-                // Handling the vertical asymptotes by checking for large y values
-                if (Double.isFinite(y) && FastMath.abs(y) < 50) {
-                    series.getData().add(new XYChart.Data<>(x, y));
-                }
-            }
-            chart.getData().clear();
-            chart.getData().add(series);
-        } catch (NumberFormatException ex) {
-            handleInvalidInputs();
-        }
-    }
-
-    // Method to handle invalid user input
-    private void handleInvalidInputs() {
-        Label errorLabel = new Label("Please enter valid numbers");
-        errorLabel.setLayoutX(20);
-        errorLabel.setLayoutY(135);
-        graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
-        graphPane.getChildren().add(errorLabel);
-        // Hide the error label after 3 seconds
-        PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-        visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
-        visiblePause.play();
-    }
-
-    // Method to display the point being hovered over
-    private void addPointHovering() {
-        // Iterate through the chart, along with all the data
-        for (XYChart.Series<Number, Number> series : chart.getData()) {
-            for (XYChart.Data<Number, Number> data : series.getData()) {
-                // Round the x and y values
-                double roundedX = round(data.getXValue().doubleValue());
-                double roundedY = round(data.getYValue().doubleValue());
-                // Create a tooltip and node to hold then display all the data on screen in a hovered textbox
-                Node node = data.getNode();
-                Tooltip tooltip = new Tooltip("(" + roundedX + ", " + roundedY + ")");
-                Tooltip.install(node, tooltip);
-                // Show the tooltip as the mouse is hovered over the node that holds the tooltip a point in the scene
-                node.setOnMouseEntered(event -> {
-                    Point2D pointInScene = new Point2D(event.getSceneX(), event.getSceneY());
-                    tooltip.show(graphPane.getScene().getWindow(), pointInScene.getX() + 10, pointInScene.getY() + 10);
-                });
-
-                node.setOnMouseExited(event -> tooltip.hide());
-            }
-        }
-    }
-
-    // Method to reset the text field for zeros and y values
-    private void resetTrace() {
-        valueField.clear();
-        trace.setText("");
-    }
-
-    // Method to round the zeros to two decimal places
-    private double round(double a) {
-        return (double) FastMath.round(a * 100) / 100;
-    }
-
-    // Method to reset the graph and input fields
-    private void resetGraph() {
-        chart.getData().clear();
-        field1.clear();
-        field2.clear();
-        field3.clear();
-        field4.clear();
-        graphCheck = false;
-        resetTrace();
-
-        if (linearRadioButton.isSelected()) {
-            organizeFields("Enter slope (m)", "Enter y-intercept (b)", null, null);
-        } else if (absoluteRadioButton.isSelected()) {
-            organizeFields("Enter coefficient (a)", null, null, null);
-        } else if (parabolaRadioButton.isSelected()) {
-            organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (c)", null);
-        } else if (squarerootRadioButton.isSelected()) {
-            organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (h)", "Enter constant (k)");
-        } else if (cubicRadioButton.isSelected()) {
-            organizeFields("Enter coefficient (a)", "Enter coefficient (b)", "Enter coefficient (c)", "Enter coefficient (d)");
-        } else if (sinRadioButton.isSelected()) {
-            organizeFields("Enter coefficient (a)", null, null, null);
-        } else if (cosRadioButton.isSelected()) {
-            organizeFields("Enter coefficient (a)", null, null, null);
-        } else if (tanRadioButton.isSelected()) {
-            organizeFields("Enter coefficient (a)", null, null, null);
-        }
     }
 }
