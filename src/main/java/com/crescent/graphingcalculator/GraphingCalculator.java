@@ -1107,19 +1107,21 @@ public class GraphingCalculator extends Application {
                 } else if (!loop && current / end == 1) {
                     // Shuffle songs if shuffle button is clicked
                     if (shuffle) {
-                        //generate random song number
-                        int random = ((int)(Math.random() * songs.size()));
+                        // generate random song number
+                        int random = ((int) (Math.random() * songs.size()));
                         shuffleCheck(random);
                         // Play shuffled song
                         cancelTimer();
                         mediaPlayer.stop();
                         media = new Media(songs.get(random).toURI().toString());
                         mediaPlayer = new MediaPlayer(media);
-                        songLabel.setText(songs.get(random).getName());
+                        Platform.runLater(() -> {
+                            songLabel.setText(songs.get(random).getName());
+                        });
                         mediaPlayer.setVolume(volumeSlider.getValue() / 600);
                         mediaPlayer.play();
                         beginTimer();
-                    // Play next song if songs are not shuffled
+                        // Play next song if songs are not shuffled
                     } else {
                         nextSong();
                     }
@@ -1178,7 +1180,7 @@ public class GraphingCalculator extends Application {
     // Makes sure that the shuffle function does not repeat songs
     private void shuffleCheck(int random) {
         if (random == songNumber) {
-            random = (int)(Math.random() * songs.size());
+            random = (int) (Math.random() * songs.size());
             shuffleCheck(random);
         }
     }
