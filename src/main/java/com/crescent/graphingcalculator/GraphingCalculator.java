@@ -333,7 +333,7 @@ public class GraphingCalculator extends Application {
         field4.setPrefWidth(180);
         valueField = new TextField();
         valueField.setLayoutX(800);
-        valueField.setLayoutY(340);
+        valueField.setLayoutY(300);
         valueField.setPrefWidth(100);
         valueField.setPromptText("X = ");
 
@@ -414,8 +414,8 @@ public class GraphingCalculator extends Application {
         });
 
         // Graph trace buttons + display text
-        trace.setLayoutX(790);
-        trace.setLayoutY(318);
+        trace.setLayoutX(800);
+        trace.setLayoutY(278);
         // Create "zero" button
         Button zeroGraph = getZeroGraph();
         // Create "value" button
@@ -772,7 +772,7 @@ public class GraphingCalculator extends Application {
         // Declare and initialize the x value button on the graph
         Button ValueGraph = new Button("X=");
         ValueGraph.setLayoutX(700);
-        ValueGraph.setLayoutY(340);
+        ValueGraph.setLayoutY(300);
         ValueGraph.setOnAction(startButtonEvent -> {
             // Try catch to ensure no error if the valueField is null
             try {
@@ -834,7 +834,7 @@ public class GraphingCalculator extends Application {
         // Declare and initialize the zeros button on the graph
         Button zeroGraph = new Button("ZERO");
         zeroGraph.setLayoutX(700);
-        zeroGraph.setLayoutY(300);
+        zeroGraph.setLayoutY(260);
         zeroGraph.setOnAction(startButtonEvent -> {
             // Reset the trace textbox
             resetTrace();
@@ -915,7 +915,6 @@ public class GraphingCalculator extends Application {
         Label errorLabel = new Label("Please enter valid numbers");
         errorLabel.setLayoutX(20);
         errorLabel.setLayoutY(135);
-        graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
         graphPane.getChildren().add(errorLabel);
         // Hide the error label after 3 seconds
         PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
@@ -1194,7 +1193,7 @@ public class GraphingCalculator extends Application {
     private void musicToMain() {
         calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, loopButton,
                 shuffleButton, songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
-        restartButton.setLayoutX(300);
+        restartButton.setLayoutX(292);
         restartButton.setLayoutY(20);
         previousButton.setLayoutX(420);
         previousButton.setLayoutY(20);
@@ -1202,9 +1201,9 @@ public class GraphingCalculator extends Application {
         playpauseButton.setLayoutY(20);
         nextButton.setLayoutX(489);
         nextButton.setLayoutY(20);
-        loopButton.setLayoutX(375);
+        loopButton.setLayoutX(374);
         loopButton.setLayoutY(20);
-        shuffleButton.setLayoutX(530);
+        shuffleButton.setLayoutX(534);
         shuffleButton.setLayoutY(20);
         songLabel.setLayoutX(410);
         songLabel.setLayoutY(100);
