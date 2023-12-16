@@ -802,7 +802,7 @@ public class GraphingCalculator extends Application {
                     trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
                             FastMath.pow(Double.parseDouble(valueField.getText()), 3)
                             + Double.parseDouble(field2.getText()) *
-                                    Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                            Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
                             +
                             Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) +
                             Double.parseDouble(field4.getText())));
@@ -957,19 +957,9 @@ public class GraphingCalculator extends Application {
     private void startMedia() {
         // Handles when the play or pause button is pressed then starts the music
         playpauseButton.setOnAction(event -> {
-            // Change button from play to pause(+vice versa) when clicked
-            if (playpause) {
-                playpauseButton.setText("⏸");
-                playpauseButton.setStyle(
-                        "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 8.5px;");
-            } else {
-                playpauseButton.setText("▶");
-                playpauseButton.setStyle(
-                        "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12.5px;");
-            }
-            playpause = !playpause;
-
             try {
+                // Change the icon of the playpause button on button press
+                playpauseIcon();
                 // If there is media, add the first song to the player and set the label and
                 // volume to the default values
                 // then start the timer to handle the progress bar
@@ -1000,6 +990,8 @@ public class GraphingCalculator extends Application {
     // Handles when the next song button is pressed and plays the next song
     private void nextSong() {
         try {
+            playpause = false;
+            playpauseIcon();
             // If it is not the last song, add one to the current song number and stop the
             // old song
             // If it is the last song, go back to the first one in the array
@@ -1031,6 +1023,8 @@ public class GraphingCalculator extends Application {
     // Previous song button to play the previous song
     private void previousSong() {
         try {
+            playpause = false;
+            playpauseIcon();
             // If it is not the first song, play the previous and stop the old song
             // If it is the first song, go back to the last song in the array
             if (songNumber > 0) {
@@ -1120,8 +1114,6 @@ public class GraphingCalculator extends Application {
                         mediaPlayer.play();
                         beginTimer();
                         // Play next song if songs are not shuffled
-                    } else {
-                        nextSong();
                     }
                 }
             }
@@ -1173,6 +1165,21 @@ public class GraphingCalculator extends Application {
             }
         }
         shuffle = !shuffle;
+    }
+
+    // Method to change the icon of the playpause button
+    private void playpauseIcon() {
+        // Change button from play to pause(+vice versa) when clicked
+        if (playpause) {
+            playpauseButton.setText("▶");
+            playpauseButton.setStyle(
+                    "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12.5px;");
+        } else {
+            playpauseButton.setText("⏸");
+            playpauseButton.setStyle(
+                    "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 8.5px;");
+        }
+        playpause = !playpause;
     }
 
     // Makes sure that the shuffle function does not repeat songs
