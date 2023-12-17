@@ -10,6 +10,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -18,6 +19,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import org.apache.commons.math3.distribution.NormalDistribution;
 // Must add this library from the lib folder into libraries in your compiler
 import org.apache.commons.math3.util.FastMath;
 import org.jetbrains.annotations.NotNull;
@@ -25,14 +28,15 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class GraphingCalculator extends Application {
     // Create the main calculator pane and graph pane
-    private Pane calcPane, graphPane;
+    private Pane calcPane, graphPane, normalPane, probPane;
     // Create the scene for the calculator and graph
-    private Scene calcScene, graphScene;
+    private Scene calcScene, graphScene, normalcdfScene, probScene;
     // Create text fields, labels, line chart, and radio buttons,
     private TextField field1, field2, field3, field4, valueField;
     // Create the formula text display
@@ -72,10 +76,12 @@ public class GraphingCalculator extends Application {
         // Assign a pane to graphPane and assign graphPane to graphScene
         graphPane = new Pane();
         graphScene = new Scene(graphPane, 1000, 800, Color.WHITE);
+        normalPane = new Pane();
+        normalcdfScene = new Scene(normalPane, 1000, 800, Color.WHITE);
         // Declare and initialize textbox
         TextField textbox = new TextField();
         // Declare and initialize button instances
-        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), stats1 = new Button("stats"), stats2 = new Button("stats"), stats3 = new Button("stats");
+        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), normal = new Button("normalDist"), prob = new Button("prob");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
@@ -183,9 +189,8 @@ public class GraphingCalculator extends Application {
         enter.setStyle("-fx-font: 9 arial;");
         setButton(graph, 97, sin.getLayoutX() + 48, sin.getLayoutY() - 50);
         graph.setStyle("-fx-font: 9 arial;");
-        setButton(stats1, 45, seven.getLayoutX() - 50, seven.getLayoutY());
-        setButton(stats2, 45, four.getLayoutX() - 50, four.getLayoutY());
-        setButton(stats3, 45, one.getLayoutX() - 50, one.getLayoutY());
+        setButton(normal, 45, seven.getLayoutX() - 50, seven.getLayoutY());
+        setButton(prob, 45, four.getLayoutX() - 50, four.getLayoutY());
 
         // Set function of buttons
         {
@@ -284,10 +289,134 @@ public class GraphingCalculator extends Application {
                 textbox.positionCaret(textbox.getText().length());
             });
             enter.setOnAction(startButtonEvent -> {
-
+                performOperation(textbox);
             });
             clear.setOnMousePressed(startButtonEvent -> textbox.setText(""));
+            normal.setOnMousePressed(startButtonEvent -> {
+                // Create the UI elements for the normal distribution input
+                Label meanLabel = new Label("Mean:");
+                Label stdDevLabel = new Label("Standard Deviation:");
+                Label numberLabel = new Label("Number:");
+                TextField meanField = new TextField();
+                TextField stdDevField = new TextField();
+                TextField numberField = new TextField();
+                RadioButton leftRadioButton = new RadioButton("Left");
+                RadioButton rightRadioButton = new RadioButton("Right");
+                ToggleGroup toggleGroup = new ToggleGroup();
+                leftRadioButton.setToggleGroup(toggleGroup);
+                rightRadioButton.setToggleGroup(toggleGroup);
+                Button calculateButton = new Button("Calculate");
+                Label resultLabel = new Label();
+            
+                // Set the layout for the normal distribution input
+                GridPane inputLayout = new GridPane();
+                inputLayout.setVgap(10);
+                inputLayout.setHgap(10);
+                inputLayout.addRow(0, meanLabel, meanField);
+                inputLayout.addRow(1, stdDevLabel, stdDevField);
+                inputLayout.addRow(2, numberLabel, numberField);
+                inputLayout.addRow(3, new Label("Calculate to the:"), leftRadioButton, rightRadioButton);
+                inputLayout.addRow(4, calculateButton);
+                inputLayout.addRow(5, resultLabel);
+            
+                // Create a new stage for the normal distribution input
+                Stage inputStage = new Stage();
+                inputStage.setTitle("Normal Distribution Input");
+                Scene inputScene = new Scene(inputLayout, 300, 250);
+                inputStage.setScene(inputScene);
+            
+                // Set the action for the calculate button
+                calculateButton.setOnAction(event -> {
+                    try {
+                        // Retrieve values from the input fields
+                        double mean = Double.parseDouble(meanField.getText());
+                        double stdDev = Double.parseDouble(stdDevField.getText());
+                        double number = Double.parseDouble(numberField.getText());
+            
+                        // Create a normal distribution object
+                        NormalDistribution normalDistribution = new NormalDistribution(mean, stdDev);
+            
+                        // Calculate the cumulative probability
+                        double cumulativeProbability;
+                        if (leftRadioButton.isSelected()) {
+                            cumulativeProbability = normalDistribution.cumulativeProbability(number);
+                            resultLabel.setText("Area to the left of " + number + ": " + cumulativeProbability);
+                        } else if (rightRadioButton.isSelected()) {
+                            cumulativeProbability = 1 - normalDistribution.cumulativeProbability(number);
+                            resultLabel.setText("Area to the right of " + number + ": " + cumulativeProbability);
+                        } else {
+                            resultLabel.setText("Please select whether to calculate to the left or right.");
+                        }
+            
+                    } catch (NumberFormatException e) {
+                        resultLabel.setText("Invalid input. Please enter numeric values.");
+                    }
+                });
+            
+                // Show the input stage
+                inputStage.show();
+            });
+    
         }
+        prob.setOnMousePressed(startButtonEvent -> {
+            // Create the UI elements for the combination/permutation input
+            Label nLabel = new Label("n:");
+            Label rLabel = new Label("r:");
+            TextField nField = new TextField();
+            TextField rField = new TextField();
+            Button calculateButton = new Button("Calculate");
+            Label resultLabel = new Label();
+        
+            // ToggleGroup for the operation choice
+            ToggleGroup operationToggleGroup = new ToggleGroup();
+        
+            RadioButton combinationRadioButton = new RadioButton("Combination");
+            combinationRadioButton.setToggleGroup(operationToggleGroup);
+            combinationRadioButton.setSelected(true); // Default selection
+        
+            RadioButton permutationRadioButton = new RadioButton("Permutation");
+            permutationRadioButton.setToggleGroup(operationToggleGroup);
+        
+            // Set the layout for the combination/permutation input
+            GridPane inputLayout = new GridPane();
+            inputLayout.setVgap(10);
+            inputLayout.setHgap(10);
+            inputLayout.addRow(0, nLabel, nField);
+            inputLayout.addRow(1, rLabel, rField);
+            inputLayout.addRow(2, combinationRadioButton, permutationRadioButton);
+            inputLayout.addRow(3, calculateButton);
+            inputLayout.addRow(4, resultLabel);
+        
+            // Create a new stage for the combination/permutation input
+            Stage inputStage = new Stage();
+            inputStage.setTitle("Combination/Permutation Input");
+            Scene inputScene = new Scene(inputLayout, 300, 200);
+            inputStage.setScene(inputScene);
+        
+            // Set the action for the calculate button
+            calculateButton.setOnAction(event -> {
+                try {
+                    // Retrieve values from the input fields
+                    int n = Integer.parseInt(nField.getText());
+                    int r = Integer.parseInt(rField.getText());
+        
+                    // Perform either combination or permutation calculation
+                    long result;
+                    if (combinationRadioButton.isSelected()) {
+                        result = calculateCombination(n, r);
+                    } else {
+                        result = calculatePermutation(n, r);
+                    }
+        
+                    resultLabel.setText("Result: " + result);
+                } catch (NumberFormatException e) {
+                    resultLabel.setText("Invalid input. Please enter valid integers.");
+                }
+            });
+        
+            // Show the input stage
+            inputStage.show();
+        });
         // Graph button to toggle on/off graphing feature
         graph.setOnAction(startButtonEvent -> {
             textbox.setText("");
@@ -689,7 +818,108 @@ public class GraphingCalculator extends Application {
         }
         resetTrace();
     }
+    
+    //method to do simple arithmetic expressions
+    private static void performOperation(TextField textbox) {
+        try {
+            String input = textbox.getText();
+            double result = evaluateExpression(input);
+            textbox.setText(String.valueOf(result));
+        } catch (Exception ex) {
+            textbox.setText("Error");
+        }
+    }
 
+    private static double evaluateExpression(String expression) {
+        // Use a stack to keep track of intermediate results
+        Stack<Double> stack = new Stack<>();
+        // Use a recursive helper function to evaluate the expression
+        return evaluateExpressionHelper(expression, 0, stack);
+    }
+
+    private static double evaluateExpressionHelper(String expression, int index, Stack<Double> stack) {
+        double currentOperand = 0;
+        double decimalMultiplier = 0.1;
+        char currentOperator = '+';
+        boolean isDecimal = false;
+        boolean isNegative = false;
+    
+        while (index < expression.length()) {
+            char c = expression.charAt(index);
+    
+            if (Character.isDigit(c)) {
+                if (isDecimal) {
+                    currentOperand += (c - '0') * decimalMultiplier;
+                    decimalMultiplier *= 0.1; // Move the decimal point to the left
+                } else {
+                    currentOperand = currentOperand * 10 + (c - '0');
+                }
+            } else if (c == '.') {
+                isDecimal = true;
+            } else if (isNegativeSign(expression, index)) {
+                isNegative = true;
+                index += 2; // Skip the "(-)" characters
+            } else if (isOperator(c)) {
+                applyOperator(stack, (isNegative ? -currentOperand : currentOperand), currentOperator);
+                currentOperand = 0;
+                currentOperator = c;
+                isDecimal = false;
+                decimalMultiplier = 0.1; // Reset decimal handling
+                isNegative = false;
+            } else if (c == '(') {
+                currentOperand = evaluateExpressionHelper(expression, index + 1, stack);
+                index++; // Skip the corresponding ')'
+            } else if (c == ')') {
+                break; // End of the current recursive call
+            }
+    
+            index++;
+        }
+    
+        applyOperator(stack, (isNegative ? -currentOperand : currentOperand), currentOperator);
+    
+        return stack.stream().mapToDouble(Double::doubleValue).sum();
+    }
+    
+    private static boolean isNegativeSign(String expression, int index) {
+        // Check if the next three characters are "(-)"
+        return (index + 2 < expression.length() && expression.substring(index, index + 3).equals("(-)"));
+    }
+    private static void applyOperator(Stack<Double> stack, double operand, char operator) {
+        switch (operator) {
+            case '+':
+                stack.push(operand);
+                break;
+            case '-':
+                stack.push(-operand);
+                break;
+            case '*':
+                stack.push(stack.pop() * operand);
+                break;
+            case '/':
+                stack.push(stack.pop() / operand);
+                break;
+        }
+    }
+
+    private static boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/';
+    }
+    private long calculateCombination(int n, int r) {
+        return factorial(n) / (factorial(r) * factorial(n - r));
+    }
+
+    private long calculatePermutation(int n, int r) {
+        return factorial(n) / factorial(n - r);
+    }
+
+    private long factorial(int n) {
+        if (n == 0 || n == 1) {
+            return 1;
+        } else {
+            return n * factorial(n - 1);
+        }
+    }
     // Method to plot the selected graph (linear, absolute, parabolic, square root, cubic)
     private void plotGraph() {
         resetTrace();
