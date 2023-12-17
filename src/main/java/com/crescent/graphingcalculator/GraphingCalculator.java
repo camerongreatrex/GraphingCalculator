@@ -33,6 +33,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class GraphingCalculator extends Application {
+    // Create graph "trace" button
+    // Can be final because trace points to the same text object, but the state
+    // (text held) can be changed
+    private final Text trace = new Text();
     // Create the main calculator pane and graph pane
     private Pane calcPane, graphPane, normalPane, probPane;
     // Create the scene for the calculator and graph
@@ -44,14 +48,13 @@ public class GraphingCalculator extends Application {
     // Create the line chart
     private LineChart<Number, Number> chart;
     // Create the selection (radio) buttons
-    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
+    private RadioButton linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton,
+            squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton;
     // Create graph check variable
     private boolean graphCheck = false;
-    // Create graph "trace" button
-    private Text trace = new Text();
     // Create music variables
-    private Button playpauseButton;
-    private Label songLabel, currentSongTime, songTotal;
+    private Button playpauseButton, restartButton, nextButton, previousButton, loopButton, shuffleButton;
+    private Label songLabel, currentSongTime, songTotal, volumeIcon;
     private Slider volumeSlider;
     private ProgressBar songProgressBar;
     private Media media;
@@ -59,10 +62,7 @@ public class GraphingCalculator extends Application {
     private int songNumber;
     private ArrayList<File> songs;
     private Timer timer;
-    private boolean running;
-
-    public GraphingCalculator() {
-    }
+    private boolean running, loop, playpause, shuffle;
 
     public static void main(String[] args) {
         launch();
@@ -87,7 +87,9 @@ public class GraphingCalculator extends Application {
         stage.setResizable(false);
         stage.setTitle("Graphing Calculator");
         stage.setScene(calcScene);
-        // Assign textbox of the calculator
+
+        // Declare, initialize and format textbox
+        TextField textbox = new TextField();
         textbox.setEditable(false);
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
@@ -95,68 +97,63 @@ public class GraphingCalculator extends Application {
         textbox.setLayoutX(390);
         textbox.setLayoutY(190);
         calcPane.getChildren().add(textbox);
-        // Initialize the song button and label variables
-        playpauseButton = new Button("⏯");
-        playpauseButton.setLayoutX(475);
-        playpauseButton.setLayoutY(20);
-        playpauseButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
-        songLabel = new Label();
-        songLabel.setLayoutX(170);
-        songLabel.setLayoutY(30);
-        currentSongTime = new Label();
-        currentSongTime.setLayoutX(270);
-        currentSongTime.setLayoutY(80);
-        songTotal = new Label();
-        songTotal.setLayoutX(702);
-        songTotal.setLayoutY(80);
 
-        Button restartButton = new Button("Restart");
-        restartButton.setLayoutX(335);
-        restartButton.setLayoutY(20);
-        restartButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        // Initialize the song buttons, label, slider and progress bar variables
+        playpauseButton = new Button("⏯");
+        playpauseButton.setStyle(
+                "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        songLabel = new Label();
+        currentSongTime = new Label();
+        songTotal = new Label();
+        restartButton = new Button("Restart");
+        restartButton.setStyle(
+                "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         restartButton.setOnAction(event -> restartMedia());
-        Button nextButton = new Button("▷|");
-        nextButton.setLayoutX(509);
-        nextButton.setLayoutY(20);
-        nextButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        nextButton = new Button("▷|");
+        nextButton.setStyle(
+                "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         nextButton.setOnAction(event -> nextSong());
-        Button previousButton = new Button("|◁");
-        previousButton.setLayoutX(440);
-        previousButton.setLayoutY(20);
-        previousButton.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        previousButton = new Button("|◁");
+        previousButton.setStyle(
+                "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         previousButton.setOnAction(event -> previousSong());
-        // Initialize volume icon (as a non-interactive Label)
-        Label volumeIcon = new Label("🔊");
-        volumeIcon.setLayoutX(583);
-        volumeIcon.setLayoutY(20);
-        volumeIcon.setStyle("-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
-        // Initialize a volume slider
+        loopButton = new Button("⟳");
+        loopButton.setStyle(
+                "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        loopButton.setOnAction(event -> loopSong());
+        shuffleButton = new Button("🔀");
+        shuffleButton.setStyle(
+                "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        shuffleButton.setOnAction(event -> shuffleSong());
+        volumeIcon = new Label("🔊");
+        volumeIcon.setStyle(
+                "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
         volumeSlider = new Slider();
         volumeSlider.setMin(0);
         volumeSlider.setMax(100);
         volumeSlider.setValue(50);
-        volumeSlider.setLayoutX(623);
-        volumeSlider.setLayoutY(37);
-        // Initialize a progress bar
         songProgressBar = new ProgressBar(0);
-        songProgressBar.setLayoutX(300);
-        songProgressBar.setLayoutY(80);
-        songProgressBar.setPrefWidth(400);
         songProgressBar.setStyle("-fx-accent: #1DB954;");
+
         // Add volume control functionality
         volumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (mediaPlayer != null) {
-                // Set volume based on the slider value
+                // Set volume based on the slider value (divide by 600, so it isn't crazy loud)
                 mediaPlayer.setVolume(newValue.doubleValue() / 600);
             }
         });
+
+        // Create an arraylist of songs in the music lib directory and add all the songs
+        // to the arraylist
         songs = new ArrayList<>();
         File directory = new File("src/main/java/lib/music");
         File[] files = directory.listFiles();
         if (files != null) {
             songs.addAll(Arrays.asList(files));
         }
-        calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+
+        // Start displaying music functions on main calculator page
+        musicToMain();
         startMedia();
 
         // Assign properties for the calculator buttons
@@ -419,22 +416,29 @@ public class GraphingCalculator extends Application {
         });
         // Graph button to toggle on/off graphing feature
         graph.setOnAction(startButtonEvent -> {
+            // Reset calculator textfield
             textbox.setText("");
+            // Move music to graphing page
+            musicToGraph();
+            // Set the scene to the graphing scene
             stage.setScene(graphScene);
         });
+
         // Declare and initialize X and Y axes for the chart
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("x");
-        yAxis.setLabel("y");
-        // Declare and initialize the line chart to display the graph
+        xAxis.setLabel("X");
+        yAxis.setLabel("Y");
+
+        // Declare, initialize and format the line chart to display the graph
         chart = new LineChart<>(xAxis, yAxis);
         chart.setLayoutX(20);
         chart.setLayoutY(150);
         chart.setPrefSize(600, 600);
         chart.setLegendVisible(false);
         chart.setAnimated(false);
-        // Declare and initialize text fields for user input
+
+        // Declare, initialize and format text fields for user input
         field1 = new TextField();
         field1.setLayoutX(20);
         field1.setLayoutY(20);
@@ -453,13 +457,16 @@ public class GraphingCalculator extends Application {
         field4.setPrefWidth(180);
         valueField = new TextField();
         valueField.setLayoutX(800);
-        valueField.setLayoutY(340);
+        valueField.setLayoutY(300);
         valueField.setPrefWidth(100);
         valueField.setPromptText("X = ");
+
         // Declare and initialize label to display the formula of the selected function
+        // (starting with linear)
         formulaDisplay = new Label("FORMULA: y = mx + b");
         formulaDisplay.setLayoutX(20);
-        // Declare and initialize radio buttons to select the function type
+
+        // Declare, initialize and format radio buttons to select the function type
         linearRadioButton = new RadioButton("Linear Function");
         linearRadioButton.setSelected(true);
         linearRadioButton.setLayoutX(400);
@@ -488,6 +495,7 @@ public class GraphingCalculator extends Application {
         tanRadioButton = new RadioButton("Tan");
         tanRadioButton.setLayoutX(700);
         tanRadioButton.setLayoutY(100);
+
         // Declare and initialize toggle groups for all radio buttons
         ToggleGroup functionToggleGroup = new ToggleGroup();
         linearRadioButton.setToggleGroup(functionToggleGroup);
@@ -499,38 +507,56 @@ public class GraphingCalculator extends Application {
         sinRadioButton.setToggleGroup(functionToggleGroup);
         cosRadioButton.setToggleGroup(functionToggleGroup);
         tanRadioButton.setToggleGroup(functionToggleGroup);
+
         // Declare and initialize buttons for plotting, resetting, and exiting the graph
         Button plotGraphButton = new Button("Plot Graph");
         plotGraphButton.setLayoutX(700);
         plotGraphButton.setLayoutY(180);
+        // Plot the graph and allow for point hovering over points
         plotGraphButton.setOnAction(e -> {
             plotGraph();
             addPointHovering();
         });
+
+        // Declare, initialize and format sidebar buttons
         Button resetButton = new Button("Reset Graph");
         resetButton.setLayoutX(700);
         resetButton.setLayoutY(220);
+        // Reset the graph on press
         resetButton.setOnAction(e -> resetGraph());
         Button backToCalc = new Button("Back");
-        backToCalc.setLayoutX(700);
-        backToCalc.setLayoutY(260);
+        backToCalc.setLayoutX(850);
+        backToCalc.setLayoutY(50);
+        // Return to the calculator scene and reset the graph on press
         backToCalc.setOnAction(startButtonEvent -> {
+            // Reset the graph
             resetGraph();
+            // Move music controls back to main calculator page
+            musicToMain();
+            // Set the scene to the main calculator scene
             stage.setScene(calcScene);
         });
-        // Graph "trace" buttons + display text
-        trace.setLayoutX(780);
-        trace.setLayoutY(300);
+
+        // Graph trace buttons + display text
+        trace.setLayoutX(800);
+        trace.setLayoutY(278);
         // Create "zero" button
         Button zeroGraph = getZeroGraph();
-        // Create "value" button 
+        // Create "value" button
         Button ValueGraph = getValueGraph();
         // Add all elements to the main pane
-        graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton, absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton, cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton, formulaDisplay, plotGraphButton, resetButton, backToCalc, zeroGraph, trace, valueField, ValueGraph);
-        // Set the default to linear function and reset the graph to ensure everything is correct
+        graphPane.getChildren().addAll(chart, field1, field2, field3, field4, linearRadioButton,
+                absoluteRadioButton, parabolaRadioButton, reciprocalRadioButton, squarerootRadioButton,
+                cubicRadioButton, sinRadioButton, cosRadioButton, tanRadioButton, formulaDisplay,
+                plotGraphButton, resetButton, backToCalc, zeroGraph, trace, valueField, ValueGraph);
+        // Set the default to linear function and reset the graph to ensure everything
+        // is correct
         linearRadioButton.setSelected(true);
         resetGraph();
         // Event listeners to update the UI based on the selected function
+        // Reset the graph when a new type is selected, change the formula needed to be
+        // entered, only make the correct
+        // amount of fields
         linearRadioButton.setOnAction(e -> {
             formulaDisplay.setText("FORMULA: y = mx + b");
             organizeFields("Enter slope (m)", "Enter y-intercept (b)", null, null);
@@ -553,13 +579,15 @@ public class GraphingCalculator extends Application {
         });
         squarerootRadioButton.setOnAction(e -> {
             formulaDisplay.setText("FORMULA: y = a√(b(x - h)) + k");
-            organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter horizontal translation (h)", "Enter vertical translation (k)");
+            organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter horizontal translation (h)",
+                    "Enter vertical translation (k)");
             resetGraph();
         });
 
         cubicRadioButton.setOnAction(e -> {
             formulaDisplay.setText("FORMULA: y = ax^3 + bx^2 + cx + d");
-            organizeFields("Enter coefficient (a)", "Enter coefficient (b)", "Enter coefficient (c)", "Enter coefficient (d)");
+            organizeFields("Enter coefficient (a)", "Enter coefficient (b)", "Enter coefficient (c)",
+                    "Enter coefficient (d)");
             resetGraph();
         });
         sinRadioButton.setOnAction(e -> {
@@ -577,212 +605,10 @@ public class GraphingCalculator extends Application {
             organizeFields("Enter coefficient (a)", null, null, null);
             resetGraph();
         });
-
     }
 
-    // Music Methods
-    public void startMedia() {
-        playpauseButton.setOnAction(event -> {
-            try {
-                if (mediaPlayer == null) {
-                    media = new Media(songs.get(songNumber).toURI().toString());
-                    mediaPlayer = new MediaPlayer(media);
-                    songLabel.setText(songs.get(songNumber).getName());
-                    mediaPlayer.setVolume(volumeSlider.getValue() / 600);
-                    beginTimer();
-                }
-                mediaPlayer.setVolume(volumeSlider.getValue() / 600);
-
-                if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
-                    mediaPlayer.pause();
-                    // Cancel timer to keep track of process
-                    cancelTimer();
-                } else {
-                    mediaPlayer.play();
-                    // Start timer to keep track of process
-                    beginTimer();
-                }
-            } catch (Exception ignored) {
-
-            }
-        });
-    }
-
-    public void nextSong() {
-        try {
-            if (songNumber < songs.size() - 1) {
-                songNumber++;
-                mediaPlayer.stop();
-                if (running) {
-                    cancelTimer();
-                }
-
-            } else {
-                songNumber = 0;
-                mediaPlayer.stop();
-            }
-            media = new Media(songs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(songs.get(songNumber).getName());
-            mediaPlayer.setVolume(volumeSlider.getValue() / 600);
-
-            mediaPlayer.play();
-            beginTimer();
-        } catch (Exception ignored) {
-
-        }
-    }
-
-
-    public void previousSong() {
-        try {
-            if (songNumber > 0) {
-                songNumber--;
-
-            } else {
-                songNumber = songs.size() - 1;
-
-            }
-            mediaPlayer.stop();
-            if (running) {
-                cancelTimer();
-            }
-            media = new Media(songs.get(songNumber).toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            songLabel.setText(songs.get(songNumber).getName());
-            mediaPlayer.setVolume(volumeSlider.getValue() / 600);
-
-            mediaPlayer.play();
-            beginTimer();
-        } catch (Exception ignored) {
-
-        }
-    }
-
-    public void restartMedia() {
-        try {
-            mediaPlayer.seek(Duration.seconds(0));
-        } catch (Exception ignored) {
-
-        }
-    }
-
-    public void beginTimer() {
-        timer = new Timer();
-        TimerTask task = new TimerTask() {
-            public void run() {
-                // Set running to true
-                running = true;
-                // Get the current and end time of the song
-                double current = mediaPlayer.getCurrentTime().toSeconds();
-                double end = media.getDuration().toSeconds();
-                songProgressBar.setProgress(current / end);
-
-                // Calculate current time and total length in proper format (minutes:seconds)
-                int currentMinutes = (int) current / 60;
-                int currentSeconds = (int) current % 60;
-                int totalMinutes = (int) end / 60;
-                int totalSeconds = (int) end % 60;
-
-                // Update the songLabel to display current time and total length
-                String currentTime = String.format("%02d:%02d", currentMinutes, currentSeconds);
-                String totalTime = String.format("%02d:%02d", totalMinutes, totalSeconds);
-                // UI-related operations must happen in the primary javafx thread, not the timer task therefore
-                // it must "run later" which is directly after a timer iteration
-                // Essentially queuing the task until after the thread opens up
-                Platform.runLater(() -> {
-                    currentSongTime.setText(currentTime);
-                    songTotal.setText(totalTime);
-                });
-
-                if (current / end == 1) {
-                    cancelTimer();
-                }
-            }
-        };
-
-        timer.scheduleAtFixedRate(task, 0, 1000);
-    }
-
-    public void cancelTimer() {
-        running = false;
-        timer.cancel();
-    }
-
-    // Method to return the y value at an x on any graph - intellij formatted
-    @NotNull
-    private Button getValueGraph() {
-        Button ValueGraph = new Button("X=");
-        ValueGraph.setLayoutX(700);
-        ValueGraph.setLayoutY(340);
-        ValueGraph.setOnAction(startButtonEvent -> {
-            try {
-                if (linearRadioButton.isSelected() && graphCheck) {
-                    // mx + b
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
-                } else if (parabolaRadioButton.isSelected() && graphCheck) {
-                    // ax^2 + bx + c
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText())));
-                } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                    // a√(b(x - h)) + k
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * FastMath.sqrt(Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText()) - Double.parseDouble(field3.getText()))) + Double.parseDouble(field4.getText())));
-                } else if (cubicRadioButton.isSelected() && graphCheck) {
-                    // ax^3 + bx^2 + cx + d
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) * FastMath.pow(Double.parseDouble(valueField.getText()), 3) + Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) + Double.parseDouble(field4.getText())));
-                } else if (absoluteRadioButton.isSelected() && graphCheck) {
-                    // |a * x|
-                    trace.setText("Y = " + round(FastMath.abs(Double.parseDouble(field1.getText()) * Double.parseDouble(valueField.getText()))));
-                } else if (reciprocalRadioButton.isSelected() && graphCheck) {
-                    // y = a / x
-                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
-                } else if (sinRadioButton.isSelected() && graphCheck) {
-                    trace.setText("Y = " + round(FastMath.sin(Double.parseDouble(valueField.getText()))));
-                } else if (cosRadioButton.isSelected() && graphCheck) {
-                    trace.setText("Y = " + round(FastMath.cos(Double.parseDouble(valueField.getText()))));
-                } else if (tanRadioButton.isSelected() && graphCheck) {
-                    trace.setText("Y = " + round(FastMath.tan(Double.parseDouble(valueField.getText()))));
-                }
-            } catch (NumberFormatException ignored) {
-            }
-        });
-        return ValueGraph;
-    }
-
-    // Method to return the zeros of the graph - intellij formatted
-    @NotNull
-    private Button getZeroGraph() {
-        Button zeroGraph = new Button("ZERO");
-        zeroGraph.setLayoutX(700);
-        zeroGraph.setLayoutY(300);
-        zeroGraph.setOnAction(startButtonEvent -> {
-            resetTrace();
-            // Use round() to round to nearest 100th
-            if (linearRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + round(-Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText())));
-            } else if (parabolaRadioButton.isSelected() && graphCheck) {
-                solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()), Double.parseDouble(field3.getText()));
-            } else if (squarerootRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = " + round((-FastMath.sqrt(Double.parseDouble(field4.getText()) / Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) / Double.parseDouble(field2.getText())));
-            } else if (cubicRadioButton.isSelected() && graphCheck) {
-                solveCubic();
-            } else if (absoluteRadioButton.isSelected() && graphCheck) {
-                trace.setText("ZERO = 0.0");
-            } else if (reciprocalRadioButton.isSelected() && graphCheck) {
-                trace.setText("THERE IS NO ZERO");
-            } else if (sinRadioButton.isSelected() && graphCheck) {
-                trace.setText("Not Calculating For Sin");
-            } else if (cosRadioButton.isSelected() && graphCheck) {
-                trace.setText("Not Calculating For Cos");
-            } else if (tanRadioButton.isSelected() && graphCheck) {
-                trace.setText("Not Calculating For Tan");
-            } else {
-                trace.setText("Graph A Function Please");
-            }
-        });
-        return zeroGraph;
-    }
-
-    // Method for setting up number buttons
+    // Method for setting up number buttons in relation to all buttons, so they are
+    // the same size
     private void setButton(Button button, int width, double x, double y) {
         calcPane.getChildren().add(button);
         button.setPrefSize(width, 30);
@@ -790,12 +616,17 @@ public class GraphingCalculator extends Application {
         button.setLayoutY(y);
     }
 
-    // Method for deciding what goes into the text fields along with which ones are displayed
+    // Method for deciding what goes into the text fields along with which ones are
+    // displayed
+    // Each function has its own number of prompts that get inputting into the
+    // method
     private void organizeFields(String prompt1, String prompt2, String prompt3, String prompt4) {
         field1.setPromptText(prompt1);
         field2.setPromptText(prompt2);
         field3.setPromptText(prompt3);
         field4.setPromptText(prompt4);
+
+        // Display just enough prompts based on the function being used
         if (prompt2 != null) {
             field2.setVisible(true);
             field2.setPromptText(prompt2);
@@ -943,23 +774,29 @@ public class GraphingCalculator extends Application {
         } else if (tanRadioButton.isSelected()) {
             plotTanFunction();
         }
+        // Set graphCheck to true once the graph is plotted
         graphCheck = true;
     }
 
     // Method to plot a linear function
     private void plotLine() {
+        // Try-catch for inputs that are not numbers
         try {
+            // Set the variables to the first and second fields depending on the amount
+            // needed for the equation
             double slope = Double.parseDouble(field1.getText());
             double intercept = Double.parseDouble(field2.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
+            // Plot all y values from -20 to +20, and similar for other graphs as well
             for (double x = -20; x <= 20; x += 0.5) {
                 double y = slope * x + intercept;
                 series.getData().add(new XYChart.Data<>(x, y));
             }
+            // Add the new data and remove the old data from previous charts
             chart.getData().clear();
             chart.getData().add(series);
         } catch (NumberFormatException ex) {
+            // Call the invalid input function and ask for proper inputs
             handleInvalidInputs();
         }
     }
@@ -987,7 +824,8 @@ public class GraphingCalculator extends Application {
             double a = Double.parseDouble(field1.getText());
             double b = Double.parseDouble(field2.getText());
             double c = Double.parseDouble(field3.getText());
-            // Calculate the x-coordinate of the vertex to fix the bug of printing more on one quadrant of another
+            // Calculate the x-coordinate of the vertex to fix the bug of plotting more
+            // points on one quadrant than another
             double vertexX = -b / (2 * a);
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
 
@@ -1002,12 +840,15 @@ public class GraphingCalculator extends Application {
         }
     }
 
+    // Method to solve/find the zero of a parabolic function
     private void solveParabola(double a, double b, double c) {
         double discriminant = b * b - 4 * a * c, x1, x2;
-        if (discriminant >= 0) {
-            x1 = (-b - FastMath.sqrt(discriminant)) / (2 * a);
-            x2 = (-b + FastMath.sqrt(discriminant)) / (2 * a);
+        x1 = (-b - FastMath.sqrt(discriminant)) / (2 * a);
+        x2 = (-b + FastMath.sqrt(discriminant)) / (2 * a);
+        if (discriminant > 0) {
             trace.setText("ZERO = " + round(x1) + " and " + round(x2));
+        } else if (discriminant == 0) {
+            trace.setText("ZERO = " + round(x1));
         } else {
             trace.setText("THERE IS NO ZERO");
         }
@@ -1037,6 +878,8 @@ public class GraphingCalculator extends Application {
     private void plotReciprocalFunction() {
         try {
             double a = Double.parseDouble(field1.getText());
+            // Uses two series' to prevent a line from being drawn across the asymptotes and
+            // falsely connecting the function
             XYChart.Series<Number, Number> positiveSeries = new XYChart.Series<>();
             XYChart.Series<Number, Number> negativeSeries = new XYChart.Series<>();
             // Set the style for both series and points (same color)
@@ -1052,7 +895,9 @@ public class GraphingCalculator extends Application {
                 negativeSeries.getData().add(new XYChart.Data<>(x, y));
             }
             chart.getData().clear();
-            chart.getData().addAll(positiveSeries, negativeSeries);
+            // Add the data separately to avoid "varargs" warning
+            chart.getData().add(positiveSeries);
+            chart.getData().add(negativeSeries);
             // Apply the style to both series
             positiveSeries.getNode().setStyle(seriesStyle);
             positiveSeries.getData().forEach(data -> data.getNode().setStyle(pointStyle));
@@ -1081,8 +926,10 @@ public class GraphingCalculator extends Application {
         }
     }
 
+    // Method to solve/find the zero of a cubic function
     private void solveCubic() {
-        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText()) - 4 * FastMath.pow(Double.parseDouble(field3.getText()), 3);
+        double discriminant = Double.parseDouble(field4.getText()) * Double.parseDouble(field4.getText()) - 4 *
+                FastMath.pow(Double.parseDouble(field3.getText()), 3);
         double root1 = FastMath.cbrt((-Double.parseDouble(field4.getText()) + discriminant) / 2);
         double root2 = FastMath.cbrt((-Double.parseDouble(field4.getText()) - discriminant) / 2);
         double root3 = root1 + root2;
@@ -1128,8 +975,8 @@ public class GraphingCalculator extends Application {
         try {
             double a = Double.parseDouble(field1.getText());
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
-            // Plotting the tangent function over a limited range to avoid issues
-            for (double x = -FastMath.PI / 2 + 0.1; x <= FastMath.PI / 2 - 0.1; x += 0.1) {
+            // Plotting the tangent function over a limited range to duplication issues
+            for (double x = -FastMath.PI / 2 + 0.1; x <= FastMath.PI / 2 - 0.1; x += 0.05) {
                 double y = a * FastMath.tan(x);
                 // Handling the vertical asymptotes by checking for large y values
                 if (Double.isFinite(y) && FastMath.abs(y) < 50) {
@@ -1143,20 +990,124 @@ public class GraphingCalculator extends Application {
         }
     }
 
-    // Method to handle input user input
-    private void handleInvalidInputs() {
-        Label errorLabel = new Label("Please enter valid numbers");
-        errorLabel.setLayoutX(20);
-        errorLabel.setLayoutY(135);
-        graphPane.getChildren().removeIf(node -> node instanceof Label && !node.equals(formulaDisplay));
-        graphPane.getChildren().add(errorLabel);
-        // Hide the error label after 3 seconds
-        PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-        visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
-        visiblePause.play();
+    // Method to return the y value at an x on any graph - intellij formatted
+    @NotNull
+    private Button getValueGraph() {
+        // Declare and initialize the x value button on the graph
+        Button ValueGraph = new Button("X=");
+        ValueGraph.setLayoutX(700);
+        ValueGraph.setLayoutY(300);
+        ValueGraph.setOnAction(startButtonEvent -> {
+            // Try catch to ensure no error if the valueField is null
+            try {
+                // For each function, set x = text field to the y value when x = a certain value
+                // (similar to the math in
+                // the function point plotting as long as a graph is plotted and the value field
+                // has a number in it
+                if (linearRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // mx + b
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            Double.parseDouble(valueField.getText()) + Double.parseDouble(field2.getText())));
+                } else if (parabolaRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // ax^2 + bx + c
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field2.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field3.getText())));
+                } else if (squarerootRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // a√(b(x - h)) + k
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            FastMath.sqrt(
+                                    Double.parseDouble(field2.getText()) * (Double.parseDouble(valueField.getText())
+                                            - Double.parseDouble(field3.getText())))
+                            + Double.parseDouble(field4.getText())));
+                } else if (cubicRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // ax^3 + bx^2 + cx + d
+                    trace.setText("Y = " + round(Double.parseDouble(field1.getText()) *
+                            FastMath.pow(Double.parseDouble(valueField.getText()), 3)
+                            + Double.parseDouble(field2.getText()) *
+                            Double.parseDouble(valueField.getText()) * Double.parseDouble(valueField.getText())
+                            +
+                            Double.parseDouble(field3.getText()) * Double.parseDouble(valueField.getText()) +
+                            Double.parseDouble(field4.getText())));
+                } else if (absoluteRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // |a * x|
+                    trace.setText("Y = " + round(FastMath.abs(Double.parseDouble(field1.getText()) *
+                            Double.parseDouble(valueField.getText()))));
+                } else if (reciprocalRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    // y = a / x
+                    trace.setText("Y = "
+                            + round(Double.parseDouble(field1.getText()) / Double.parseDouble(valueField.getText())));
+                } else if (sinRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    trace.setText("Y = " + round(FastMath.sin(Double.parseDouble(valueField.getText()))));
+                } else if (cosRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    trace.setText("Y = " + round(FastMath.cos(Double.parseDouble(valueField.getText()))));
+                } else if (tanRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                    trace.setText("Y = " + round(FastMath.tan(Double.parseDouble(valueField.getText()))));
+                }
+            } catch (NumberFormatException ignored) {
+
+            }
+        });
+        return ValueGraph;
     }
 
-    // Method for point hovering
+    // Method to return the zeros of the graph - intellij formatted
+    @NotNull
+    private Button getZeroGraph() {
+        // Declare and initialize the zeros button on the graph
+        Button zeroGraph = new Button("ZERO");
+        zeroGraph.setLayoutX(700);
+        zeroGraph.setLayoutY(260);
+        zeroGraph.setOnAction(startButtonEvent -> {
+            // Reset the trace textbox
+            resetTrace();
+            // Set the text accordingly (if the right button is selected, the graph exists,
+            // and valueField has a value
+            // to the x intercepts of each graph (minus redundant functions that don't need
+            // x ints calculated)
+            // Use round() to round to nearest 100th
+            if (linearRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("ZERO = "
+                        + round(-Double.parseDouble(field2.getText()) / Double.parseDouble(field1.getText())));
+            } else if (parabolaRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                solveParabola(Double.parseDouble(field1.getText()), Double.parseDouble(field2.getText()),
+                        Double.parseDouble(field3.getText()));
+            } else if (squarerootRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("ZERO = " + round((-FastMath.sqrt(Double.parseDouble(field4.getText()) /
+                        Double.parseDouble(field1.getText())) + Double.parseDouble(field3.getText())) /
+                        Double.parseDouble(field2.getText())));
+            } else if (cubicRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                solveCubic();
+            } else if (absoluteRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("ZERO = 0.0");
+            } else if (reciprocalRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("THERE IS NO ZERO");
+            } else if (sinRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("Not Calculating For Sin");
+            } else if (cosRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("Not Calculating For Cos");
+            } else if (tanRadioButton.isSelected() && graphCheck && valueField.getText() != null) {
+                trace.setText("Not Calculating For Tan");
+            } else {
+                trace.setText("Graph A Function Please");
+            }
+        });
+        return zeroGraph;
+    }
+
+    // Method to round the zeros to two decimal places
+    private double round(double a) {
+        return (double) FastMath.round(a * 100) / 100;
+    }
+
+    // Method to reset the text field for zeros and y values
+    private void resetTrace() {
+        valueField.clear();
+        trace.setText("");
+    }
+
+    // Method to display the point being hovered over
     private void addPointHovering() {
         // Iterate through the chart, along with all the data
         for (XYChart.Series<Number, Number> series : chart.getData()) {
@@ -1164,30 +1115,35 @@ public class GraphingCalculator extends Application {
                 // Round the x and y values
                 double roundedX = round(data.getXValue().doubleValue());
                 double roundedY = round(data.getYValue().doubleValue());
-                // Create a tooltip and node to hold then display all the data on screen in a hovered textbox
+                // Create a tooltip and node to hold then display all the data on screen in a
+                // hovered textbox
                 Node node = data.getNode();
                 Tooltip tooltip = new Tooltip("(" + roundedX + ", " + roundedY + ")");
                 Tooltip.install(node, tooltip);
-                // Show the tooltip as the mouse is hovered over the node that holds the tooltip a point in the scene
+                // Show the tooltip as the mouse is hovered over the node that holds the tooltip
+                // a point in the scene
                 node.setOnMouseEntered(event -> {
                     Point2D pointInScene = new Point2D(event.getSceneX(), event.getSceneY());
-                    tooltip.show(graphPane.getScene().getWindow(), pointInScene.getX() + 10, pointInScene.getY() + 10);
+                    tooltip.show(graphPane.getScene().getWindow(), pointInScene.getX() + 100,
+                            pointInScene.getY() + 100);
                 });
-
+                // Hide the tooltip after the mouse is no longer hovered over a point
                 node.setOnMouseExited(event -> tooltip.hide());
             }
         }
     }
 
-    // Reset the text field for zeros and y values
-    private void resetTrace() {
-        valueField.clear();
-        trace.setText("");
-    }
-
-    // Quick method to round the zeros to two decimal places
-    private double round(double a) {
-        return (double) FastMath.round(a * 100) / 100;
+    // Method to handle invalid user input
+    private void handleInvalidInputs() {
+        // Assign values to the error label
+        Label errorLabel = new Label("Please enter valid numbers");
+        errorLabel.setLayoutX(20);
+        errorLabel.setLayoutY(135);
+        graphPane.getChildren().add(errorLabel);
+        // Hide the error label after 3 seconds
+        PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+        visiblePause.setOnFinished(event -> graphPane.getChildren().remove(errorLabel));
+        visiblePause.play();
     }
 
     // Method to reset the graph and input fields
@@ -1199,7 +1155,7 @@ public class GraphingCalculator extends Application {
         field4.clear();
         graphCheck = false;
         resetTrace();
-
+        // Reorganizes the fields that are displayed for each function
         if (linearRadioButton.isSelected()) {
             organizeFields("Enter slope (m)", "Enter y-intercept (b)", null, null);
         } else if (absoluteRadioButton.isSelected()) {
@@ -1209,7 +1165,8 @@ public class GraphingCalculator extends Application {
         } else if (squarerootRadioButton.isSelected()) {
             organizeFields("Enter coefficient (a)", "Enter constant (b)", "Enter constant (h)", "Enter constant (k)");
         } else if (cubicRadioButton.isSelected()) {
-            organizeFields("Enter coefficient (a)", "Enter coefficient (b)", "Enter coefficient (c)", "Enter coefficient (d)");
+            organizeFields("Enter coefficient (a)", "Enter coefficient (b)", "Enter coefficient (c)",
+                    "Enter coefficient (d)");
         } else if (sinRadioButton.isSelected()) {
             organizeFields("Enter coefficient (a)", null, null, null);
         } else if (cosRadioButton.isSelected()) {
@@ -1217,5 +1174,304 @@ public class GraphingCalculator extends Application {
         } else if (tanRadioButton.isSelected()) {
             organizeFields("Enter coefficient (a)", null, null, null);
         }
+    }
+
+    // Music Methods
+    private void startMedia() {
+        // Handles when the play or pause button is pressed then starts the music
+        playpauseButton.setOnAction(event -> {
+            try {
+                // Change the icon of the playpause button on button press
+                playpauseIcon();
+                // If there is media, add the first song to the player and set the label and
+                // volume to the default values
+                // then start the timer to handle the progress bar
+                if (mediaPlayer == null) {
+                    media = new Media(songs.get(songNumber).toURI().toString());
+                    mediaPlayer = new MediaPlayer(media);
+                    songLabel.setText(songs.get(songNumber).getName());
+                    mediaPlayer.setVolume(volumeSlider.getValue() / 600);
+                    beginTimer();
+                }
+                mediaPlayer.setVolume(volumeSlider.getValue() / 600);
+
+                if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                    mediaPlayer.pause();
+                    // Stop timer to keep track of process
+                    cancelTimer();
+                } else {
+                    mediaPlayer.play();
+                    // Start timer to keep track of process
+                    beginTimer();
+                }
+            } catch (Exception ignored) {
+
+            }
+        });
+    }
+
+    // Handles when the next song button is pressed and plays the next song
+    private void nextSong() {
+        try {
+            playpause = false;
+            playpauseIcon();
+            // If it is not the last song, add one to the current song number and stop the
+            // old song
+            // If it is the last song, go back to the first one in the array
+            if (songNumber < songs.size() - 1) {
+                songNumber++;
+                mediaPlayer.stop();
+                if (running) {
+                    cancelTimer();
+                }
+
+            } else {
+                songNumber = 0;
+                mediaPlayer.stop();
+            }
+            // Add the next song to the media player, song label, set the volume to the
+            // default value, and play the song
+            media = new Media(songs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(songs.get(songNumber).getName());
+            mediaPlayer.setVolume(volumeSlider.getValue() / 600);
+
+            mediaPlayer.play();
+            beginTimer();
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    // Previous song button to play the previous song
+    private void previousSong() {
+        try {
+            playpause = false;
+            playpauseIcon();
+            // If it is not the first song, play the previous and stop the old song
+            // If it is the first song, go back to the last song in the array
+            if (songNumber > 0) {
+                songNumber--;
+
+            } else {
+                songNumber = songs.size() - 1;
+
+            }
+            mediaPlayer.stop();
+            if (running) {
+                cancelTimer();
+            }
+            // Add the previous song to the media player, song label, set the volume to the
+            // default value, and play the song
+            media = new Media(songs.get(songNumber).toURI().toString());
+            mediaPlayer = new MediaPlayer(media);
+            songLabel.setText(songs.get(songNumber).getName());
+            mediaPlayer.setVolume(volumeSlider.getValue() / 600);
+
+            mediaPlayer.play();
+            beginTimer();
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    // Restart the song
+    private void restartMedia() {
+        try {
+            // Reset the player to 0 seconds
+            mediaPlayer.seek(Duration.seconds(0));
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    // Handles the timer for the progress bar and starts when a song starts playing
+    // - iterates every second
+    private void beginTimer() {
+        // Declare and initialize the timer and timer task thread
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            public void run() {
+                // Set timer running to true
+                running = true;
+                // Get the current and end time of the song
+                double current = mediaPlayer.getCurrentTime().toSeconds();
+                double end = media.getDuration().toSeconds();
+                songProgressBar.setProgress(current / end);
+
+                // Calculate current time and total length in proper format (minutes:seconds)
+                int currentMinutes = (int) current / 60;
+                int currentSeconds = (int) current % 60;
+                int totalMinutes = (int) end / 60;
+                int totalSeconds = (int) end % 60;
+
+                // Update the songLabel to display current time and total length
+                String currentTime = String.format("%02d:%02d", currentMinutes, currentSeconds);
+                String totalTime = String.format("%02d:%02d", totalMinutes, totalSeconds);
+                // UI-related operations must happen in the primary javafx thread, not the timer
+                // task therefore
+                // it must "run later" which is directly after a timer iteration
+                // Essentially queuing the task until after the thread opens up
+                Platform.runLater(() -> {
+                    currentSongTime.setText(currentTime);
+                    songTotal.setText(totalTime);
+                });
+
+                // Handle what happens when the song finishes
+                // Loops the song when song is looped
+                if (loop && current / end == 1) {
+                    restartMedia();
+                } else if (!loop && current / end == 1) {
+                    // Shuffle songs if shuffle button is clicked
+                    if (shuffle) {
+                        // generate random song number
+                        int random = ((int) (Math.random() * songs.size()));
+                        shuffleCheck(random);
+                        // Play shuffled song
+                        cancelTimer();
+                        mediaPlayer.stop();
+                        media = new Media(songs.get(random).toURI().toString());
+                        mediaPlayer = new MediaPlayer(media);
+                        Platform.runLater(() -> songLabel.setText(songs.get(random).getName()));
+                        mediaPlayer.setVolume(volumeSlider.getValue() / 600);
+                        mediaPlayer.play();
+                        beginTimer();
+                        // Play next song if songs are not shuffled
+                    }
+                }
+            }
+        };
+        // Iterate every second
+        timer.scheduleAtFixedRate(task, 0, 1000);
+    }
+
+    // Handles when the timer is stopped
+    private void cancelTimer() {
+        // set running to false and cancel the timer
+        running = false;
+        timer.cancel();
+    }
+
+    // Loop song
+    private void loopSong() {
+        // Darken the button when clicked to indicate the song if looped
+        // Reset button colour when toggled off
+        if (!loop) {
+            loopButton.setStyle(
+                    "-fx-background-color: #147a38; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+            // If songs are shuffled, turn off shuffle
+            // Songs can be either looped or shuffled, not both
+            if (shuffle) {
+                shuffleSong();
+            }
+        } else {
+            loopButton.setStyle(
+                    "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        }
+        loop = !loop;
+    }
+
+    // Shuffle song button to play songs in random order
+    private void shuffleSong() {
+        // Change the colour of the button when shuffle is toggled on/off
+        // On = dark, off = normal
+        if (shuffle) {
+            shuffleButton.setStyle(
+                    "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+        } else {
+            shuffleButton.setStyle(
+                    "-fx-background-color: #147a38; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12px;");
+            // Turn off loop if it is on
+            // You can only loop or shuffle songs, not both
+            if (loop) {
+                loopSong();
+            }
+        }
+        shuffle = !shuffle;
+    }
+
+    // Method to change the icon of the playpause button
+    private void playpauseIcon() {
+        // Change button from play to pause(+vice versa) when clicked
+        if (playpause) {
+            playpauseButton.setText("▶");
+            playpauseButton.setStyle(
+                    "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 12.5px;");
+        } else {
+            playpauseButton.setText("⏸");
+            playpauseButton.setStyle(
+                    "-fx-background-color: #1DB954; -fx-text-fill: black; -fx-font-size: 16; -fx-background-radius: 50px; -fx-padding: 8px 8.5px;");
+        }
+        playpause = !playpause;
+    }
+
+    // Makes sure that the shuffle function does not repeat songs
+    private void shuffleCheck(int random) {
+        if (random == songNumber) {
+            random = (int) (Math.random() * songs.size());
+            shuffleCheck(random);
+        }
+    }
+
+    // set layout of music functions on calculator and add them to the pane
+    private void musicToMain() {
+        calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, loopButton,
+                shuffleButton, songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+        restartButton.setLayoutX(292);
+        restartButton.setLayoutY(20);
+        previousButton.setLayoutX(420);
+        previousButton.setLayoutY(20);
+        playpauseButton.setLayoutX(456);
+        playpauseButton.setLayoutY(20);
+        nextButton.setLayoutX(489);
+        nextButton.setLayoutY(20);
+        loopButton.setLayoutX(374);
+        loopButton.setLayoutY(20);
+        shuffleButton.setLayoutX(534);
+        shuffleButton.setLayoutY(20);
+        songLabel.setLayoutX(410);
+        songLabel.setLayoutY(100);
+        currentSongTime.setLayoutX(270);
+        currentSongTime.setLayoutY(80);
+        songTotal.setLayoutX(702);
+        songTotal.setLayoutY(80);
+        songProgressBar.setLayoutX(300);
+        songProgressBar.setLayoutY(80);
+        songProgressBar.setPrefWidth(400);
+        volumeIcon.setLayoutX(583);
+        volumeIcon.setLayoutY(20);
+        volumeSlider.setLayoutX(623);
+        volumeSlider.setLayoutY(37);
+    }
+
+    // set layout of music functions on graph and add them to the pane
+    private void musicToGraph() {
+        graphPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, loopButton,
+                shuffleButton, songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
+        restartButton.setLayoutX(690);
+        restartButton.setLayoutY(500);
+        previousButton.setLayoutX(804);
+        previousButton.setLayoutY(500);
+        playpauseButton.setLayoutX(834);
+        playpauseButton.setLayoutY(500);
+        nextButton.setLayoutX(864);
+        nextButton.setLayoutY(500);
+        loopButton.setLayoutX(764);
+        loopButton.setLayoutY(500);
+        shuffleButton.setLayoutX(900);
+        shuffleButton.setLayoutY(500);
+        songLabel.setLayoutX(730);
+        songLabel.setLayoutY(560);
+        currentSongTime.setLayoutX(650);
+        currentSongTime.setLayoutY(580);
+        songTotal.setLayoutX(940);
+        songTotal.setLayoutY(580);
+        songProgressBar.setLayoutX(680);
+        songProgressBar.setLayoutY(580);
+        songProgressBar.setPrefWidth(250);
+        volumeIcon.setLayoutX(710);
+        volumeIcon.setLayoutY(610);
+        volumeSlider.setLayoutX(750);
+        volumeSlider.setLayoutY(625);
     }
 }
