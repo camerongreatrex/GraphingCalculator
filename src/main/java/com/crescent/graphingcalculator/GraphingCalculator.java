@@ -67,7 +67,7 @@ public class GraphingCalculator extends Application {
     public void start(Stage stage) {
         // Assign a pane to calcPane and assign calcPane to calcScene
         calcPane = new Pane();
-        calcScene = new Scene(calcPane, 600, 800, Color.WHITE);
+        calcScene = new Scene(calcPane, 600, 650, Color.WHITE);
         // Assign a pane to graphPane and assign graphPane to graphScene
         graphPane = new Pane();
         graphScene = new Scene(graphPane, 1000, 800, Color.WHITE);
