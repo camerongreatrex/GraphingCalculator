@@ -67,7 +67,7 @@ public class GraphingCalculator extends Application {
     public void start(Stage stage) {
         // Assign a pane to calcPane and assign calcPane to calcScene
         calcPane = new Pane();
-        calcScene = new Scene(calcPane, 1000, 800, Color.WHITE);
+        calcScene = new Scene(calcPane, 600, 800, Color.WHITE);
         // Assign a pane to graphPane and assign graphPane to graphScene
         graphPane = new Pane();
         graphScene = new Scene(graphPane, 1000, 800, Color.WHITE);
@@ -91,7 +91,7 @@ public class GraphingCalculator extends Application {
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
         textbox.setMaxWidth(210);
-        textbox.setLayoutX(390);
+        textbox.setLayoutX(187);
         textbox.setLayoutY(190);
         calcPane.getChildren().add(textbox);
 
@@ -154,7 +154,7 @@ public class GraphingCalculator extends Application {
         startMedia();
 
         // Assign properties for the calculator buttons
-        setButton(one, 45, 395, 500);
+        setButton(one, 45, 195, 500);
         setButton(two, 45, one.getLayoutX() + 50, one.getLayoutY());
         setButton(three, 45, one.getLayoutX() + 100, one.getLayoutY());
         setButton(four, 45, one.getLayoutX(), one.getLayoutY() - 50);
@@ -1450,30 +1450,30 @@ public class GraphingCalculator extends Application {
     private void musicToMain() {
         calcPane.getChildren().addAll(playpauseButton, restartButton, nextButton, previousButton, loopButton,
                 shuffleButton, songLabel, currentSongTime, songTotal, songProgressBar, volumeSlider, volumeIcon);
-        restartButton.setLayoutX(292);
+        restartButton.setLayoutX(60);
         restartButton.setLayoutY(20);
-        previousButton.setLayoutX(420);
+        previousButton.setLayoutX(188);
         previousButton.setLayoutY(20);
-        playpauseButton.setLayoutX(456);
+        playpauseButton.setLayoutX(224);
         playpauseButton.setLayoutY(20);
-        nextButton.setLayoutX(489);
+        nextButton.setLayoutX(257);
         nextButton.setLayoutY(20);
-        loopButton.setLayoutX(374);
+        loopButton.setLayoutX(142);
         loopButton.setLayoutY(20);
-        shuffleButton.setLayoutX(534);
+        shuffleButton.setLayoutX(302);
         shuffleButton.setLayoutY(20);
-        songLabel.setLayoutX(410);
+        songLabel.setLayoutX(218);
         songLabel.setLayoutY(100);
-        currentSongTime.setLayoutX(270);
+        currentSongTime.setLayoutX(56);
         currentSongTime.setLayoutY(80);
-        songTotal.setLayoutX(702);
+        songTotal.setLayoutX(489);
         songTotal.setLayoutY(80);
-        songProgressBar.setLayoutX(300);
+        songProgressBar.setLayoutX(86);
         songProgressBar.setLayoutY(80);
         songProgressBar.setPrefWidth(400);
-        volumeIcon.setLayoutX(583);
+        volumeIcon.setLayoutX(351);
         volumeIcon.setLayoutY(20);
-        volumeSlider.setLayoutX(623);
+        volumeSlider.setLayoutX(391);
         volumeSlider.setLayoutY(37);
     }
 
