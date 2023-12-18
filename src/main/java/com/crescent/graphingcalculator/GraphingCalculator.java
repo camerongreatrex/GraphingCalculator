@@ -282,9 +282,9 @@ public class GraphingCalculator extends Application {
             clear.setOnMousePressed(startButtonEvent -> textbox.setText(""));
             normal.setOnMousePressed(startButtonEvent -> {
                 // Create the UI elements for the normal distribution input
-                Label meanLabel = new Label("Mean:");
-                Label stdDevLabel = new Label("Standard Deviation:");
-                Label numberLabel = new Label("Number:");
+                Label meanLabel = new Label("   Mean:");
+                Label stdDevLabel = new Label("   Standard Deviation:");
+                Label numberLabel = new Label("   Number:");
                 TextField meanField = new TextField();
                 TextField stdDevField = new TextField();
                 TextField numberField = new TextField();
@@ -303,7 +303,7 @@ public class GraphingCalculator extends Application {
                 inputLayout.addRow(0, meanLabel, meanField);
                 inputLayout.addRow(1, stdDevLabel, stdDevField);
                 inputLayout.addRow(2, numberLabel, numberField);
-                inputLayout.addRow(3, new Label("Calculate to the:"), leftRadioButton, rightRadioButton);
+                inputLayout.addRow(3, new Label("   Calculate to the:"), leftRadioButton, rightRadioButton);
                 inputLayout.addRow(4, calculateButton);
                 inputLayout.addRow(5, resultLabel);
 
@@ -328,16 +328,16 @@ public class GraphingCalculator extends Application {
                         double cumulativeProbability;
                         if (leftRadioButton.isSelected()) {
                             cumulativeProbability = normalDistribution.cumulativeProbability(number);
-                            resultLabel.setText("Area to the left of " + number + ": " + cumulativeProbability);
+                            resultLabel.setText("  Area to the left of " + number + ": " + cumulativeProbability);
                         } else if (rightRadioButton.isSelected()) {
                             cumulativeProbability = 1 - normalDistribution.cumulativeProbability(number);
-                            resultLabel.setText("Area to the right of " + number + ": " + cumulativeProbability);
+                            resultLabel.setText("  Area to the right of " + number + ": " + cumulativeProbability);
                         } else {
-                            resultLabel.setText("Please select whether to calculate to the left or right.");
+                            resultLabel.setText("  Please select whether to calculate to the left or right.");
                         }
 
                     } catch (NumberFormatException e) {
-                        resultLabel.setText("Invalid input. Please enter numeric values.");
+                        resultLabel.setText("  Invalid input. Please enter numeric values.");
                     }
                 });
 
@@ -348,8 +348,8 @@ public class GraphingCalculator extends Application {
         }
         prob.setOnMousePressed(startButtonEvent -> {
             // Create the UI elements for the combination/permutation input
-            Label nLabel = new Label("n:");
-            Label rLabel = new Label("r:");
+            Label nLabel = new Label("    n:");
+            Label rLabel = new Label("    r:");
             TextField nField = new TextField();
             TextField rField = new TextField();
             Button calculateButton = new Button("Calculate");
@@ -396,9 +396,9 @@ public class GraphingCalculator extends Application {
                         result = calculatePermutation(n, r);
                     }
 
-                    resultLabel.setText("Result: " + result);
+                    resultLabel.setText("  Result: " + result);
                 } catch (NumberFormatException e) {
-                    resultLabel.setText("Invalid input. Please enter valid integers.");
+                    resultLabel.setText("  Invalid input. Please enter valid integers.");
                 }
             });
 
