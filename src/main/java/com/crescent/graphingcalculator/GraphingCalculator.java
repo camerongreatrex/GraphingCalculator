@@ -77,8 +77,8 @@ public class GraphingCalculator extends Application {
                 decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"),
                 multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
                 closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"),
-                clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), normal = new Button("normalDist"),
-                prob = new Button("prob");
+                clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), normal = new Button("Normal\n  Dist."),
+                prob = new Button("Prob");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
@@ -183,6 +183,7 @@ public class GraphingCalculator extends Application {
         setButton(graph, 97, sin.getLayoutX() + 48, sin.getLayoutY() - 50);
         graph.setStyle("-fx-font: 9 arial;");
         setButton(normal, 45, seven.getLayoutX() - 50, seven.getLayoutY());
+        normal.setStyle("-fx-font: 9 arial;");
         setButton(prob, 45, four.getLayoutX() - 50, four.getLayoutY());
 
         // Set function of buttons
