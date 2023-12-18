@@ -19,18 +19,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import org.apache.commons.math3.distribution.NormalDistribution;
-// Must add this library from the lib folder into libraries in your compiler
 import org.apache.commons.math3.util.FastMath;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Stack;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class GraphingCalculator extends Application {
     // Create graph "trace" button
@@ -38,9 +32,9 @@ public class GraphingCalculator extends Application {
     // (text held) can be changed
     private final Text trace = new Text();
     // Create the main calculator pane and graph pane
-    private Pane calcPane, graphPane, normalPane, probPane;
+    private Pane calcPane, graphPane;
     // Create the scene for the calculator and graph
-    private Scene calcScene, graphScene, normalcdfScene, probScene;
+    private Scene calcScene, graphScene;
     // Create text fields, labels, line chart, and radio buttons,
     private TextField field1, field2, field3, field4, valueField;
     // Create the formula text display
@@ -68,6 +62,8 @@ public class GraphingCalculator extends Application {
         launch();
     }
 
+
+
     @Override
     public void start(Stage stage) {
         // Assign a pane to calcPane and assign calcPane to calcScene
@@ -76,10 +72,6 @@ public class GraphingCalculator extends Application {
         // Assign a pane to graphPane and assign graphPane to graphScene
         graphPane = new Pane();
         graphScene = new Scene(graphPane, 1000, 800, Color.WHITE);
-        normalPane = new Pane();
-        normalcdfScene = new Scene(normalPane, 1000, 800, Color.WHITE);
-        // Declare and initialize textbox
-        TextField textbox = new TextField();
         // Declare and initialize button instances
         Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), normal = new Button("normalDist"), prob = new Button("prob");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
@@ -89,6 +81,7 @@ public class GraphingCalculator extends Application {
         stage.setScene(calcScene);
 
         // Declare, initialize and format textbox
+        TextField textbox = new TextField();
         textbox.setEditable(false);
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
@@ -284,9 +277,7 @@ public class GraphingCalculator extends Application {
                 textbox.setText(textbox.getText() + "(-)");
                 textbox.positionCaret(textbox.getText().length());
             });
-            enter.setOnAction(startButtonEvent -> {
-                performOperation(textbox);
-            });
+            enter.setOnAction(startButtonEvent -> performOperation(textbox));
             clear.setOnMousePressed(startButtonEvent -> textbox.setText(""));
             normal.setOnMousePressed(startButtonEvent -> {
                 // Create the UI elements for the normal distribution input
@@ -303,7 +294,7 @@ public class GraphingCalculator extends Application {
                 rightRadioButton.setToggleGroup(toggleGroup);
                 Button calculateButton = new Button("Calculate");
                 Label resultLabel = new Label();
-            
+
                 // Set the layout for the normal distribution input
                 GridPane inputLayout = new GridPane();
                 inputLayout.setVgap(10);
@@ -314,13 +305,13 @@ public class GraphingCalculator extends Application {
                 inputLayout.addRow(3, new Label("Calculate to the:"), leftRadioButton, rightRadioButton);
                 inputLayout.addRow(4, calculateButton);
                 inputLayout.addRow(5, resultLabel);
-            
+
                 // Create a new stage for the normal distribution input
                 Stage inputStage = new Stage();
                 inputStage.setTitle("Normal Distribution Input");
                 Scene inputScene = new Scene(inputLayout, 300, 250);
                 inputStage.setScene(inputScene);
-            
+
                 // Set the action for the calculate button
                 calculateButton.setOnAction(event -> {
                     try {
@@ -328,10 +319,10 @@ public class GraphingCalculator extends Application {
                         double mean = Double.parseDouble(meanField.getText());
                         double stdDev = Double.parseDouble(stdDevField.getText());
                         double number = Double.parseDouble(numberField.getText());
-            
+
                         // Create a normal distribution object
                         NormalDistribution normalDistribution = new NormalDistribution(mean, stdDev);
-            
+
                         // Calculate the cumulative probability
                         double cumulativeProbability;
                         if (leftRadioButton.isSelected()) {
@@ -343,16 +334,16 @@ public class GraphingCalculator extends Application {
                         } else {
                             resultLabel.setText("Please select whether to calculate to the left or right.");
                         }
-            
+
                     } catch (NumberFormatException e) {
                         resultLabel.setText("Invalid input. Please enter numeric values.");
                     }
                 });
-            
+
                 // Show the input stage
                 inputStage.show();
             });
-    
+
         }
         prob.setOnMousePressed(startButtonEvent -> {
             // Create the UI elements for the combination/permutation input
@@ -362,17 +353,17 @@ public class GraphingCalculator extends Application {
             TextField rField = new TextField();
             Button calculateButton = new Button("Calculate");
             Label resultLabel = new Label();
-        
+
             // ToggleGroup for the operation choice
             ToggleGroup operationToggleGroup = new ToggleGroup();
-        
+
             RadioButton combinationRadioButton = new RadioButton("Combination");
             combinationRadioButton.setToggleGroup(operationToggleGroup);
             combinationRadioButton.setSelected(true); // Default selection
-        
+
             RadioButton permutationRadioButton = new RadioButton("Permutation");
             permutationRadioButton.setToggleGroup(operationToggleGroup);
-        
+
             // Set the layout for the combination/permutation input
             GridPane inputLayout = new GridPane();
             inputLayout.setVgap(10);
@@ -382,20 +373,20 @@ public class GraphingCalculator extends Application {
             inputLayout.addRow(2, combinationRadioButton, permutationRadioButton);
             inputLayout.addRow(3, calculateButton);
             inputLayout.addRow(4, resultLabel);
-        
+
             // Create a new stage for the combination/permutation input
             Stage inputStage = new Stage();
             inputStage.setTitle("Combination/Permutation Input");
             Scene inputScene = new Scene(inputLayout, 300, 200);
             inputStage.setScene(inputScene);
-        
+
             // Set the action for the calculate button
             calculateButton.setOnAction(event -> {
                 try {
                     // Retrieve values from the input fields
                     int n = Integer.parseInt(nField.getText());
                     int r = Integer.parseInt(rField.getText());
-        
+
                     // Perform either combination or permutation calculation
                     long result;
                     if (combinationRadioButton.isSelected()) {
@@ -403,13 +394,13 @@ public class GraphingCalculator extends Application {
                     } else {
                         result = calculatePermutation(n, r);
                     }
-        
+
                     resultLabel.setText("Result: " + result);
                 } catch (NumberFormatException e) {
                     resultLabel.setText("Invalid input. Please enter valid integers.");
                 }
             });
-        
+
             // Show the input stage
             inputStage.show();
         });
@@ -755,6 +746,7 @@ public class GraphingCalculator extends Application {
             return n * factorial(n - 1);
         }
     }
+
     // Method to plot the selected graph (linear, absolute, parabolic, square root, cubic)
     private void plotGraph() {
         resetTrace();
