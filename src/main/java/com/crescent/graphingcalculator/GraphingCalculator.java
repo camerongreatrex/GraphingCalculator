@@ -89,7 +89,6 @@ public class GraphingCalculator extends Application {
         stage.setScene(calcScene);
 
         // Declare, initialize and format textbox
-        TextField textbox = new TextField();
         textbox.setEditable(false);
         textbox.setFocusTraversable(false);
         textbox.setFont(Font.font("Verdana", 20));
@@ -660,14 +659,14 @@ public class GraphingCalculator extends Application {
             textbox.setText("Error");
         }
     }
-
+    
     private static double evaluateExpression(String expression) {
         // Use a stack to keep track of intermediate results
         Stack<Double> stack = new Stack<>();
         // Use a recursive helper function to evaluate the expression
         return evaluateExpressionHelper(expression, 0, stack);
     }
-
+    
     private static double evaluateExpressionHelper(String expression, int index, Stack<Double> stack) {
         double currentOperand = 0;
         double decimalMultiplier = 0.1;
@@ -716,6 +715,7 @@ public class GraphingCalculator extends Application {
         // Check if the next three characters are "(-)"
         return (index + 2 < expression.length() && expression.substring(index, index + 3).equals("(-)"));
     }
+    
     private static void applyOperator(Stack<Double> stack, double operand, char operator) {
         switch (operator) {
             case '+':
@@ -730,11 +730,15 @@ public class GraphingCalculator extends Application {
             case '/':
                 stack.push(stack.pop() / operand);
                 break;
+            case '%':
+                double previousOperand = stack.pop();
+                stack.push(previousOperand % operand);
+                break;
         }
     }
-
+    
     private static boolean isOperator(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/';
+        return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
     }
     private long calculateCombination(int n, int r) {
         return factorial(n) / (factorial(r) * factorial(n - r));
