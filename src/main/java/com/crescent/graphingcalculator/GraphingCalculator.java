@@ -24,6 +24,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.util.*;
 
 public class GraphingCalculator extends Application {
@@ -62,8 +63,6 @@ public class GraphingCalculator extends Application {
         launch();
     }
 
-
-
     @Override
     public void start(Stage stage) {
         // Assign a pane to calcPane and assign calcPane to calcScene
@@ -73,7 +72,13 @@ public class GraphingCalculator extends Application {
         graphPane = new Pane();
         graphScene = new Scene(graphPane, 1000, 800, Color.WHITE);
         // Declare and initialize button instances
-        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"), six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"), decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"), exponent = new Button("^"), multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("), closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"), clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), normal = new Button("normalDist"), prob = new Button("prob");
+        Button one = new Button("1"), two = new Button("2"), three = new Button("3"), four = new Button("4"), five = new Button("5"),
+                six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
+                decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"),
+                multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
+                closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"),
+                clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), normal = new Button("normalDist"),
+                prob = new Button("prob");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
         stage.setResizable(false);
@@ -165,14 +170,13 @@ public class GraphingCalculator extends Application {
         setButton(minus, 45, plus.getLayoutX(), plus.getLayoutY() - 50);
         setButton(multiply, 45, plus.getLayoutX(), minus.getLayoutY() - 50);
         setButton(divide, 45, multiply.getLayoutX(), multiply.getLayoutY() - 50);
-        setButton(exponent, 45, divide.getLayoutX(), divide.getLayoutY() - 50);
         setButton(modulus, 45, nine.getLayoutX(), nine.getLayoutY() - 50);
         setButton(openBracket, 45, seven.getLayoutX(), seven.getLayoutY() - 50);
         setButton(closeBracket, 45, eight.getLayoutX(), eight.getLayoutY() - 50);
         setButton(sin, 45, openBracket.getLayoutX(), openBracket.getLayoutY() - 50);
         setButton(cos, 45, closeBracket.getLayoutX(), closeBracket.getLayoutY() - 50);
         setButton(tan, 45, modulus.getLayoutX(), modulus.getLayoutY() - 50);
-        setButton(clear, 45, exponent.getLayoutX(), exponent.getLayoutY() - 50);
+        setButton(clear, 45, divide.getLayoutX(), divide.getLayoutY() - 50);
         clear.setStyle("-fx-font: 9 arial;");
         setButton(enter, 45, negative.getLayoutX() + 50, negative.getLayoutY());
         enter.setStyle("-fx-font: 9 arial;");
@@ -265,10 +269,6 @@ public class GraphingCalculator extends Application {
                 textbox.setText(textbox.getText() + "TAN(");
                 textbox.positionCaret(textbox.getText().length());
             });
-            exponent.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "^");
-                textbox.positionCaret(textbox.getText().length());
-            });
             decimalPoint.setOnMousePressed(startButtonEvent -> {
                 textbox.setText(textbox.getText() + ".");
                 textbox.positionCaret(textbox.getText().length());
@@ -309,7 +309,7 @@ public class GraphingCalculator extends Application {
                 // Create a new stage for the normal distribution input
                 Stage inputStage = new Stage();
                 inputStage.setTitle("Normal Distribution Input");
-                Scene inputScene = new Scene(inputLayout, 300, 250);
+                Scene inputScene = new Scene(inputLayout, 500, 225);
                 inputStage.setScene(inputScene);
 
                 // Set the action for the calculate button
@@ -377,7 +377,7 @@ public class GraphingCalculator extends Application {
             // Create a new stage for the combination/permutation input
             Stage inputStage = new Stage();
             inputStage.setTitle("Combination/Permutation Input");
-            Scene inputScene = new Scene(inputLayout, 300, 200);
+            Scene inputScene = new Scene(inputLayout, 500, 225);
             inputStage.setScene(inputScene);
 
             // Set the action for the calculate button
@@ -388,7 +388,7 @@ public class GraphingCalculator extends Application {
                     int r = Integer.parseInt(rField.getText());
 
                     // Perform either combination or permutation calculation
-                    long result;
+                    BigInteger result;
                     if (combinationRadioButton.isSelected()) {
                         result = calculateCombination(n, r);
                     } else {
@@ -597,6 +597,150 @@ public class GraphingCalculator extends Application {
         });
     }
 
+    //method to do simple arithmetic expressions
+    private void performOperation(TextField textbox) {
+        try {
+            String input = textbox.getText();
+            double result = evaluateExpression(input);
+            textbox.setText(String.valueOf(result));
+        } catch (Exception ex) {
+            textbox.setText("Error");
+        }
+    }
+
+    // Method to finalize the expression
+    private double evaluateExpression(String expression) {
+        // Use a stack to keep track of intermediate results
+        Stack<Double> stack = new Stack<>();
+        // Use a recursive helper function to evaluate the expression
+        return evaluateExpressionHelper(expression, 0, stack);
+    }
+
+    // Method to calculate the complex math behind the stack of operations
+    private double evaluateExpressionHelper(String expression, int index, Stack<Double> stack) {
+        double currentOperand = 0;
+        double decimalMultiplier = 0.1;
+        char currentOperator = '+';
+        boolean isDecimal = false;
+        boolean isNegative = false;
+
+        while (index < expression.length()) {
+            char c = expression.charAt(index);
+
+            if (Character.isDigit(c)) {
+                if (isDecimal) {
+                    currentOperand += (c - '0') * decimalMultiplier;
+                    decimalMultiplier *= 0.1; // Move the decimal point to the left
+                } else {
+                    currentOperand = currentOperand * 10 + (c - '0');
+                }
+            } else if (c == '.') {
+                isDecimal = true;
+            } else if (isNegativeSign(expression, index)) {
+                isNegative = true;
+                index += 2; // Skip the "(-)" characters
+            } else if (isOperator(c)) {
+                applyOperator(stack, (isNegative ? -currentOperand : currentOperand), currentOperator);
+                currentOperand = 0;
+                currentOperator = c;
+                isDecimal = false;
+                decimalMultiplier = 0.1; // Reset decimal handling
+                isNegative = false;
+            } else if (c == '(') {
+                currentOperand = evaluateExpressionHelper(expression, index + 1, stack);
+                index++; // Skip the corresponding ')'
+            } else if (c == ')') {
+                break; // End of the current recursive call
+            }
+
+            index++;
+        }
+
+        applyOperator(stack, (isNegative ? -currentOperand : currentOperand), currentOperator);
+
+        return stack.stream().mapToDouble(Double::doubleValue).sum();
+    }
+
+    // Method to check if there is a user-inputted negative sign before a number
+    private boolean isNegativeSign(String expression, int index) {
+        // Check if the next three characters are "(-)"
+        return (index + 2 < expression.length() && expression.startsWith("(-)", index));
+    }
+
+
+    //TODO: ADD SIN,COS,TAN FUNCTIONALITY ON THE CALCULATOR
+
+
+    // Method to apply the operator to the operand
+    private void applyOperator(Stack<Double> stack, double operand, char operator) {
+        switch (operator) {
+            case '+':
+                stack.push(operand);
+                break;
+            case '-':
+                stack.push(-operand);
+                break;
+            case '*':
+                stack.push(stack.pop() * operand);
+                break;
+            case '/':
+                stack.push(stack.pop() / operand);
+                break;
+            case '%':
+                double previousOperand = stack.pop();
+                stack.push(previousOperand % operand);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid operator");
+        }
+    }
+
+    // Method to check for each operator
+    private boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
+    }
+
+    // Method to calculate combinations using BigInteger to avoid StackOverFlow errors
+    private BigInteger calculateCombination(int n, int r) {
+        BigInteger numerator = factorial(n);
+        BigInteger denominator = factorial(r).multiply(factorial(n - r));
+
+        if (denominator.equals(BigInteger.ZERO)) {
+            // Division by zero, return zero
+            return BigInteger.ZERO;
+        } else {
+            return numerator.divide(denominator);
+        }
+    }
+
+    // Method to calculate permutations using BigInteger to avoid StackOverFlow errors
+    private BigInteger calculatePermutation(int n, int r) {
+        BigInteger numerator = factorial(n);
+        BigInteger denominator = factorial(n - r);
+
+        if (denominator.equals(BigInteger.ZERO)) {
+            // Division by zero, return zero
+            return BigInteger.ZERO;
+        } else {
+            return numerator.divide(denominator);
+        }
+    }
+
+    // Method to calculate factorials using BigInteger to avoid StackOverFlow errors
+    private BigInteger factorial(int n) {
+        if (n == 0 || n == 1) {
+            return BigInteger.ONE;
+        } else {
+            BigInteger result = BigInteger.ONE;
+            for (int i = 2; i <= n; i++) {
+                result = result.multiply(BigInteger.valueOf(i));
+            }
+            return result;
+        }
+    }
+
+
     // Method for setting up number buttons in relation to all buttons, so they are
     // the same size
     private void setButton(Button button, int width, double x, double y) {
@@ -638,113 +782,6 @@ public class GraphingCalculator extends Application {
             field4.clear();
         }
         resetTrace();
-    }
-    
-    //method to do simple arithmetic expressions
-    private static void performOperation(TextField textbox) {
-        try {
-            String input = textbox.getText();
-            double result = evaluateExpression(input);
-            textbox.setText(String.valueOf(result));
-        } catch (Exception ex) {
-            textbox.setText("Error");
-        }
-    }
-    
-    private static double evaluateExpression(String expression) {
-        // Use a stack to keep track of intermediate results
-        Stack<Double> stack = new Stack<>();
-        // Use a recursive helper function to evaluate the expression
-        return evaluateExpressionHelper(expression, 0, stack);
-    }
-    
-    private static double evaluateExpressionHelper(String expression, int index, Stack<Double> stack) {
-        double currentOperand = 0;
-        double decimalMultiplier = 0.1;
-        char currentOperator = '+';
-        boolean isDecimal = false;
-        boolean isNegative = false;
-    
-        while (index < expression.length()) {
-            char c = expression.charAt(index);
-    
-            if (Character.isDigit(c)) {
-                if (isDecimal) {
-                    currentOperand += (c - '0') * decimalMultiplier;
-                    decimalMultiplier *= 0.1; // Move the decimal point to the left
-                } else {
-                    currentOperand = currentOperand * 10 + (c - '0');
-                }
-            } else if (c == '.') {
-                isDecimal = true;
-            } else if (isNegativeSign(expression, index)) {
-                isNegative = true;
-                index += 2; // Skip the "(-)" characters
-            } else if (isOperator(c)) {
-                applyOperator(stack, (isNegative ? -currentOperand : currentOperand), currentOperator);
-                currentOperand = 0;
-                currentOperator = c;
-                isDecimal = false;
-                decimalMultiplier = 0.1; // Reset decimal handling
-                isNegative = false;
-            } else if (c == '(') {
-                currentOperand = evaluateExpressionHelper(expression, index + 1, stack);
-                index++; // Skip the corresponding ')'
-            } else if (c == ')') {
-                break; // End of the current recursive call
-            }
-    
-            index++;
-        }
-    
-        applyOperator(stack, (isNegative ? -currentOperand : currentOperand), currentOperator);
-    
-        return stack.stream().mapToDouble(Double::doubleValue).sum();
-    }
-    
-    private static boolean isNegativeSign(String expression, int index) {
-        // Check if the next three characters are "(-)"
-        return (index + 2 < expression.length() && expression.substring(index, index + 3).equals("(-)"));
-    }
-    
-    private static void applyOperator(Stack<Double> stack, double operand, char operator) {
-        switch (operator) {
-            case '+':
-                stack.push(operand);
-                break;
-            case '-':
-                stack.push(-operand);
-                break;
-            case '*':
-                stack.push(stack.pop() * operand);
-                break;
-            case '/':
-                stack.push(stack.pop() / operand);
-                break;
-            case '%':
-                double previousOperand = stack.pop();
-                stack.push(previousOperand % operand);
-                break;
-        }
-    }
-    
-    private static boolean isOperator(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
-    }
-    private long calculateCombination(int n, int r) {
-        return factorial(n) / (factorial(r) * factorial(n - r));
-    }
-
-    private long calculatePermutation(int n, int r) {
-        return factorial(n) / factorial(n - r);
-    }
-
-    private long factorial(int n) {
-        if (n == 0 || n == 1) {
-            return 1;
-        } else {
-            return n * factorial(n - 1);
-        }
     }
 
     // Method to plot the selected graph (linear, absolute, parabolic, square root, cubic)
@@ -1119,9 +1156,9 @@ public class GraphingCalculator extends Application {
                 // Show the tooltip as the mouse is hovered over the node that holds the tooltip
                 // a point in the scene
                 node.setOnMouseEntered(event -> {
-                    Point2D pointInScene = new Point2D(event.getSceneX(), event.getSceneY());
-                    tooltip.show(graphPane.getScene().getWindow(), pointInScene.getX() + 100,
-                            pointInScene.getY() + 100);
+                    Point2D pointInScene = node.localToScreen(node.getBoundsInLocal().getMaxX(),
+                            node.getBoundsInLocal().getMaxY());
+                    tooltip.show(node, pointInScene.getX(), pointInScene.getY());
                 });
                 // Hide the tooltip after the mouse is no longer hovered over a point
                 node.setOnMouseExited(event -> tooltip.hide());
