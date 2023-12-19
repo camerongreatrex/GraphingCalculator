@@ -588,6 +588,11 @@ public class GraphingCalculator extends Application {
             String input = textbox.getText();
             double result = evaluateExpression(input);
             textbox.setText(String.valueOf(result));
+            if (Double.isInfinite(result) || Double.isNaN(result)) {
+                textbox.setText("Error");
+            } else {
+                textbox.setText(String.valueOf(result));
+            }
         } catch (Exception ex) {
             textbox.setText("Error");
         }
