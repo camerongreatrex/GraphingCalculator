@@ -76,8 +76,7 @@ public class GraphingCalculator extends Application {
                 six = new Button("6"), seven = new Button("7"), eight = new Button("8"), nine = new Button("9"), zero = new Button("0"),
                 decimalPoint = new Button("."), negative = new Button("(-)"), plus = new Button("+"), minus = new Button("-"),
                 multiply = new Button("*"), divide = new Button("/"), modulus = new Button("%"), openBracket = new Button("("),
-                closeBracket = new Button(")"), sin = new Button("SIN"), cos = new Button("COS"), tan = new Button("TAN"),
-                clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), normal = new Button("Normal\n  Dist."),
+                closeBracket = new Button(")"), clear = new Button("CLEAR"), enter = new Button("ENTER"), graph = new Button("GRAPHING"), normal = new Button("Normal\n  Dist."),
                 prob = new Button("Prob");
         // Show the stage, make it un-resizable, name the window, and set the first scene to the calculator
         stage.show();
@@ -173,14 +172,11 @@ public class GraphingCalculator extends Application {
         setButton(modulus, 45, nine.getLayoutX(), nine.getLayoutY() - 50);
         setButton(openBracket, 45, seven.getLayoutX(), seven.getLayoutY() - 50);
         setButton(closeBracket, 45, eight.getLayoutX(), eight.getLayoutY() - 50);
-        setButton(sin, 45, openBracket.getLayoutX(), openBracket.getLayoutY() - 50);
-        setButton(cos, 45, closeBracket.getLayoutX(), closeBracket.getLayoutY() - 50);
-        setButton(tan, 45, modulus.getLayoutX(), modulus.getLayoutY() - 50);
         setButton(clear, 45, divide.getLayoutX(), divide.getLayoutY() - 50);
         clear.setStyle("-fx-font: 9 arial;");
         setButton(enter, 45, negative.getLayoutX() + 50, negative.getLayoutY());
         enter.setStyle("-fx-font: 9 arial;");
-        setButton(graph, 97, sin.getLayoutX() + 48, sin.getLayoutY() - 50);
+        setButton(graph, 97, clear.getLayoutX() - 100, clear.getLayoutY());
         graph.setStyle("-fx-font: 9 arial;");
         setButton(normal, 45, seven.getLayoutX() - 50, seven.getLayoutY());
         normal.setStyle("-fx-font: 9 arial;");
@@ -256,18 +252,6 @@ public class GraphingCalculator extends Application {
             });
             closeBracket.setOnMousePressed(startButtonEvent -> {
                 textbox.setText(textbox.getText() + ")");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            sin.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "SIN(");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            cos.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "COS(");
-                textbox.positionCaret(textbox.getText().length());
-            });
-            tan.setOnMousePressed(startButtonEvent -> {
-                textbox.setText(textbox.getText() + "TAN(");
                 textbox.positionCaret(textbox.getText().length());
             });
             decimalPoint.setOnMousePressed(startButtonEvent -> {
@@ -667,10 +651,6 @@ public class GraphingCalculator extends Application {
         // Check if the next three characters are "(-)"
         return (index + 2 < expression.length() && expression.startsWith("(-)", index));
     }
-
-
-    //TODO: ADD SIN,COS,TAN FUNCTIONALITY ON THE CALCULATOR
-
 
     // Method to apply the operator to the operand
     private void applyOperator(Stack<Double> stack, double operand, char operator) {
